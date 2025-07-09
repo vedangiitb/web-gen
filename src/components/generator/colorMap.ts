@@ -1,4 +1,4 @@
-export const colorMap = {
+export const colorMap:any = {
   white: {
     bgFrom: "from-white",
     bgVia: "via-white",

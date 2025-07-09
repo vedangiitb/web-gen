@@ -10,7 +10,7 @@ import type { HeroProps } from "@/components/generator/Hero";
 import type { NavbarProps } from "@/components/generator/Navbar";
 import type { PricingProps } from "@/components/generator/Pricing";
 import type { TestimonialProps } from "@/components/generator/Testimonials";
-
+import { colorMap } from "@/components/generator/colorMap";
 type Section =
   | { type: "CallToAction"; props: CallToActionProps }
   | { type: "FAQ"; props: FAQProps }
@@ -19,7 +19,8 @@ type Section =
   | { type: "Hero"; props: HeroProps }
   | { type: "Navbar"; props: NavbarProps }
   | { type: "Pricing"; props: PricingProps }
-  | { type: "Testimonials"; props: TestimonialProps };
+  | { type: "Testimonials"; props: TestimonialProps }
+  | { type: "LoadingPreview"; props: {} };
 
 export default function PreviewPage() {
   const [layout, setLayout] = useState<Section[]>([
@@ -30,11 +31,10 @@ export default function PreviewPage() {
   ]);
 
   const [styles, setStyles] = useState<GenStyles>({
-    background: "zinc",
-    text: "gray",
-    accent: "blue",
-    muted: "neutral",
+    color: "rose",
+    muted: "pink",
   });
+  console.log(layout);
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -60,8 +60,12 @@ export default function PreviewPage() {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
+  const bgColors = colorMap[styles?.color || "zinc"];
+
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main
+      className={`min-h-screen bg-gradient-to-br ${bgColors.bgFrom} ${bgColors.bgVia} ${bgColors.bgTo} ${bgColors.text}`}
+    >
       {layout.map((section, idx) => {
         console.log(section.type);
         console.log(section.props);

@@ -14,27 +14,15 @@ export type CallToActionProps = {
 export default function CallToAction({ content, style }: CallToActionProps) {
   if (!content) return null;
 
-  // Use your colorMap with full class names:
-  // Example colorMap entry for blue:
-  // blue: {
-  //   bgFrom: "from-blue-600",
-  //   bgVia: "via-blue-500",
-  //   bgTo: "to-blue-400",
-  //   textLight: "text-blue-100",
-  //   textDark: "text-blue-700",
-  //   buttonBg: "bg-white",
-  //   buttonText: "text-blue-700",
-  //   buttonHover: "hover:bg-blue-50"
-  // }
-  const bgColors = colorMap[style.background] || colorMap.blue;
-  const accent = colorMap[style.accent] || colorMap.indigo;
+  const mutedColors = colorMap[style?.muted || "gray"];
 
   return (
     <section
       className={`
-        relative isolate overflow-hidden rounded-xl
-        bg-gradient-to-br ${bgColors.bgFrom} ${bgColors.bgVia} ${bgColors.bgTo}
-        px-6 py-16 text-center shadow-lg
+        relative isolate overflow-hidden
+        ${mutedColors.cardBgCol}
+        ${mutedColors.cardBorderCol}
+        px-6 py-16 text-center
         flex flex-col items-center justify-center
       `}
     >
@@ -62,15 +50,15 @@ export default function CallToAction({ content, style }: CallToActionProps) {
       </svg>
 
       <div className="relative z-10 max-w-2xl mx-auto">
-        <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${accent.text} drop-shadow`}>
+        <h2 className={`text-3xl md:text-4xl font-bold mb-4 ${mutedColors.text} drop-shadow`}>
           {content.heading}
         </h2>
-        <p className={`mb-8 text-lg md:text-xl ${bgColors.accentText}`}>
+        <p className={`mb-8 text-lg md:text-xl ${mutedColors.accentText}`}>
           {content.subtext}
         </p>
         <Button
           size="lg"
-          className={`transition ${accent.button} text-white ${accent.buttonHover} font-semibold `}
+          className={`transition ${mutedColors.button} text-white ${mutedColors.buttonHover} font-semibold `}
           onClick={content.onClick}
         >
           {content.buttonText}

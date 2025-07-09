@@ -9,16 +9,13 @@ export type TestimonialProps = {
 export default function Testimonials({ content, style }: TestimonialProps) {
   if (!content) return null;
 
-  const bg = colorMap[style.background] || "white";
-  const text = colorMap[style.text] || "gray";
-  const accent = colorMap[style.accent] || "blue";
+  const bgColors = colorMap[style?.color || "zinc"];
+  const mutedColors = colorMap[style?.muted || "gray"];
 
   return (
-    <section
-      className={`py-16 px-4 ${bg.bgFrom} ${bg.bgVia} ${bg.bgTo} bg-gradient-to-br`}
-    >
+    <section className={`py-16 px-4`}>
       <h2
-        className={`text-3xl md:text-4xl font-bold text-center mb-12 ${accent.accentText}`}
+        className={`text-3xl md:text-4xl font-bold text-center mb-12 ${bgColors.text}`}
       >
         What Our Users Say
       </h2>
@@ -28,12 +25,12 @@ export default function Testimonials({ content, style }: TestimonialProps) {
           <div
             key={idx}
             className={`
-              flex-shrink-0 w-80 bg-white rounded-2xl shadow-lg p-6
+              flex-shrink-0 w-80 rounded-2xl shadow-lg p-6
               flex flex-col justify-between
-              hover:shadow-2xl transition border border-gray-200
+              hover:shadow-2xl transition border ${mutedColors.cardBgCol} ${mutedColors.cardBorderCol} ${mutedColors.cardTxtCol}
             `}
           >
-            <p className={`text-lg italic mb-6 ${text.accentText}`}>
+            <p className={`text-lg italic mb-6 ${mutedColors.text}`}>
               "{review}"
             </p>
 
@@ -52,7 +49,7 @@ export default function Testimonials({ content, style }: TestimonialProps) {
                   />
                 );
               })}
-              <span className={`ml-2 font-semibold ${accent.text}`}>
+              <span className={`ml-2 font-semibold `}>
                 ({content.userRatings[idx]}/5)
               </span>
             </div>

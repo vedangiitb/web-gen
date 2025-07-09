@@ -9,16 +9,14 @@ export type PricingProps = {
 export default function Pricing({ content, style }: PricingProps) {
   if (!content) return null;
 
-  const bg = colorMap[style.background] || "white";
-  const text = colorMap[style.text] || "gray";
-  const accent = colorMap[style.accent] || "blue";
+  const bgColors = colorMap[style?.color || "zinc"];
 
   return (
     <section
-      className={`py-16 px-4 ${bg.bgFrom} ${bg.bgVia} ${bg.bgTo} bg-gradient-to-br`}
+      className={`py-16 px-4 ${bgColors.bgFrom} ${bgColors.bgVia} ${bgColors.bgTo} bg-gradient-to-br`}
     >
       <h2
-        className={`text-3xl md:text-4xl font-bold text-center mb-12 ${accent.accentText}`}
+        className={`text-3xl md:text-4xl font-bold text-center mb-12 ${bgColors.text}`}
       >
         Pricing Plans
       </h2>
@@ -34,11 +32,11 @@ export default function Pricing({ content, style }: PricingProps) {
               border border-gray-200
             `}
           >
-            <h3 className={`text-xl font-semibold mb-2 ${accent.text}`}>
+            <h3 className={`text-xl font-semibold mb-2 ${bgColors.accentText}`}>
               {plan.name}
             </h3>
             <p
-              className={`text-3xl font-extrabold ${accent.button} mb-6 text-white px-4 py-2 rounded-md`}
+              className={`text-3xl font-extrabold ${bgColors.button} ${bgColors.buttonTxt} mb-6 text-white px-4 py-2 rounded-md`}
             >
               {plan.price}
             </p>
@@ -46,9 +44,9 @@ export default function Pricing({ content, style }: PricingProps) {
               {plan.features.map((feat, i) => (
                 <li
                   key={i}
-                  className={`flex items-center gap-2 ${text.accentText}`}
+                  className={`flex items-center gap-2 ${bgColors.accentText}`}
                 >
-                  <CheckCircle className={`h-5 w-5 ${accent.button}`} />
+                  <CheckCircle className={`h-5 w-5 ${bgColors.text}`} />
                   <span>{feat}</span>
                 </li>
               ))}

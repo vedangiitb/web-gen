@@ -17,13 +17,12 @@ export type FAQProps = {
 export default function FAQ({ content, style }: FAQProps) {
   if (!content) return null;
 
-  const bg = colorMap[style.background] || "white";
-  const text = colorMap[style.text] || "gray";
-  const accent = colorMap[style.accent] || "blue";
+  const bgColors = colorMap[style?.color || "zinc"];
+  const mutedColors = colorMap[style?.muted || "gray"];
 
   return (
     <section className="max-w-2xl mx-auto px-4 py-16">
-      <h2 className={`text-3xl font-bold text-center mb-10 ${accent.accentText}`}>
+      <h2 className={`text-3xl font-bold text-center mb-10 ${bgColors.textColors}`}>
         Frequently Asked Questions
       </h2>
 
@@ -32,15 +31,15 @@ export default function FAQ({ content, style }: FAQProps) {
           <AccordionItem
             key={idx}
             value={`faq-${idx}`}
-            className={`rounded-lg border border-${style.background}-200 shadow-sm ${bg.bgFrom} overflow-hidden`}
+            className={`rounded-lg border ${mutedColors.cardBgCol} ${mutedColors.cardBorderCol} ${mutedColors.cardTxtCol} shadow-sm overflow-hidden`}
           >
             <AccordionTrigger
-              className={`text-lg font-semibold px-6 py-4 hover:${accent.bgFrom} transition-all ${text.accentText}`}
+              className={`text-lg font-semibold px-6 py-4 hover:${mutedColors.bgTo} transition-all`}
             >
               {q.question}
             </AccordionTrigger>
             <AccordionContent
-              className={`px-6 py-4 ${accent.bgFrom} ${text.text}`}
+              className={`px-6 py-4 ${mutedColors.accentText}`}
             >
               {q.answer}
             </AccordionContent>

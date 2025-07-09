@@ -11,16 +11,13 @@ export type FeaturesProps = {
 export default function Features({ content, style }: FeaturesProps) {
   if (!content) return null;
 
-  const bg = colorMap[style.background] || "white";
-  const text = colorMap[style.text] || "gray";
-  const accent = colorMap[style.accent] || "blue";
+  const bgColors = colorMap[style?.color || "zinc"];
+  const mutedColors = colorMap[style?.muted || "gray"];
 
   return (
-    <section
-      className={`py-16 px-4 ${bg.bgFrom} ${bg.bgVia} ${bg.bgTo} bg-gradient-to-br`}
-    >
+    <section className={`py-16 px-4 `}>
       <h2
-        className={`text-3xl md:text-4xl font-bold text-center mb-10 ${accent.accentText}`}
+        className={`text-3xl md:text-4xl font-bold text-center mb-10 ${bgColors.text}`}
       >
         {content.title}
       </h2>
@@ -28,13 +25,13 @@ export default function Features({ content, style }: FeaturesProps) {
         {content.featureList.map((feature, idx) => (
           <li
             key={idx}
-            className="flex items-start gap-3 bg-white rounded-lg shadow-sm p-5 hover:shadow-md transition"
+            className={`flex items-start gap-3 ${mutedColors.cardBgCol} ${mutedColors.cardBorderCol} ${mutedColors.cardTxtCol} rounded-lg shadow-sm p-5 hover:shadow-md transition`}
           >
             <CheckCircle
-              className={`h-6 w-6 ${accent.button} mt-1 flex-shrink-0`}
+              className={`h-6 w-6 ${mutedColors.text} mt-1 flex-shrink-0`}
               aria-hidden="true"
             />
-            <span className={`text-lg ${text.accentText}`}>{feature}</span>
+            <span className={`text-lg font-medium`}>{feature}</span>
           </li>
         ))}
       </ul>

@@ -11,10 +11,7 @@ export type NavbarProps = {
 export default function Navbar({ content, style }: NavbarProps) {
   if (!content) return <div></div>;
 
-  const bgColors = colorMap[style?.background || "zinc"];
-  const textColors = colorMap[style?.accent || "blue"];
-  const accentColors = colorMap[style?.text || "gray"];
-
+  const bgColors = colorMap[style?.color || "zinc"];
 
   return (
     <nav
@@ -25,7 +22,7 @@ export default function Navbar({ content, style }: NavbarProps) {
     >
       {/* Logo */}
       <div
-        className={`font-extrabold text-2xl tracking-tight ${accentColors.accentText}`}
+        className={`font-extrabold text-2xl tracking-tight ${bgColors.text}`}
       >
         {content.logoText}
       </div>
@@ -36,8 +33,8 @@ export default function Navbar({ content, style }: NavbarProps) {
           <li
             key={idx}
             className={`
-              ${textColors.text} 
-              ${textColors.linkHover}
+              ${bgColors.text} 
+              ${bgColors.linkHover}
               font-medium cursor-pointer transition-colors
             `}
           >
@@ -48,14 +45,14 @@ export default function Navbar({ content, style }: NavbarProps) {
 
       {/* CTA Button */}
       <Button
-        className={`${accentColors.button} ${accentColors.buttonHover} ${accentColors.buttonTxt} transition`}
+        className={`${bgColors.button} ${bgColors.buttonHover} ${bgColors.buttonTxt} transition`}
       >
         {content.ctaText}
       </Button>
 
       {/* Mobile menu icon */}
       <div className="md:hidden">
-        <MenuIcon className={`h-6 w-6 ${accentColors.accentText}`} />
+        <MenuIcon className={`h-6 w-6 ${bgColors.text}`} />
       </div>
     </nav>
   );
