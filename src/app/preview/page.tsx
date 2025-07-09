@@ -1,12 +1,25 @@
-// pages/preview.tsx or wherever
 "use client";
 import { componentRegistry } from "@/components/generator/registry";
 import { useEffect, useState } from "react";
 
-interface Section {
-  type: keyof typeof componentRegistry; // only keys present in registry
-  props: Record<string, any>;
-}
+import type { CallToActionProps } from "@/components/generator/CallToAction";
+import type { FAQProps } from "@/components/generator/FAQ";
+import type { FeaturesProps } from "@/components/generator/Features";
+import type { FooterProps } from "@/components/generator/Footer";
+import type { HeroProps } from "@/components/generator/Hero";
+import type { NavbarProps } from "@/components/generator/Navbar";
+import type { PricingProps } from "@/components/generator/Pricing";
+import type { TestimonialProps } from "@/components/generator/Testimonials";
+
+type Section =
+  | { type: "CallToAction"; props: CallToActionProps }
+  | { type: "FAQ"; props: FAQProps }
+  | { type: "Features"; props: FeaturesProps }
+  | { type: "Footer"; props: FooterProps }
+  | { type: "Hero"; props: HeroProps }
+  | { type: "Navbar"; props: NavbarProps }
+  | { type: "Pricing"; props: PricingProps }
+  | { type: "Testimonials"; props: TestimonialProps };
 
 export default function PreviewPage() {
   const [layout, setLayout] = useState<Section[]>([
@@ -15,6 +28,13 @@ export default function PreviewPage() {
       props: {},
     },
   ]);
+
+  const [styles, setStyles] = useState<GenStyles>({
+    background: "zinc",
+    text: "gray",
+    accent: "blue",
+    muted: "neutral",
+  });
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -26,8 +46,11 @@ export default function PreviewPage() {
         return;
       }
 
-      console.log("Received data from parent:", event.data.payload);
-      setLayout(event.data.payload);
+      if (event.data.type === "previewData") {
+        console.log("Received data from parent:", event.data.payload);
+        setLayout(event.data.payload.content);
+        setStyles(event.data.payload.styles);
+      }
     }
 
     window.addEventListener("message", handleMessage);
@@ -44,7 +67,7 @@ export default function PreviewPage() {
         console.log(section.props);
         const Component = componentRegistry[section.type];
         if (!Component) return null;
-        return <Component key={idx} content={section.props} />;
+        return <Component key={idx} content={section.props} style={styles} />;
       })}
     </main>
   );

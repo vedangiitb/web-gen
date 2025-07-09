@@ -21,7 +21,7 @@ import { generateSite } from "./generateSite";
 import RenderAIResponse from "./RenderAIResponse";
 import RenderUserMessage from "./RenderUserMessage";
 import TypingIndicator from "./TypingIndicator";
-
+import { generateSiteStyles } from "./generateSiteStyles";
 export default function GenerateWebsite() {
   const user = useAuth();
   const { logout } = useAuth();
@@ -50,8 +50,8 @@ export default function GenerateWebsite() {
   });
   const [generatingsite, setGeneratingSite] = useState(false);
   const [detailsFromLLM, setDetailsFromLLM] = useState({});
+  const [stylesFromLLM, setStylesFromLLM] = useState({});
   const [siteComplete, setSiteComplete] = useState(false);
-  const [userDialog, setUserDialog] = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -80,6 +80,14 @@ export default function GenerateWebsite() {
         setSiteComplete,
         user.accessToken
       );
+
+      generateSiteStyles(
+        websiteDetails,
+        setStylesFromLLM,
+        setIsLoading,
+        setSiteComplete,
+        user.accessToken
+      );
     }
   }, [generatingsite]);
 
@@ -88,14 +96,14 @@ export default function GenerateWebsite() {
       "preview-frame"
     ) as HTMLIFrameElement;
 
-    if (!iframe || !detailsFromLLM) return;
+    if (!iframe || !detailsFromLLM || !stylesFromLLM) return;
 
     const sendMessage = () => {
       console.log("📤 Sending preview data to iframe", detailsFromLLM);
       iframe.contentWindow?.postMessage(
         {
           type: "previewData",
-          payload: detailsFromLLM,
+          payload: { content: detailsFromLLM, styles: stylesFromLLM },
         },
         window.location.origin
       );
@@ -117,7 +125,7 @@ export default function GenerateWebsite() {
     return () => {
       iframe.removeEventListener("load", sendMessage);
     };
-  }, [detailsFromLLM]);
+  }, [detailsFromLLM, stylesFromLLM]);
 
   const submitPrompt = useCallback(
     (e?: React.FormEvent) => {
@@ -177,7 +185,7 @@ export default function GenerateWebsite() {
           ) : (
             <Popover>
               <PopoverTrigger>
-                <Button variant="outline">{user.currentUser}</Button>
+                <span className="cursor-pointer">{user.currentUser}</span>
               </PopoverTrigger>
               <PopoverContent className="space-y-2">
                 <div

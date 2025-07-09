@@ -1,0 +1,38 @@
+import { extractJsonFromResponse } from "@/utils/extractJsonFromResponse";
+
+export async function generateSiteStyles(
+  websiteDetails: {
+    businessName: string;
+    businessType: string;
+    targetAudience: string;
+    tone: string;
+    primaryGoal: string;
+    designPreferences: string;
+  },
+  setStylesFromLLM: any,
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
+  setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
+  accessToken: string
+) {
+  setIsLoading(true);
+  const response = await fetch(
+    "https://jxceaahrdymuhokduqdt.supabase.co/functions/v1/website-styles-api",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        websiteDetails: websiteDetails,
+      }),
+    }
+  );
+  const body = await response.json();
+  console.log(body);
+  const text = extractJsonFromResponse(body.text);
+  console.log(text);
+  setStylesFromLLM(text);
+  setIsLoading(false);
+  setSiteComplete(false);
+}

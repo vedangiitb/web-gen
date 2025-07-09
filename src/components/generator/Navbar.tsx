@@ -1,18 +1,32 @@
 // components/Navbar/minimal.tsx
 import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
+import { colorMap } from "./colorMap";
 
-export default function Navbar({
-  content,
-}: {
+export type NavbarProps = {
   content: { logoText: string; links: string[]; ctaText: string };
-}) {
+  style: GenStyles;
+};
+
+export default function Navbar({ content, style }: NavbarProps) {
   if (!content) return <div></div>;
 
+  const bgColors = colorMap[style?.background || "zinc"];
+  const textColors = colorMap[style?.accent || "blue"];
+  const accentColors = colorMap[style?.text || "gray"];
+
+
   return (
-    <nav className="flex items-center justify-between px-6 py-4 bg-white/80 backdrop-blur border-b border-gray-100 shadow-sm">
+    <nav
+      className={`
+        flex items-center justify-between px-6 py-4 
+        ${bgColors.bgFrom} backdrop-blur border-b ${bgColors.bgTo} shadow-sm
+      `}
+    >
       {/* Logo */}
-      <div className="font-extrabold text-2xl text-blue-700 tracking-tight">
+      <div
+        className={`font-extrabold text-2xl tracking-tight ${accentColors.accentText}`}
+      >
         {content.logoText}
       </div>
 
@@ -21,7 +35,11 @@ export default function Navbar({
         {content.links.map((link, idx) => (
           <li
             key={idx}
-            className="text-gray-700 hover:text-blue-700 font-medium cursor-pointer transition-colors"
+            className={`
+              ${textColors.text} 
+              ${textColors.linkHover}
+              font-medium cursor-pointer transition-colors
+            `}
           >
             {link}
           </li>
@@ -29,13 +47,15 @@ export default function Navbar({
       </ul>
 
       {/* CTA Button */}
-      <Button className="ml-6 bg-blue-700 text-white hover:bg-blue-800 transition">
+      <Button
+        className={`${accentColors.button} ${accentColors.buttonHover} ${accentColors.buttonTxt} transition`}
+      >
         {content.ctaText}
       </Button>
 
-      {/* Mobile menu placeholder (optional, for future expansion) */}
+      {/* Mobile menu icon */}
       <div className="md:hidden">
-        <MenuIcon className="h-6 w-6 text-blue-700" />
+        <MenuIcon className={`h-6 w-6 ${accentColors.accentText}`} />
       </div>
     </nav>
   );

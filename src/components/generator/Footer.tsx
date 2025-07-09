@@ -1,11 +1,12 @@
 import { Facebook, Twitter, Linkedin, Instagram, Globe } from "lucide-react";
 
-type FooterProps = {
+export type FooterProps = {
   content: {
     companyInfo: string;
     links: { label: string; href: string }[];
     socials: { type: string; href: string }[];
   };
+  style: GenStyles;
 };
 
 // Helper to render the right icon
@@ -27,7 +28,7 @@ function SocialIcon({ type, ...props }: { type: string; className?: string }) {
   }
 }
 
-export default function Footer({ content }: FooterProps) {
+export default function Footer({ content,style }: FooterProps) {
   if (!content) return null;
 
   return (
