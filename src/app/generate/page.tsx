@@ -12,7 +12,17 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowUp, ExternalLink, LogOut, Moon, Sun } from "lucide-react";
+import {
+  ArrowUp,
+  Check,
+  Circle,
+  ExternalLink,
+  LogOut,
+  Moon,
+  Settings,
+  Square,
+  Sun,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -22,6 +32,8 @@ import RenderAIResponse from "./RenderAIResponse";
 import RenderUserMessage from "./RenderUserMessage";
 import TypingIndicator from "./TypingIndicator";
 import { generateSiteStyles } from "./generateSiteStyles";
+import { colorMap } from "@/components/generator/colorMap";
+
 export default function GenerateWebsite() {
   const user = useAuth();
   const { logout } = useAuth();
@@ -50,7 +62,10 @@ export default function GenerateWebsite() {
   });
   const [generatingsite, setGeneratingSite] = useState(false);
   const [detailsFromLLM, setDetailsFromLLM] = useState({});
-  const [stylesFromLLM, setStylesFromLLM] = useState({});
+  const [stylesFromLLM, setStylesFromLLM] = useState<GenStyles>({
+    color: "blue",
+    muted: "indigo",
+  });
   const [siteComplete, setSiteComplete] = useState(false);
 
   useEffect(() => {
@@ -153,6 +168,56 @@ export default function GenerateWebsite() {
 
   const openInNewWindow = () => {
     window.open(iframeSrc, "_blank", "noopener,noreferrer");
+  };
+
+  const getRelColList = (col1: string, col2: string) => {
+    const allPairs = [
+      { color: "bg-blue-500", muted: "bg-sky-300", col1: "blue", col2: "sky" },
+      {
+        color: "bg-indigo-500",
+        muted: "bg-violet-300",
+        col1: "indigo",
+        col2: "violet",
+      },
+      {
+        color: "bg-emerald-500",
+        muted: "bg-green-300",
+        col1: "emerald",
+        col2: "green",
+      },
+      {
+        color: "bg-orange-500",
+        muted: "bg-amber-300",
+        col1: "orange",
+        col2: "amber",
+      },
+      {
+        color: "bg-purple-500",
+        muted: "bg-fuchsia-300",
+        col1: "purple",
+        col2: "fuchsia",
+      },
+      {
+        color: "bg-teal-500",
+        muted: "bg-cyan-300",
+        col1: "teal",
+        col2: "cyan",
+      },
+      {
+        color: "bg-lime-500",
+        muted: "bg-indigo-300",
+        col1: "lime",
+        col2: "indigo",
+      },
+      {
+        color:"bg-zinc-500",
+        muted:"bg-gray-300",
+        col1:"zinc",
+        col2:"gray"
+      }
+    ];
+
+    return allPairs;
   };
 
   return (
@@ -276,9 +341,73 @@ export default function GenerateWebsite() {
               <div className="h-full flex flex-col p-2">
                 <div className="flex justify-between items-center mb-3">
                   <h3 className="font-semibold text-lg">Preview</h3>
-                  {generatingsite ? (
-                    <ExternalLink onClick={openInNewWindow}></ExternalLink>
-                  ) : null}
+
+                  <div className="flex gap-4">
+                    {generatingsite ? (
+                      <div>
+                        <Popover>
+                          <PopoverTrigger>
+                            <Settings className="cursor-pointer"></Settings>
+                          </PopoverTrigger>
+                          <PopoverContent className="space-y-2">
+                            <p>Website Theme</p>
+
+                            {getRelColList(
+                              stylesFromLLM.color,
+                              stylesFromLLM.muted
+                            ).map((item, idx) => {
+                              // Compose Tailwind color classes dynamically
+                              const colorClass = `${item.color}`;
+                              const mutedClass = `${item.muted}`;
+
+                              // Check if this is the selected color pair
+                              const isSelected =
+                                item.col1 === stylesFromLLM.color &&
+                                item.col2 === stylesFromLLM.muted;
+
+                              return (
+                                <div
+                                  key={idx}
+                                  className={`flex items-center gap-2 p-1 rounded cursor-pointer transition-all ${
+                                    isSelected
+                                      ? "ring-2 ring-primary"
+                                      : "hover:ring-2 hover:ring-accent"
+                                  }`}
+                                  onClick={() =>
+                                    setStylesFromLLM({
+                                      color: item.col1,
+                                      muted: item.col2,
+                                    })
+                                  }
+                                >
+                                  <div className="flex gap-1">
+                                    <div
+                                      className={`w-6 h-6 rounded ${colorClass} border border-border`}
+                                      title={item.col1}
+                                    />
+                                    <div
+                                      className={`w-6 h-6 rounded ${mutedClass} border border-border`}
+                                      title={item.col2}
+                                    />
+                                  </div>
+                                  <span className="text-xs font-mono text-muted-foreground">
+                                    {item.col1} / {item.col2}
+                                  </span>
+                                  {isSelected && (
+                                    <Check className="text-primary" size={18} />
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </PopoverContent>
+                        </Popover>
+                      </div>
+                    ) : null}
+
+                    {generatingsite ? (
+                      <ExternalLink onClick={openInNewWindow}></ExternalLink>
+                    ) : null}
+                  </div>
                 </div>
 
                 {generatingsite ? (

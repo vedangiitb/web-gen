@@ -15,13 +15,11 @@ export default function CallToAction({ content, style }: CallToActionProps) {
   if (!content) return null;
 
   const mutedColors = colorMap[style?.muted || "gray"];
-
+ 
   return (
     <section
       className={`
         relative isolate overflow-hidden
-        ${mutedColors.cardBgCol}
-        ${mutedColors.cardBorderCol}
         px-6 py-16 text-center
         flex flex-col items-center justify-center
       `}

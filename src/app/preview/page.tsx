@@ -60,7 +60,7 @@ export default function PreviewPage() {
     return () => window.removeEventListener("message", handleMessage);
   }, []);
 
-  const bgColors = colorMap[styles?.color || "zinc"];
+  const bgColors = colorMap[styles?.color || "blue"];
 
   return (
     <main
