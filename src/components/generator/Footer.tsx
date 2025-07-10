@@ -28,11 +28,14 @@ function SocialIcon({ type, ...props }: { type: string; className?: string }) {
   }
 }
 
-export default function Footer({ content,style }: FooterProps) {
+export default function Footer({ content, style }: FooterProps) {
   if (!content) return null;
 
+  const primary = style?.font.primary;
+  const bodyFont = style?.font.body;
+
   return (
-    <footer className="bg-neutral-900 text-neutral-200 py-10 px-4">
+    <footer className={`bg-neutral-900 text-neutral-200 py-10 px-4 ${bodyFont}`}>
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:justify-between items-center gap-8">
         {/* Company Info */}
         <div className="text-center md:text-left text-sm mb-4 md:mb-0">
@@ -68,8 +71,7 @@ export default function Footer({ content,style }: FooterProps) {
         </div>
       </div>
       <div className="mt-8 text-center text-xs text-neutral-400">
-        {content.companyInfo} &mdash; All
-        rights reserved.
+        {content.companyInfo} &mdash; All rights reserved.
       </div>
     </footer>
   );

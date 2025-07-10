@@ -10,6 +10,7 @@ export async function generateSiteStyles(
     designPreferences: string;
   },
   setStylesFromLLM: any,
+  setInitialCols: any,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
   accessToken: string
@@ -33,6 +34,7 @@ export async function generateSiteStyles(
   const text = extractJsonFromResponse(body.text);
   console.log(text);
   setStylesFromLLM(text);
+  setInitialCols(text);
   setIsLoading(false);
   setSiteComplete(false);
 }

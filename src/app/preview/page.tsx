@@ -31,10 +31,17 @@ export default function PreviewPage() {
   ]);
 
   const [styles, setStyles] = useState<GenStyles>({
-    color: "rose",
-    muted: "pink",
+    color: "blue",
+    muted: "slate",
+    font: {
+      primary: "Inter, sans-serif",
+      body: "Inter, sans-serif",
+    },
   });
-  console.log(layout);
+
+  const [heroImg, setHeroImg] = useState(
+    "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
+  );
 
   useEffect(() => {
     function handleMessage(event: MessageEvent) {
@@ -48,8 +55,15 @@ export default function PreviewPage() {
 
       if (event.data.type === "previewData") {
         console.log("Received data from parent:", event.data.payload);
-        setLayout(event.data.payload.content);
-        setStyles(event.data.payload.styles);
+        if (
+          event.data.payload.content &&
+          Array.isArray(event.data.payload.content)
+        )
+          setLayout(event.data.payload.content);
+        if (event.data.payload.styles) setStyles(event.data.payload.styles);
+        if (event.data.payload.heroImg) {
+          setHeroImg(event.data.payload.heroImg);
+        }
       }
     }
 
@@ -66,12 +80,22 @@ export default function PreviewPage() {
     <main
       className={`min-h-screen bg-gradient-to-br ${bgColors.bgFrom} ${bgColors.bgVia} ${bgColors.bgTo} ${bgColors.text}`}
     >
-      {layout.map((section, idx) => {
+      {(layout || []).map((section, idx) => {
         console.log(section.type);
         console.log(section.props);
         const Component = componentRegistry[section.type];
         if (!Component) return null;
-        return <Component key={idx} content={section.props} style={styles} />;
+        if (section.type == "Hero")
+          return (
+            <Component
+              key={idx}
+              content={section.props}
+              style={styles}
+              heroImg={heroImg}
+            />
+          );
+        else
+          return <Component key={idx} content={section.props} style={styles} />;
       })}
     </main>
   );

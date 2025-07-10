@@ -12,12 +12,13 @@ export default function Navbar({ content, style }: NavbarProps) {
   if (!content) return <div></div>;
 
   const bgColors = colorMap[style?.color || "zinc"];
+  const primary = style?.font.primary;
 
   return (
     <nav
       className={`
         flex items-center justify-between px-6 py-4 
-        ${bgColors.bgFrom} backdrop-blur border-b ${bgColors.bgTo} shadow-sm
+        ${bgColors.bgFrom} backdrop-blur  ${bgColors.bgTo} shadow-sm ${primary}
       `}
     >
       {/* Logo */}
@@ -33,12 +34,15 @@ export default function Navbar({ content, style }: NavbarProps) {
           <li
             key={idx}
             className={`
-              ${bgColors.text} 
-              ${bgColors.linkHover}
-              font-medium cursor-pointer transition-colors
-            `}
+            ${bgColors.text} 
+            ${bgColors.linkHover}
+            font-medium cursor-pointer transition-colors
+            relative overflow-hidden
+            group
+          `}
           >
-            {link}
+            <span className="relative z-10">{link}</span>
+            <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-current transition-all duration-500 group-hover:w-full" />
           </li>
         ))}
       </ul>

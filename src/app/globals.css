@@ -1,6 +1,10 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 
+body {
+  font-family: Outfit;
+}
 
 .auth-box {
   border: 1px solid #00289f;
@@ -27,6 +31,58 @@
   left: -70%;
   opacity: 1;
   transition: opacity 0.3s;
+}
+
+.roboto {
+  font-family: var(--font-roboto);
+}
+
+.inter {
+  font-family: var(--font-inter);
+}
+
+.nunito {
+  font-family: var(--font-nunito);
+}
+
+.handlee {
+  font-family: var(--font-handlee);
+}
+
+.libre-baskerville {
+  font-family: var(--font-libre-baskerville);
+}
+
+.work-sans {
+  font-family: var(--font-work-sans);
+}
+
+.playfair-display {
+  font-family: var(--font-playfair-display);
+}
+
+.lora {
+  font-family: var(--font-lora);
+}
+
+.nunito-sans {
+  font-family: var(--font-nunito-sans);
+}
+
+.open-sans {
+  font-family: var(--font-open-sans);
+}
+
+.orbitron {
+  font-family: var(--font-orbitron);
+}
+
+.roboto-mono {
+  font-family: var(--font-roboto-mono);
+}
+
+.courier-prime {
+  font-family: var(--font-courier-prime);
 }
 
 @custom-variant dark (&:is(.dark *));

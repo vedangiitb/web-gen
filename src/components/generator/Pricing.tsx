@@ -10,11 +10,13 @@ export default function Pricing({ content, style }: PricingProps) {
   if (!content) return null;
 
   const bgColors = colorMap[style?.color || "zinc"];
+  const mutedColors = colorMap[style?.muted || "gray"];
+
+  const primary = style?.font.primary;
+  const bodyFont = style?.font.body;
 
   return (
-    <section
-      className={`py-16 px-4 ${bgColors.bgFrom} ${bgColors.bgVia} ${bgColors.bgTo} bg-gradient-to-br`}
-    >
+    <section className={`py-16 px-4 ${primary}`}>
       <h2
         className={`text-3xl md:text-4xl font-bold text-center mb-12 ${bgColors.text}`}
       >
@@ -26,27 +28,23 @@ export default function Pricing({ content, style }: PricingProps) {
           <div
             key={idx}
             className={`
-              bg-white rounded-2xl shadow-lg p-8 w-full max-w-xs
+              rounded-2xl shadow-lg p-8 w-full max-w-xs
               flex flex-col items-center
               hover:scale-105 hover:shadow-2xl transition
               border border-gray-200
+               ${mutedColors.cardBgCol} ${mutedColors.cardBorderCol} ${mutedColors.cardTxtCol} shadow-sm
             `}
           >
-            <h3 className={`text-xl font-semibold mb-2 ${bgColors.accentText}`}>
-              {plan.name}
-            </h3>
+            <h3 className={`text-xl font-semibold mb-2`}>{plan.name}</h3>
             <p
-              className={`text-3xl font-extrabold ${bgColors.button} ${bgColors.buttonTxt} mb-6 text-white px-4 py-2 rounded-md`}
+              className={`text-3xl font-bold ${bgColors.secondaryButtonBg} ${bgColors.secondaryTxtCol} mb-6 px-4 py-2 rounded-md`}
             >
               {plan.price}
             </p>
             <ul className="w-full space-y-3 mb-2">
               {plan.features.map((feat, i) => (
-                <li
-                  key={i}
-                  className={`flex items-center gap-2 ${bgColors.accentText}`}
-                >
-                  <CheckCircle className={`h-5 w-5 ${bgColors.text}`} />
+                <li key={i} className={`flex items-center gap-2 `}>
+                  <CheckCircle className={`h-5 w-5`} />
                   <span>{feat}</span>
                 </li>
               ))}

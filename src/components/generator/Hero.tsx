@@ -11,18 +11,20 @@ export type HeroProps = {
     imageUrl: string;
   };
   style: GenStyles;
+  heroImg: string;
 };
 
-export default function Hero({ content, style }: HeroProps) {
+export default function Hero({ content, style, heroImg }: HeroProps) {
   if (!content) return <div></div>;
 
   const bgColors = colorMap[style?.color || "zinc"];
+  const primary = style?.font.primary;
 
   return (
     <section
       className={`
         flex flex-col-reverse md:flex-row items-center gap-10
-        px-6 py-20 md:py-28
+        px-6 py-20 md:py-28 ${primary}
       `}
     >
       {/* Text Content */}
@@ -60,7 +62,10 @@ export default function Hero({ content, style }: HeroProps) {
       <div className="flex-1 w-full flex justify-center items-center">
         {content.imageUrl && (
           <img
-            src={content.imageUrl}
+            src={
+              heroImg ||
+              "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
+            }
             alt="Hero Image"
             className="w-full max-w-md rounded-2xl shadow-xl object-cover"
           />

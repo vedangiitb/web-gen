@@ -20,9 +20,14 @@ export default function FAQ({ content, style }: FAQProps) {
   const bgColors = colorMap[style?.color || "zinc"];
   const mutedColors = colorMap[style?.muted || "gray"];
 
+  const primary = style?.font.primary;
+  const bodyFont = style?.font.body;
+
   return (
-    <section className="max-w-2xl mx-auto px-4 py-16">
-      <h2 className={`text-3xl font-bold text-center mb-10 ${bgColors.textColors}`}>
+    <section className={`max-w-2xl mx-auto px-4 py-16 ${primary}`}>
+      <h2
+        className={`text-3xl font-bold text-center mb-10 ${bgColors.textColors}`}
+      >
         Frequently Asked Questions
       </h2>
 
@@ -38,9 +43,7 @@ export default function FAQ({ content, style }: FAQProps) {
             >
               {q.question}
             </AccordionTrigger>
-            <AccordionContent
-              className={`px-6 py-4 ${mutedColors.accentText}`}
-            >
+            <AccordionContent className={`px-6 py-4 ${mutedColors.accentText}`}>
               {q.answer}
             </AccordionContent>
           </AccordionItem>

@@ -14,8 +14,11 @@ export default function Features({ content, style }: FeaturesProps) {
   const bgColors = colorMap[style?.color || "zinc"];
   const mutedColors = colorMap[style?.muted || "gray"];
 
+  const primary = style?.font.primary;
+  const bodyFont = style?.font.body;
+
   return (
-    <section className={`py-16 px-4 `}>
+    <section className={`py-16 px-4 ${primary}`}>
       <h2
         className={`text-3xl md:text-4xl font-bold text-center mb-10 ${bgColors.text}`}
       >
