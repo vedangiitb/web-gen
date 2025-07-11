@@ -20,11 +20,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Accordion } from "@radix-ui/react-accordion";
 import {
   ArrowUp,
+  BotMessageSquare,
   Check,
   ExternalLink,
   LogOut,
   Moon,
   Paintbrush,
+  PanelLeftClose,
+  PanelLeftOpen,
   Pen,
   Settings,
   Sun,
@@ -88,6 +91,7 @@ export default function GenerateWebsite() {
   const [heroImg, setHeroImg] = useState(
     "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
   );
+  const [chatVisible, setChatVisible] = useState(true);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", darkMode);
@@ -198,9 +202,9 @@ export default function GenerateWebsite() {
       {/* Header */}
       <header className="sticky top-0 z-30 flex items-center justify-between px-8 py-4 bg-card/80 backdrop-blur border-b border-border shadow-md">
         <div className="flex items-center gap-3">
-          <span className="text-xl font-bold tracking-tight">
+          <h1 className="text-xl font-bold tracking-tight">
             Website Generator
-          </span>
+          </h1>
         </div>
 
         <div className="flex items-center gap-8">
@@ -246,7 +250,10 @@ export default function GenerateWebsite() {
       <main className="px-4 h-[calc(100vh-5rem)]">
         <ResizablePanelGroup direction="horizontal" className="h-full">
           {/* Chat Panel */}
-          <ResizablePanel minSize={30} className="p-2 h-full">
+          <ResizablePanel
+            minSize={30}
+            className={`p-2 h-full ${!chatVisible ? "hidden" : ""}`}
+          >
             <div className="h-full flex flex-col justify-between overflow-hidden">
               {/* Chat History */}
               <div
@@ -308,107 +315,59 @@ export default function GenerateWebsite() {
             </div>
           </ResizablePanel>
 
-          {isGen && <ResizableHandle withHandle />}
+          <ResizableHandle
+            withHandle
+            className={` ${!(chatVisible && isGen) ? "hidden" : ""}`}
+          />
 
-          {isGen && (
-            <ResizablePanel minSize={30} className="pl-2">
-              <div className="h-full flex flex-col p-2">
-                <div className="flex justify-between items-center mb-3">
-                  <h3 className="font-semibold text-lg">Preview</h3>
+          <ResizablePanel
+            minSize={30}
+            className={`pl-2 ${!isGen ? "hidden" : ""}`}
+          >
+            <div className="h-full flex flex-col p-2">
+              <div className="flex justify-between items-center mb-3">
+                {chatVisible ? (
+                  <PanelLeftClose
+                    className="h-8 w-8 p-1 cursor-pointer hover:bg-muted rounded-md transition-colors duration-300"
+                    onClick={() => setChatVisible(false)}
+                  ></PanelLeftClose>
+                ) : (
+                  <PanelLeftOpen
+                    className="h-8 w-8 p-1 cursor-pointer hover:bg-muted rounded-md transition-colors duration-300"
+                    onClick={() => setChatVisible(true)}
+                  ></PanelLeftOpen>
+                )}
+                <h3 className="font-semibold text-lg">Preview</h3>
 
-                  <div className="flex gap-4">
-                    {generatingsite ? (
-                      <div>
-                        <Popover>
-                          <PopoverTrigger>
-                            <Settings
-                              className="cursor-pointer"
-                              aria-label="Open settings"
-                            />
-                          </PopoverTrigger>
-                          <PopoverContent className="space-y-3 mr-4 p-4 rounded-lg shadow-lg bg-background border border-border max-w-xs">
-                            <Accordion type="single" className="w-full">
-                              <AccordionItem value="item-1">
-                                <AccordionTrigger>
-                                  <div className="flex gap-2">
-                                    <Paintbrush></Paintbrush>
-                                    <span className="font-semibold text-base">
-                                      Theme Colors
-                                    </span>
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
-                                  {getRelColList(initialStyles).map(
-                                    (item, idx) => {
-                                      const colorClass = `${item.color}`;
-                                      const mutedClass = `${item.muted}`;
-                                      const isSelected =
-                                        item.col1 === stylesFromLLM.color &&
-                                        item.col2 === stylesFromLLM.muted;
-
-                                      return (
-                                        <div
-                                          key={idx}
-                                          className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
-                                            isSelected
-                                              ? "ring-2 ring-primary bg-primary/10"
-                                              : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
-                                          }`}
-                                          onClick={() =>
-                                            setStylesFromLLM((prev) => {
-                                              return {
-                                                color: item.col1,
-                                                muted: item.col2,
-                                                font: prev.font,
-                                              };
-                                            })
-                                          }
-                                          aria-selected={isSelected}
-                                          tabIndex={0}
-                                          title={`Select ${item.col1} / ${item.col2}`}
-                                        >
-                                          <div className="flex gap-1">
-                                            <div
-                                              className={`w-6 h-6 rounded ${colorClass} border border-border shadow-sm`}
-                                              title={item.col1}
-                                            />
-                                            <div
-                                              className={`w-6 h-6 rounded ${mutedClass} border border-border shadow-sm`}
-                                              title={item.col2}
-                                            />
-                                          </div>
-                                          <span className="text-xs font-mono text-muted-foreground">
-                                            {item.col1} / {item.col2}
-                                          </span>
-                                          {isSelected && (
-                                            <Check
-                                              className="text-primary ml-auto"
-                                              size={18}
-                                              aria-label="Selected"
-                                            />
-                                          )}
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </AccordionContent>
-                              </AccordionItem>
-
-                              <AccordionItem value="item-2">
-                                <AccordionTrigger>
-                                  <div className="flex gap-2">
-                                    <Pen></Pen>
-                                    <span className="font-semibold text-base">
-                                      Font Styles
-                                    </span>
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
-                                  {getFontsList().map((item, idx) => {
+                <div className="flex gap-4">
+                  {generatingsite ? (
+                    <div>
+                      <Popover>
+                        <PopoverTrigger>
+                          <Settings
+                            className="cursor-pointer"
+                            aria-label="Open settings"
+                          />
+                        </PopoverTrigger>
+                        <PopoverContent className="space-y-3 mr-4 p-4 rounded-lg shadow-lg bg-background border border-border max-w-xs">
+                          <Accordion type="single" className="w-full">
+                            <AccordionItem value="item-1">
+                              <AccordionTrigger className="cursor-pointer">
+                                <div className="flex gap-2">
+                                  <Paintbrush></Paintbrush>
+                                  <span className="font-semibold text-base">
+                                    Theme Colors
+                                  </span>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
+                                {getRelColList(initialStyles).map(
+                                  (item, idx) => {
+                                    const colorClass = `${item.color}`;
+                                    const mutedClass = `${item.muted}`;
                                     const isSelected =
-                                      item.primary ===
-                                        stylesFromLLM.font.primary &&
-                                      item.body === stylesFromLLM.font.body;
+                                      item.col1 === stylesFromLLM.color &&
+                                      item.col2 === stylesFromLLM.muted;
 
                                     return (
                                       <div
@@ -421,25 +380,28 @@ export default function GenerateWebsite() {
                                         onClick={() =>
                                           setStylesFromLLM((prev) => {
                                             return {
-                                              ...prev,
-                                              font: {
-                                                primary: item.primary,
-                                                body: item.body,
-                                              },
+                                              color: item.col1,
+                                              muted: item.col2,
+                                              font: prev.font,
                                             };
                                           })
                                         }
                                         aria-selected={isSelected}
                                         tabIndex={0}
-                                        title={`Select ${item.primary} / ${item.body}`}
+                                        title={`Select ${item.col1} / ${item.col2}`}
                                       >
-                                        <span
-                                          className={`font-${item.primary} text-base`}
-                                        >
-                                          {item.primary}
-                                        </span>
+                                        <div className="flex gap-1">
+                                          <div
+                                            className={`w-6 h-6 rounded ${colorClass} border border-border shadow-sm`}
+                                            title={item.col1}
+                                          />
+                                          <div
+                                            className={`w-6 h-6 rounded ${mutedClass} border border-border shadow-sm`}
+                                            title={item.col2}
+                                          />
+                                        </div>
                                         <span className="text-xs font-mono text-muted-foreground">
-                                          {item.body}
+                                          {item.col1} / {item.col2}
                                         </span>
                                         {isSelected && (
                                           <Check
@@ -450,53 +412,114 @@ export default function GenerateWebsite() {
                                         )}
                                       </div>
                                     );
-                                  })}
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
+                                  }
+                                )}
+                              </AccordionContent>
+                            </AccordionItem>
 
-                            {/* <Accordion
+                            <AccordionItem value="item-2">
+                              <AccordionTrigger className="cursor-pointer">
+                                <div className="flex gap-2">
+                                  <Pen></Pen>
+                                  <span className="font-semibold text-base">
+                                    Font Styles
+                                  </span>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
+                                {getFontsList().map((item, idx) => {
+                                  const isSelected =
+                                    item.primary ===
+                                      stylesFromLLM.font.primary &&
+                                    item.body === stylesFromLLM.font.body;
+
+                                  return (
+                                    <div
+                                      key={idx}
+                                      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
+                                        isSelected
+                                          ? "ring-2 ring-primary bg-primary/10"
+                                          : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
+                                      }`}
+                                      onClick={() =>
+                                        setStylesFromLLM((prev) => {
+                                          return {
+                                            ...prev,
+                                            font: {
+                                              primary: item.primary,
+                                              body: item.body,
+                                            },
+                                          };
+                                        })
+                                      }
+                                      aria-selected={isSelected}
+                                      tabIndex={0}
+                                      title={`Select ${item.primary} / ${item.body}`}
+                                    >
+                                      <span
+                                        className={`font-${item.primary} text-base`}
+                                      >
+                                        {item.primary}
+                                      </span>
+                                      <span className="text-xs font-mono text-muted-foreground">
+                                        {item.body}
+                                      </span>
+                                      {isSelected && (
+                                        <Check
+                                          className="text-primary ml-auto"
+                                          size={18}
+                                          aria-label="Selected"
+                                        />
+                                      )}
+                                    </div>
+                                  );
+                                })}
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+
+                          {/* <Accordion
                               type="single"
                               className="w-full"
                             ></Accordion> */}
-                          </PopoverContent>
-                        </Popover>
-                      </div>
-                    ) : null}
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                  ) : null}
 
-                    {generatingsite ? (
-                      <ExternalLink onClick={openInNewWindow}></ExternalLink>
-                    ) : null}
+                  {generatingsite ? (
+                    <ExternalLink onClick={openInNewWindow}></ExternalLink>
+                  ) : null}
+                </div>
+              </div>
+
+              {generatingsite ? (
+                <iframe
+                  id="preview-frame"
+                  src="/preview"
+                  style={{
+                    width: "100%",
+                    height: "800px",
+                    border: "1px solid #ddd",
+                    borderRadius: "8px",
+                  }}
+                />
+              ) : (
+                <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground border border-border rounded-lg bg-muted/50">
+                  <div className="text-center p-6">
+                    <div className="mx-auto bg-accent/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                      <Sun size={24} className="text-accent-foreground" />
+                    </div>
+                    <h4 className="font-medium mb-1">No Preview Available</h4>
+                    <p className="text-sm max-w-xs">
+                      Website preview will appear here after a website is
+                      generated.
+                    </p>
                   </div>
                 </div>
+              )}
 
-                {generatingsite ? (
-                  <iframe
-                    id="preview-frame"
-                    src="/preview"
-                    style={{
-                      width: "100%",
-                      height: "800px",
-                      border: "1px solid #ddd",
-                      borderRadius: "8px",
-                    }}
-                  />
-                ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground border border-border rounded-lg bg-muted/50">
-                    <div className="text-center p-6">
-                      <div className="mx-auto bg-accent/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                        <Sun size={24} className="text-accent-foreground" />
-                      </div>
-                      <h4 className="font-medium mb-1">No Preview Available</h4>
-                      <p className="text-sm max-w-xs">
-                        Website preview will appear here after a website is
-                        generated.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* <iframe
+              {/* <iframe
                   id="preview-frame"
                   src="/preview"
                   style={{
@@ -506,31 +529,10 @@ export default function GenerateWebsite() {
                     borderRadius: "8px",
                   }}
                 /> */}
-              </div>
-            </ResizablePanel>
-          )}
+            </div>
+          </ResizablePanel>
         </ResizablePanelGroup>
       </main>
-
-      {/* Global Styles */}
-      <style jsx global>{`
-        .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: var(--muted-foreground) var(--background);
-        }
-        .custom-scrollbar::-webkit-scrollbar {
-          width: 8px;
-          background: var(--background);
-          border-radius: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: var(--muted-foreground);
-          border-radius: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: var(--accent);
-        }
-      `}</style>
     </div>
   );
 }
