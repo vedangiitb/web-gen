@@ -57,7 +57,7 @@ export default function CallToAction({ content, style }: CallToActionProps) {
         >
           {content.heading}
         </h2>
-        <p className={`mb-8 text-lg md:text-xl ${bgColors.accentText}`}>
+        <p className={`mb-8 text-lg md:text-xl ${bgColors.accentText} ${bodyFont}`}>
           {content.subtext}
         </p>
         <Button

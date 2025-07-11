@@ -65,6 +65,10 @@ body {
   font-family: var(--font-lora);
 }
 
+.nunito {
+  font-family: var(--font-nunito-sans);
+}
+
 .nunito-sans {
   font-family: var(--font-nunito-sans);
 }
@@ -81,8 +85,24 @@ body {
   font-family: var(--font-roboto-mono);
 }
 
-.courier-prime {
+.courier {
   font-family: var(--font-courier-prime);
+}
+
+.georgia{
+  font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.arial-black{
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.system-ui{
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.segoe-ui{
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 @custom-variant dark (&:is(.dark *));

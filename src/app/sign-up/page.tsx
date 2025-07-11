@@ -120,23 +120,23 @@ export default function SignUp() {
 
   return (
     <div className="px-[8%] py-[2%]">
-      <h2 className="mb-2">Candidate Sign Up</h2>
+      <h2 className="mb-2 text-4xl">Sign Up</h2>
 
       <div className="md:flex md:flex-row gap-4">
         <div className="flex-4 text-left mb-2">
-          <h3 className="mb-2 md:mb-6">
-            Step into the new age of recruiting with{" "}
+          <h3 className="mb-2 md:mb-6 text-2xl">
+           {" "}
             <span className="blue-txt">Rekruit</span>
           </h3>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-xl">
             <Check className="h-5 w-5 text-green-500" />
             <p>Bias Free Hiring</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-xl">
             <Check className="h-5 w-5 text-green-500" />
             <p>Know where you stand and improve your skills</p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 text-xl">
             <Check className="h-5 w-5 text-green-500" />
             <p>Get hired where you deserve</p>
           </div>

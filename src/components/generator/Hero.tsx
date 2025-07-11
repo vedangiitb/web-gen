@@ -19,6 +19,7 @@ export default function Hero({ content, style, heroImg }: HeroProps) {
 
   const bgColors = colorMap[style?.color || "zinc"];
   const primary = style?.font.primary;
+  const bodyFont = style?.font.body;
 
   return (
     <section
@@ -34,7 +35,7 @@ export default function Hero({ content, style, heroImg }: HeroProps) {
         >
           {content.heading}
         </h1>
-        <p className={`text-lg md:text-xl mb-8 ${bgColors.accentText}`}>
+        <p className={`text-lg md:text-xl mb-8 ${bgColors.accentText} ${bodyFont}`}>
           {content.subheading}
         </p>
         <div className="flex flex-col sm:flex-row gap-4">

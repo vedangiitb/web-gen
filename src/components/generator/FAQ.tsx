@@ -43,7 +43,7 @@ export default function FAQ({ content, style }: FAQProps) {
             >
               {q.question}
             </AccordionTrigger>
-            <AccordionContent className={`px-6 py-4 ${mutedColors.accentText}`}>
+            <AccordionContent className={`px-6 py-4 ${mutedColors.accentText} ${bodyFont}`}>
               {q.answer}
             </AccordionContent>
           </AccordionItem>

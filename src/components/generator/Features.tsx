@@ -34,7 +34,7 @@ export default function Features({ content, style }: FeaturesProps) {
               className={`h-6 w-6 ${mutedColors.text} mt-1 flex-shrink-0`}
               aria-hidden="true"
             />
-            <span className={`text-lg font-medium`}>{feature}</span>
+            <span className={`text-lg font-medium ${bodyFont}`}>{feature}</span>
           </li>
         ))}
       </ul>

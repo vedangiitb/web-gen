@@ -12,8 +12,9 @@ export async function generateSiteStyles(
   setStylesFromLLM: any,
   setInitialCols: any,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
-  accessToken: string
+  // setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
+  accessToken: string,
+  setHeroImgQuery: React.Dispatch<React.SetStateAction<string>>
 ) {
   setIsLoading(true);
   const response = await fetch(
@@ -35,6 +36,7 @@ export async function generateSiteStyles(
   console.log(text);
   setStylesFromLLM(text);
   setInitialCols(text);
+  if (text?.query) setHeroImgQuery(text.query);
   setIsLoading(false);
-  setSiteComplete(false);
+  // setSiteComplete(false);
 }

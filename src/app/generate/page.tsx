@@ -1,5 +1,10 @@
 "use client";
 import { useAuth } from "@/components/auth/AuthContext";
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
@@ -12,17 +17,16 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Textarea } from "@/components/ui/textarea";
+import { Accordion } from "@radix-ui/react-accordion";
 import {
   ArrowUp,
   Check,
-  Circle,
   ExternalLink,
   LogOut,
   Moon,
   Paintbrush,
   Pen,
   Settings,
-  Square,
   Sun,
 } from "lucide-react";
 import Link from "next/link";
@@ -30,17 +34,11 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { captureWebsiteDetails } from "./captureWebsiteDetails";
 import { generateSite } from "./generateSite";
+import { generateSiteStyles } from "./generateSiteStyles";
 import RenderAIResponse from "./RenderAIResponse";
 import RenderUserMessage from "./RenderUserMessage";
+import { getFontsList, getHeroImg, getRelColList } from "./stylesEdit";
 import TypingIndicator from "./TypingIndicator";
-import { generateSiteStyles } from "./generateSiteStyles";
-import { colorMap } from "@/components/generator/colorMap";
-import { Accordion } from "@radix-ui/react-accordion";
-import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
 
 export default function GenerateWebsite() {
   const user = useAuth();
@@ -78,7 +76,6 @@ export default function GenerateWebsite() {
       body: "Inter, sans-serif",
     },
   });
-  const [siteComplete, setSiteComplete] = useState(false);
   const [initialStyles, setInitialStyles] = useState<GenStyles>({
     color: "blue",
     muted: "slate",
@@ -87,7 +84,7 @@ export default function GenerateWebsite() {
       body: "Inter, sans-serif",
     },
   });
-
+  const [heroImgquery, setHeroImgQuery] = useState("");
   const [heroImg, setHeroImg] = useState(
     "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
   );
@@ -116,7 +113,6 @@ export default function GenerateWebsite() {
         websiteDetails,
         setDetailsFromLLM,
         setIsLoading,
-        setSiteComplete,
         user.accessToken
       );
 
@@ -125,13 +121,16 @@ export default function GenerateWebsite() {
         setStylesFromLLM,
         setInitialStyles,
         setIsLoading,
-        setSiteComplete,
-        user.accessToken
+        user.accessToken,
+        setHeroImgQuery
       );
-
-      getHeroImg(websiteDetails);
     }
   }, [generatingsite]);
+
+  useEffect(() => {
+    console.log(heroImgquery)
+    getHeroImg(heroImgquery, setHeroImg);
+  }, [heroImgquery]);
 
   useEffect(() => {
     const iframe = document.getElementById(
@@ -199,92 +198,6 @@ export default function GenerateWebsite() {
 
   const openInNewWindow = () => {
     window.open(iframeSrc, "_blank", "noopener,noreferrer");
-  };
-
-  const getRelColList = () => {
-    const allPairs = [
-      {
-        color: colorMap[initialStyles?.color].button,
-        muted: colorMap[initialStyles?.muted],
-        col1: initialStyles?.color,
-        col2: initialStyles?.muted,
-      },
-      { color: "bg-blue-500", muted: "bg-sky-300", col1: "blue", col2: "sky" },
-      {
-        color: "bg-indigo-500",
-        muted: "bg-violet-300",
-        col1: "indigo",
-        col2: "violet",
-      },
-      {
-        color: "bg-emerald-500",
-        muted: "bg-green-300",
-        col1: "emerald",
-        col2: "green",
-      },
-      {
-        color: "bg-orange-500",
-        muted: "bg-amber-300",
-        col1: "orange",
-        col2: "amber",
-      },
-      {
-        color: "bg-purple-500",
-        muted: "bg-fuchsia-300",
-        col1: "purple",
-        col2: "fuchsia",
-      },
-      {
-        color: "bg-teal-500",
-        muted: "bg-cyan-300",
-        col1: "teal",
-        col2: "cyan",
-      },
-      {
-        color: "bg-gray-700",
-        muted: colorMap[initialStyles?.muted],
-        col1: "black",
-        col2: initialStyles?.muted,
-      },
-      {
-        color: "bg-zinc-500",
-        muted: "bg-gray-300",
-        col1: "zinc",
-        col2: "gray",
-      },
-      {
-        color: "bg-white",
-        muted: "bg-gray-700",
-        col1: "black",
-        col2: "black",
-      },
-    ];
-
-    return allPairs;
-  };
-
-  const getFontsList = () => {
-    return [
-      { primary: "inter", body: "inter" }, // Modern / SaaS / Clean
-      { primary: "handlee", body: "nunito" }, // Playful / Casual
-      { primary: "georgia", body: "libre-baskerville" }, // Editorial / Traditional
-      { primary: "work-sans", body: "work-sans" }, // Minimalist
-      { primary: "arial-black", body: "system-ui" }, // Brutalist
-      { primary: "courier", body: "georgia" }, // Vintage / Retro
-      { primary: "segoe-ui", body: "roboto" }, // Corporate / Professional
-      { primary: "playfair-display", body: "lora" }, // Luxury / Elegant
-      { primary: "nunito-sans", body: "open-sans" }, // Friendly / Humanist
-      { primary: "orbitron", body: "roboto-mono" }, // Tech / Futuristic
-    ];
-  };
-
-  const getHeroImg = async (websiteDetails: any) => {
-    if (!websiteDetails || !websiteDetails.businessType) return;
-    const response = await fetch(
-      `https://api.unsplash.com/search/photos?query=${websiteDetails.businessType}&orientation=landscape&page=1&per_page=1&client_id=NnFxmV1FS3-YfreNX_sliS2dvLLstQ03RJDYimSEpyk`
-    );
-    const data = await response.json();
-    if (data?.results[0]?.urls?.full) setHeroImg(data?.results[0]?.urls?.full);
   };
 
   return (
@@ -421,12 +334,7 @@ export default function GenerateWebsite() {
                             />
                           </PopoverTrigger>
                           <PopoverContent className="space-y-3 mr-4 p-4 rounded-lg shadow-lg bg-background border border-border max-w-xs">
-                            <Accordion
-                              type="single"
-                              collapsible
-                              className="w-full"
-                              defaultValue="item-1"
-                            >
+                            <Accordion type="single" className="w-full">
                               <AccordionItem value="item-1">
                                 <AccordionTrigger>
                                   <div className="flex gap-2">
@@ -436,69 +344,64 @@ export default function GenerateWebsite() {
                                     </span>
                                   </div>
                                 </AccordionTrigger>
-                                <AccordionContent className="p-2 space-y-2">
-                                  {getRelColList().map((item, idx) => {
-                                    const colorClass = `${item.color}`;
-                                    const mutedClass = `${item.muted}`;
-                                    const isSelected =
-                                      item.col1 === stylesFromLLM.color &&
-                                      item.col2 === stylesFromLLM.muted;
+                                <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
+                                  {getRelColList(initialStyles).map(
+                                    (item, idx) => {
+                                      const colorClass = `${item.color}`;
+                                      const mutedClass = `${item.muted}`;
+                                      const isSelected =
+                                        item.col1 === stylesFromLLM.color &&
+                                        item.col2 === stylesFromLLM.muted;
 
-                                    return (
-                                      <div
-                                        key={idx}
-                                        className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
-                                          isSelected
-                                            ? "ring-2 ring-primary bg-primary/10"
-                                            : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
-                                        }`}
-                                        onClick={() =>
-                                          setStylesFromLLM((prev) => {
-                                            return {
-                                              color: item.col1,
-                                              muted: item.col2,
-                                              font: prev.font,
-                                            };
-                                          })
-                                        }
-                                        aria-selected={isSelected}
-                                        tabIndex={0}
-                                        title={`Select ${item.col1} / ${item.col2}`}
-                                      >
-                                        <div className="flex gap-1">
-                                          <div
-                                            className={`w-6 h-6 rounded ${colorClass} border border-border shadow-sm`}
-                                            title={item.col1}
-                                          />
-                                          <div
-                                            className={`w-6 h-6 rounded ${mutedClass} border border-border shadow-sm`}
-                                            title={item.col2}
-                                          />
+                                      return (
+                                        <div
+                                          key={idx}
+                                          className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
+                                            isSelected
+                                              ? "ring-2 ring-primary bg-primary/10"
+                                              : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
+                                          }`}
+                                          onClick={() =>
+                                            setStylesFromLLM((prev) => {
+                                              return {
+                                                color: item.col1,
+                                                muted: item.col2,
+                                                font: prev.font,
+                                              };
+                                            })
+                                          }
+                                          aria-selected={isSelected}
+                                          tabIndex={0}
+                                          title={`Select ${item.col1} / ${item.col2}`}
+                                        >
+                                          <div className="flex gap-1">
+                                            <div
+                                              className={`w-6 h-6 rounded ${colorClass} border border-border shadow-sm`}
+                                              title={item.col1}
+                                            />
+                                            <div
+                                              className={`w-6 h-6 rounded ${mutedClass} border border-border shadow-sm`}
+                                              title={item.col2}
+                                            />
+                                          </div>
+                                          <span className="text-xs font-mono text-muted-foreground">
+                                            {item.col1} / {item.col2}
+                                          </span>
+                                          {isSelected && (
+                                            <Check
+                                              className="text-primary ml-auto"
+                                              size={18}
+                                              aria-label="Selected"
+                                            />
+                                          )}
                                         </div>
-                                        <span className="text-xs font-mono text-muted-foreground">
-                                          {item.col1} / {item.col2}
-                                        </span>
-                                        {isSelected && (
-                                          <Check
-                                            className="text-primary ml-auto"
-                                            size={18}
-                                            aria-label="Selected"
-                                          />
-                                        )}
-                                      </div>
-                                    );
-                                  })}
+                                      );
+                                    }
+                                  )}
                                 </AccordionContent>
                               </AccordionItem>
-                            </Accordion>
 
-                            <Accordion
-                              type="single"
-                              collapsible
-                              className="w-full"
-                              defaultValue="item-1"
-                            >
-                              <AccordionItem value="item-1">
+                              <AccordionItem value="item-2">
                                 <AccordionTrigger>
                                   <div className="flex gap-2">
                                     <Pen></Pen>
@@ -507,7 +410,7 @@ export default function GenerateWebsite() {
                                     </span>
                                   </div>
                                 </AccordionTrigger>
-                                <AccordionContent className="p-2 space-y-2">
+                                <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
                                   {getFontsList().map((item, idx) => {
                                     const isSelected =
                                       item.primary ===
@@ -558,6 +461,11 @@ export default function GenerateWebsite() {
                                 </AccordionContent>
                               </AccordionItem>
                             </Accordion>
+
+                            {/* <Accordion
+                              type="single"
+                              className="w-full"
+                            ></Accordion> */}
                           </PopoverContent>
                         </Popover>
                       </div>

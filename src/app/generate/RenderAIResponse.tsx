@@ -5,7 +5,7 @@ export default function RenderAIResponse({ data }: { data: string }) {
     <div
       className="mr-auto p-4 max-w-2xl whitespace-pre-wrap"
       style={{
-        fontFamily: "Inter, Segoe UI, Arial, sans-serif",
+        fontFamily: " Segoe UI, Arial, sans-serif",
         fontSize: "1rem",
       }}
     >

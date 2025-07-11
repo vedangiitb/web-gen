@@ -43,7 +43,7 @@ export default function Pricing({ content, style }: PricingProps) {
             </p>
             <ul className="w-full space-y-3 mb-2">
               {plan.features.map((feat, i) => (
-                <li key={i} className={`flex items-center gap-2 `}>
+                <li key={i} className={`flex items-center gap-2 ${bodyFont}`}>
                   <CheckCircle className={`h-5 w-5`} />
                   <span>{feat}</span>
                 </li>

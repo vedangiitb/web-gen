@@ -11,7 +11,7 @@ export async function generateSite(
   },
   setDetailsFromLLM: any,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
-  setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
+  // setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
   accessToken: string
 ) {
   setIsLoading(true);
@@ -34,5 +34,5 @@ export async function generateSite(
   console.log(text);
   setDetailsFromLLM(text);
   setIsLoading(false);
-  setSiteComplete(false);
+  // setSiteComplete(false);
 }

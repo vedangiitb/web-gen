@@ -33,7 +33,7 @@ export default function Testimonials({ content, style }: TestimonialProps) {
               hover:shadow-2xl transition border ${mutedColors.cardBgCol} ${mutedColors.cardBorderCol} ${mutedColors.cardTxtCol}
             `}
           >
-            <p className={`text-lg italic mb-6 ${mutedColors.text}`}>
+            <p className={`text-lg italic mb-6 ${mutedColors.text} ${bodyFont}`}>
               {review}
             </p>
 
@@ -52,7 +52,7 @@ export default function Testimonials({ content, style }: TestimonialProps) {
                   />
                 );
               })}
-              <span className={`ml-2 font-semibold `}>
+              <span className={`ml-2 font-semibold ${bodyFont}`}>
                 ({content.userRatings[idx]}/5)
               </span>
             </div>
