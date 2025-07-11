@@ -64,7 +64,7 @@ export const getRelColList = (initialStyles: GenStyles) => {
 
 export const getFontsList = () => {
   return [
-    { primary: "inter", body: "inter" }, // Modern / SaaS / Clean
+    { primary: "montserrat", body: "inter" }, // Modern / SaaS / Clean
     { primary: "handlee", body: "handlee" }, // Playful / Casual
     { primary: "libre-baskerville", body: "georgia" }, // Editorial / Traditional
     { primary: "work-sans", body: "work-sans" }, // Minimalist

@@ -8,6 +8,7 @@ import {
   Inter,
   Libre_Baskerville,
   Lora,
+  Montserrat,
   Nunito,
   Nunito_Sans,
   Open_Sans,
@@ -32,6 +33,12 @@ const geistMono = Geist_Mono({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  variable: "--font-montserrat",
   display: "swap",
 });
 
@@ -140,6 +147,7 @@ export default function RootLayout({
     ${orbitron.variable} 
     ${robotoMono.variable} 
     ${courierPrime.variable} 
+    ${montserrat.variable}
     antialiased
   `}
         >

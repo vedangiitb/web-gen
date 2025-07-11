@@ -24,7 +24,7 @@ export default function FAQ({ content, style }: FAQProps) {
   const bodyFont = style?.font.body;
 
   return (
-    <section className={`max-w-2xl mx-auto px-4 py-16 ${primary}`}>
+    <section className={`max-w-4xl mx-auto px-8 md:px-16 py-16 ${primary}`}>
       <h2
         className={`text-3xl font-bold text-center mb-10 ${bgColors.textColors}`}
       >

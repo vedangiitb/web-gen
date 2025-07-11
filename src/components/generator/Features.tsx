@@ -18,13 +18,13 @@ export default function Features({ content, style }: FeaturesProps) {
   const bodyFont = style?.font.body;
 
   return (
-    <section className={`py-16 px-4 ${primary}`}>
+    <section className={`py-16 px-8 md:px-16 ${primary}`}>
       <h2
         className={`text-3xl md:text-4xl font-bold text-center mb-10 ${bgColors.text}`}
       >
         {content.title}
       </h2>
-      <ul className="max-w-2xl mx-auto space-y-6">
+      <ul className="max-w-4xl mx-auto space-y-6">
         {content.featureList.map((feature, idx) => (
           <li
             key={idx}

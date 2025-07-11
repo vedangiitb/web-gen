@@ -17,7 +17,7 @@ export default function Navbar({ content, style }: NavbarProps) {
   return (
     <nav
       className={`
-        flex items-center justify-between px-6 py-4 
+        flex items-center justify-between px-8 md:px-16 py-4 
         ${bgColors.bgFrom} backdrop-blur  ${bgColors.bgTo} shadow-sm ${primary}
       `}
     >

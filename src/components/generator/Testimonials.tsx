@@ -16,14 +16,14 @@ export default function Testimonials({ content, style }: TestimonialProps) {
   const bodyFont = style?.font.body;
 
   return (
-    <section className={`py-16 px-4 ${primary}`}>
+    <section className={`py-24 px-8 md:px-16 ${primary}`}>
       <h2
         className={`text-3xl md:text-4xl font-bold text-center mb-12 ${bgColors.text}`}
       >
         What Our Users Say
       </h2>
 
-      <div className="flex gap-8 overflow-x-auto pb-4">
+      <div className="flex gap-8 overflow-x-auto pb-4 justify-center">
         {content.userReviews.map((review, idx) => (
           <div
             key={idx}

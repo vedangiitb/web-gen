@@ -128,48 +128,33 @@ export default function GenerateWebsite() {
   }, [generatingsite]);
 
   useEffect(() => {
-    console.log(heroImgquery)
+    console.log(heroImgquery);
     getHeroImg(heroImgquery, setHeroImg);
   }, [heroImgquery]);
 
   useEffect(() => {
+    if (!detailsFromLLM || !stylesFromLLM) return;
+
+    const previewData = {
+      content: detailsFromLLM,
+      styles: stylesFromLLM,
+      heroImg: heroImg,
+    };
+
+    // Save to localStorage
+    localStorage.setItem("previewData", JSON.stringify(previewData));
+    console.log("📦 Saved to localStorage:", previewData);
+
+    // Send postMessage to iframe if it's present
     const iframe = document.getElementById(
       "preview-frame"
     ) as HTMLIFrameElement;
-
-    if (!iframe || !detailsFromLLM || !stylesFromLLM) return;
-
-    const sendMessage = () => {
-      console.log("📤 Sending preview data to iframe", detailsFromLLM);
-      iframe.contentWindow?.postMessage(
-        {
-          type: "previewData",
-          payload: {
-            content: detailsFromLLM,
-            styles: stylesFromLLM,
-            heroImg: heroImg,
-          },
-        },
-        window.location.origin
-      );
-    };
-
-    if (iframe.contentWindow) {
-      // Check if already loaded
-      if (
-        iframe.contentDocument?.readyState === "complete" ||
-        iframe.contentDocument?.readyState === "interactive"
-      ) {
-        sendMessage(); // iframe already loaded
-      } else {
-        // Wait for load
-        iframe.addEventListener("load", sendMessage);
-      }
-    }
-
-    return () => {
-      iframe.removeEventListener("load", sendMessage);
-    };
+    iframe?.contentWindow?.postMessage(
+      {
+        type: "previewDataUpdated",
+      },
+      window.location.origin
+    );
   }, [detailsFromLLM, stylesFromLLM, heroImg]);
 
   const submitPrompt = useCallback(
@@ -194,10 +179,18 @@ export default function GenerateWebsite() {
     [prompt, conversationHistory]
   );
 
-  const iframeSrc = "/preview";
-
   const openInNewWindow = () => {
-    window.open(iframeSrc, "_blank", "noopener,noreferrer");
+    const previewData = {
+      content: detailsFromLLM,
+      styles: stylesFromLLM,
+      heroImg: heroImg,
+    };
+
+    // ✅ Save data BEFORE opening the tab
+    localStorage.setItem("previewData", JSON.stringify(previewData));
+
+    // ✅ Then open the new tab
+    window.open("/preview", "_blank");
   };
 
   return (

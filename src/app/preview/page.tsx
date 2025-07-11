@@ -44,34 +44,52 @@ export default function PreviewPage() {
   );
 
   useEffect(() => {
-    function handleMessage(event: MessageEvent) {
+    const loadPreviewData = () => {
+      const dataJSON = localStorage.getItem("previewData");
+      console.log(dataJSON)
+      if (!dataJSON) return;
+
+      try {
+        const data = JSON.parse(dataJSON);
+        console.log("📥 Loaded preview data:", data);
+
+        if (Array.isArray(data.content)) setLayout(data.content);
+        if (data.styles) setStyles(data.styles);
+        if (data.heroImg) setHeroImg(data.heroImg);
+      } catch (err) {
+        console.error("Failed to parse preview data", err);
+      }
+    };
+
+    // Load on mount
+    loadPreviewData();
+
+    const handleMessage = (event: MessageEvent) => {
       if (
         event.origin !== window.location.origin ||
-        !event.data?.type ||
-        event.data.type !== "previewData"
-      ) {
+        event.data?.type !== "previewDataUpdated"
+      )
         return;
-      }
 
-      if (event.data.type === "previewData") {
-        console.log("Received data from parent:", event.data.payload);
-        if (
-          event.data.payload.content &&
-          Array.isArray(event.data.payload.content)
-        )
-          setLayout(event.data.payload.content);
-        if (event.data.payload.styles) setStyles(event.data.payload.styles);
-        if (event.data.payload.heroImg) {
-          setHeroImg(event.data.payload.heroImg);
-        }
+      console.log("📬 Received previewDataUpdated via postMessage");
+      loadPreviewData();
+    };
+
+    // Optionally support tab-based sync as well
+    const handleStorage = (event: StorageEvent) => {
+      if (event.key === "previewData") {
+        console.log("📦 Storage event triggered");
+        loadPreviewData();
       }
-    }
+    };
 
     window.addEventListener("message", handleMessage);
+    window.addEventListener("storage", handleStorage);
 
-    console.log("hey there");
-
-    return () => window.removeEventListener("message", handleMessage);
+    return () => {
+      window.removeEventListener("message", handleMessage);
+      window.removeEventListener("storage", handleStorage);
+    };
   }, []);
 
   const bgColors = colorMap[styles?.color || "blue"];

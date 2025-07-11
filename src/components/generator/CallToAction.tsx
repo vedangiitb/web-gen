@@ -24,7 +24,7 @@ export default function CallToAction({ content, style }: CallToActionProps) {
     <section
       className={`
         relative isolate overflow-hidden
-        px-6 py-16 text-center
+        px-8 md:px-16 py-16 text-center
         flex flex-col items-center justify-center ${primary}
       `}
     >

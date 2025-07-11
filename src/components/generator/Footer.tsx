@@ -35,7 +35,7 @@ export default function Footer({ content, style }: FooterProps) {
   const bodyFont = style?.font.body;
 
   return (
-    <footer className={`bg-neutral-900 text-neutral-200 py-10 px-4 ${bodyFont}`}>
+    <footer className={`bg-neutral-900 text-neutral-200 py-10 px-8 md:px-16 ${bodyFont}`}>
       <div className="max-w-5xl mx-auto flex flex-col md:flex-row md:justify-between items-center gap-8">
         {/* Company Info */}
         <div className="text-center md:text-left text-sm mb-4 md:mb-0">
