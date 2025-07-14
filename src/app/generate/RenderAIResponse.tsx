@@ -3,7 +3,7 @@ import ReactMarkdown from "react-markdown";
 export default function RenderAIResponse({ data }: { data: string }) {
   return (
     <div
-      className="mr-auto p-4 max-w-2xl whitespace-pre-wrap"
+      className="mr-auto py-4 max-w-2xl whitespace-pre-wrap"
       style={{
         fontFamily: " Segoe UI, Arial, sans-serif",
         fontSize: "1rem",

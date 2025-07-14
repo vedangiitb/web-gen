@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabaseClient";
 import { extractJsonFromResponse } from "@/utils/extractJsonFromResponse";
 
 export async function generateSite(

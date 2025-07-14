@@ -1,4 +1,5 @@
 import { colorMap } from "@/components/generator/colorMap";
+import { supabase } from "@/lib/supabaseClient";
 
 export const getRelColList = (initialStyles: GenStyles) => {
   const allPairs = [
@@ -85,6 +86,6 @@ export const getHeroImg = async (
   const response = await fetch(
     `https://api.unsplash.com/search/photos?query=${heroImgquery}&orientation=landscape&page=1&per_page=1&client_id=NnFxmV1FS3-YfreNX_sliS2dvLLstQ03RJDYimSEpyk`
   );
-  const data = await response.json();
-  if (data?.results[0]?.urls?.full) setHeroImg(data?.results[0]?.urls?.full);
+  const data1 = await response.json();
+  if (data1?.results[0]?.urls?.full) setHeroImg(data1?.results[0]?.urls?.full);
 };

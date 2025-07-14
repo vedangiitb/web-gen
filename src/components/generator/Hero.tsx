@@ -31,12 +31,13 @@ export default function Hero({ content, style, heroImg }: HeroProps) {
       {/* Text Content */}
       <div className="flex-1 w-full">
         <h1
-        contentEditable={true}
           className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${bgColors.text}`}
         >
           {content.heading}
         </h1>
-        <p className={`text-lg md:text-xl mb-8 ${bgColors.accentText} ${bodyFont}`}>
+        <p
+          className={`text-lg md:text-xl mb-8 ${bgColors.accentText} ${bodyFont}`}
+        >
           {content.subheading}
         </p>
         <div className="flex flex-col sm:flex-row gap-4">

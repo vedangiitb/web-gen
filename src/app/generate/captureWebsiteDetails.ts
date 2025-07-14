@@ -1,4 +1,5 @@
 "use client";
+import { supabase } from "@/lib/supabaseClient";
 import { extractJsonFromResponse } from "@/utils/extractJsonFromResponse";
 
 export async function captureWebsiteDetails(
@@ -27,7 +28,8 @@ export async function captureWebsiteDetails(
     }>
   >,
   setGeneratingSite: React.Dispatch<React.SetStateAction<boolean>>,
-  accessToken: string
+  accessToken: string,
+  chatId: string | null
 ): Promise<void> {
   setIsLoading(true);
 
@@ -63,8 +65,8 @@ export async function captureWebsiteDetails(
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    const aiResponseText = data.text;
+    const data1 = await response.json();
+    const aiResponseText = data1.text;
 
     let updatedDetails = { ...websiteDetails };
     let responseToUser = "Sorry, something went wrong. Please tell again!";
@@ -89,6 +91,22 @@ export async function captureWebsiteDetails(
       ...newHistory,
       { role: "model", parts: [{ text: responseToUser }] },
     ]);
+
+    if (chatId) {
+      console.log(chatId)
+      const { data, error } = await supabase
+        .from("user_conversations")
+        .update({
+          biz_details: updatedDetails,
+          conv_history: [
+            ...newHistory,
+            { role: "model", parts: [{ text: responseToUser }] },
+          ],
+        })
+        .eq("id", chatId)
+        .select("id");
+      if (error) console.log(error);
+    }
   } catch (error) {
     console.error("Error sending message to Gemini:", error);
     setConversationHistory([

@@ -1,3 +1,4 @@
+import { supabase } from "@/lib/supabaseClient";
 import { extractJsonFromResponse } from "@/utils/extractJsonFromResponse";
 
 export async function generateSiteStyles(
@@ -38,5 +39,6 @@ export async function generateSiteStyles(
   setInitialCols(text);
   if (text?.query) setHeroImgQuery(text.query);
   setIsLoading(false);
+
   // setSiteComplete(false);
 }
