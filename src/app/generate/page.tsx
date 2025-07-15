@@ -1,5 +1,6 @@
 "use client";
 import { useAuth } from "@/components/auth/AuthContext";
+import NavBar from "@/components/others/navbar";
 import {
   AccordionContent,
   AccordionItem,
@@ -17,61 +18,56 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/lib/supabaseClient";
 import { Accordion } from "@radix-ui/react-accordion";
 import {
   ArrowUp,
-  BotMessageSquare,
   Check,
   ExternalLink,
-  LogOut,
-  Moon,
   Paintbrush,
   PanelLeftClose,
   PanelLeftOpen,
   Pen,
   Settings,
-  Sidebar,
   Sun,
 } from "lucide-react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { captureWebsiteDetails } from "./captureWebsiteDetails";
 import { generateSite } from "./generateSite";
 import { generateSiteStyles } from "./generateSiteStyles";
 import RenderAIResponse from "./RenderAIResponse";
 import RenderUserMessage from "./RenderUserMessage";
+import SideBar from "./sidebar";
 import { getFontsList, getHeroImg, getRelColList } from "./stylesEdit";
 import TypingIndicator from "./TypingIndicator";
-import SideBar from "./sidebar";
-import { supabase } from "@/lib/supabaseClient";
+import { navigateToConversation, resetConversation } from "./utils";
+import { useSearchParams } from "next/navigation";
 
-type ConversationRow = {
-  id: string;
-  user_id: string;
-  name: string;
-  conv_history: any;
+type WebsiteDetails = {
+  businessName: string;
+  businessType: string;
+  targetAudience: string;
+  tone: string;
+  primaryGoal: string;
+  designPreferences: string;
 };
 
 export default function GenerateWebsite() {
+// TODO Workflow:
+// #1 Get the data from the server
+
+  const serarchParams = useSearchParams();
+  const id = serarchParams.get("id");
+
   const user = useAuth();
-  const { logout } = useAuth();
-  const router = useRouter();
   const [prompt, setPrompt] = useState<string>("");
   const [isGen, setIsGen] = useState<boolean>(true);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [darkMode, setDarkMode] = useState<boolean>(true);
   const [conversationHistory, setConversationHistory] = useState<
     { role: string; parts: { text: string }[] }[]
   >([]);
-  const [websiteDetails, setWebsiteDetails] = useState<{
-    businessName: string;
-    businessType: string;
-    targetAudience: string;
-    tone: string;
-    primaryGoal: string;
-    designPreferences: string;
-  }>({
+  const [generatingsite, setGeneratingSite] = useState(false);
+  const [websiteDetails, setWebsiteDetails] = useState<WebsiteDetails>({
     businessName: "",
     businessType: "",
     targetAudience: "",
@@ -79,7 +75,6 @@ export default function GenerateWebsite() {
     primaryGoal: "",
     designPreferences: "",
   });
-  const [generatingsite, setGeneratingSite] = useState(false);
   const [detailsFromLLM, setDetailsFromLLM] = useState({});
   const [stylesFromLLM, setStylesFromLLM] = useState<GenStyles>({
     color: "blue",
@@ -89,6 +84,9 @@ export default function GenerateWebsite() {
       body: "Inter, sans-serif",
     },
   });
+  const [heroImg, setHeroImg] = useState(
+    "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
+  );
   const [initialStyles, setInitialStyles] = useState<GenStyles>({
     color: "blue",
     muted: "slate",
@@ -98,43 +96,19 @@ export default function GenerateWebsite() {
     },
   });
   const [heroImgquery, setHeroImgQuery] = useState("");
-  const [heroImg, setHeroImg] = useState(
-    "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
-  );
   const [chatVisible, setChatVisible] = useState(true);
   const [chatId, setChatId] = useState<string | null>(null);
 
-  useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-  }, [darkMode]);
-
-  useEffect(() => {
-    setConversationHistory((items) => [
-      ...items,
-      {
-        role: "model",
-        parts: [
-          {
-            text: "Hello!\n I am Web-Gen, the new age website generator!. Tell me what type of website do you want, and it will be ready for you in minutes",
-          },
-        ],
-      },
-    ]);
-  }, []);
+  const generateConversationName = (name: string) =>
+    name ? `Website generation for ${name}` : "Website Generation";
 
   const updateDetails = async () => {
-    if (
-      !chatId ||
-      !heroImg ||
-      !websiteDetails ||
-      !detailsFromLLM ||
-      !stylesFromLLM
-    ) {
-      return;
-    }
+    if (!chatId) return;
+
     const { data, error } = await supabase
       .from("user_conversations")
       .update({
+        name: generateConversationName(websiteDetails.businessName),
         biz_details: websiteDetails,
         hero_img: heroImg,
         content: detailsFromLLM,
@@ -142,82 +116,37 @@ export default function GenerateWebsite() {
       })
       .eq("id", chatId)
       .select("id");
+
+    if (error) console.error("Error updating full details:", error);
   };
 
-  useEffect(() => {
-    updateDetails();
-  }, [websiteDetails, heroImg, detailsFromLLM, stylesFromLLM]);
+  const updateWebsiteDetails = async () => {
+    if (!chatId) return;
 
-  useEffect(() => {
-    if (generatingsite && !detailsFromLLM) {
-      generateSite(
-        websiteDetails,
-        setDetailsFromLLM,
-        setIsLoading,
-        user.accessToken
-      );
-
-      generateSiteStyles(
-        websiteDetails,
-        setStylesFromLLM,
-        setInitialStyles,
-        setIsLoading,
-        user.accessToken,
-        setHeroImgQuery
-      );
-    }
-  }, [generatingsite]);
-
-  useEffect(() => {
-    console.log(heroImgquery);
-    getHeroImg(heroImgquery, setHeroImg);
-  }, [heroImgquery]);
-
-  useEffect(() => {
-    if (!detailsFromLLM || !stylesFromLLM) return;
-
-    const previewData = {
-      content: detailsFromLLM,
-      styles: stylesFromLLM,
-      heroImg: heroImg,
-    };
-
-    // Save to localStorage
-    localStorage.setItem("previewData", JSON.stringify(previewData));
-    console.log("📦 Saved to localStorage:", previewData);
-
-    // Send postMessage to iframe if it's present
-    const iframe = document.getElementById(
-      "preview-frame"
-    ) as HTMLIFrameElement;
-    iframe?.contentWindow?.postMessage(
-      {
-        type: "previewDataUpdated",
-      },
-      window.location.origin
-    );
-  }, [detailsFromLLM, stylesFromLLM, heroImg]);
-
-  const createConversation = async (userId: string) => {
     const { data, error } = await supabase
       .from("user_conversations")
-      .insert([
-        {
-          user_id: userId,
-          name: "New Conversation",
-          conv_history: conversationHistory,
-        },
-      ])
-      .select(); // Ensure select() is called to get inserted rows
+      .update({
+        name: generateConversationName(websiteDetails.businessName),
+        biz_details: websiteDetails,
+      })
+      .eq("id", chatId)
+      .select("id");
 
-    if (error) {
-      console.log(error);
-      return;
-    }
-    if (data && Array.isArray(data)) {
-      const rows = data as ConversationRow[];
-      setChatId(rows[0]?.id);
-    }
+    if (error) console.error("Error updating website details:", error);
+  };
+
+  const updateConversation = async () => {
+    if (!chatId || conversationHistory.length <= 1) return;
+    const { data, error } = await supabase
+      .from("user_conversations")
+      .update({
+        biz_details: websiteDetails,
+        conv_history: conversationHistory,
+      })
+      .eq("id", chatId)
+      .select("id");
+
+    if (error) console.error(error);
   };
 
   const submitPrompt = useCallback(
@@ -226,9 +155,6 @@ export default function GenerateWebsite() {
       if (!prompt.trim()) return;
 
       if (!generatingsite) {
-        if (conversationHistory.length == 1) {
-          createConversation(user.userId);
-        }
         captureWebsiteDetails(
           prompt,
           setConversationHistory,
@@ -260,67 +186,92 @@ export default function GenerateWebsite() {
     window.open("/preview", "_blank");
   };
 
+  useEffect(() => {
+    console.log(heroImgquery);
+    getHeroImg(heroImgquery, setHeroImg);
+  }, [heroImgquery]);
+
+  useEffect(() => {
+    setConversationHistory((items) => [
+      ...items,
+      {
+        role: "model",
+        parts: [
+          {
+            text: "Hello!\n I am Web-Gen, the new age website generator!. Tell me what type of website do you want, and it will be ready for you in minutes",
+          },
+        ],
+      },
+    ]);
+  }, []);
+
+  useEffect(() => {
+    updateConversation();
+  }, [conversationHistory]);
+
+  useEffect(() => {
+    updateWebsiteDetails();
+  }, [websiteDetails]);
+
+  useEffect(() => {
+    updateDetails();
+  }, [heroImg, detailsFromLLM, stylesFromLLM]);
+
+  useEffect(() => {
+    if (generatingsite && Object.keys(detailsFromLLM).length === 0) {
+      generateSite(
+        websiteDetails,
+        setDetailsFromLLM,
+        setIsLoading,
+        user.accessToken
+      );
+
+      generateSiteStyles(
+        websiteDetails,
+        setStylesFromLLM,
+        setInitialStyles,
+        setIsLoading,
+        user.accessToken,
+        setHeroImgQuery
+      );
+    }
+  }, [generatingsite]);
+
+  useEffect(() => {
+    if (!detailsFromLLM || !stylesFromLLM) return;
+
+    const previewData = {
+      content: detailsFromLLM,
+      styles: stylesFromLLM,
+      heroImg: heroImg,
+    };
+
+    // Save to localStorage
+    localStorage.setItem("previewData", JSON.stringify(previewData));
+    console.log("📦 Saved to localStorage:", previewData);
+
+    // Send postMessage to iframe if it's present
+    const iframe = document.getElementById(
+      "preview-frame"
+    ) as HTMLIFrameElement;
+    iframe?.contentWindow?.postMessage(
+      {
+        type: "previewDataUpdated",
+      },
+      window.location.origin
+    );
+  }, [detailsFromLLM, stylesFromLLM, heroImg]);
+
   return (
     <div className="max-h-screen text-foreground flex">
       {/* Header */}
       <SideBar
-        setConversationHistory={setConversationHistory}
-        setWebsiteDetails={setWebsiteDetails}
-        setDetailsFromLLM={setDetailsFromLLM}
-        setStylesFromLLM={setStylesFromLLM}
-        setInitialStyles={setInitialStyles}
-        setHeroImg={setHeroImg}
-        setChatId={setChatId}
-        setGeneratingSite={setGeneratingSite}
+        navigateToConversation={navigateToConversation}
+        resetConversation={resetConversation}
       />
 
       <div className="w-full">
-        <header className="sticky top-0 z-30 flex items-center justify-between px-8 py-4">
-          <div className="flex items-center gap-3">
-            <h1 className="text-xl font-medium tracking-tight orbitron">
-              Web Gen
-            </h1>
-          </div>
-
-          <div className="flex items-center gap-8">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setDarkMode(!darkMode)}
-              aria-label="Toggle theme"
-              className="cursor-pointer"
-            >
-              {darkMode ? <Moon size={18} /> : <Sun size={18} />}
-            </Button>
-            {user.currentUser === "Login" ? (
-              <Link
-                href="/login"
-                className="cursor-pointer text-[#00289f] bg-transparent border-none outline-none"
-                type="button"
-              >
-                {user.currentUser}
-              </Link>
-            ) : (
-              <Popover>
-                <PopoverTrigger>
-                  <span className="cursor-pointer">{user.currentUser}</span>
-                </PopoverTrigger>
-                <PopoverContent className="space-y-2">
-                  <div
-                    className="flex items-center cursor-pointer"
-                    onClick={() => {
-                      logout();
-                      router.push("/");
-                    }}
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    <p>Logout</p>
-                  </div>
-                </PopoverContent>
-              </Popover>
-            )}
-          </div>
-        </header>
+        <NavBar />
 
         <main className="h-[calc(100vh-5rem)]">
           <ResizablePanelGroup direction="horizontal" className="h-full">

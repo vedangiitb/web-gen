@@ -1,5 +1,4 @@
 "use client";
-import { supabase } from "@/lib/supabaseClient";
 import { extractJsonFromResponse } from "@/utils/extractJsonFromResponse";
 
 export async function captureWebsiteDetails(
@@ -40,6 +39,7 @@ export async function captureWebsiteDetails(
 
   setConversationHistory(newHistory);
 
+  console.log("chatId:", chatId);
   try {
     const response = await fetch(
       "https://jxceaahrdymuhokduqdt.supabase.co/functions/v1/site-details",
@@ -91,22 +91,6 @@ export async function captureWebsiteDetails(
       ...newHistory,
       { role: "model", parts: [{ text: responseToUser }] },
     ]);
-
-    if (chatId) {
-      console.log(chatId)
-      const { data, error } = await supabase
-        .from("user_conversations")
-        .update({
-          biz_details: updatedDetails,
-          conv_history: [
-            ...newHistory,
-            { role: "model", parts: [{ text: responseToUser }] },
-          ],
-        })
-        .eq("id", chatId)
-        .select("id");
-      if (error) console.log(error);
-    }
   } catch (error) {
     console.error("Error sending message to Gemini:", error);
     setConversationHistory([

@@ -17,6 +17,7 @@ import {
   Roboto,
   Roboto_Mono,
   Work_Sans,
+  Outfit,
 } from "next/font/google";
 import "./globals.css";
 
@@ -33,6 +34,12 @@ const geistMono = Geist_Mono({
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
+  display: "swap",
+});
+
+const outfit = Outfit({
+  subsets: ["latin"],
+  variable: "--font-outfit",
   display: "swap",
 });
 
@@ -148,6 +155,7 @@ export default function RootLayout({
     ${robotoMono.variable} 
     ${courierPrime.variable} 
     ${montserrat.variable}
+    ${outfit.variable}
     antialiased
   `}
         >

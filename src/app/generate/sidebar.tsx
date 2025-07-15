@@ -1,3 +1,4 @@
+"use client";
 import { useAuth } from "@/components/auth/AuthContext";
 import {
   Tooltip,
@@ -5,12 +6,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { supabase } from "@/lib/supabaseClient";
-import {
-  Database,
-  Search,
-  Sidebar as SidebarIcon,
-  SquarePen,
-} from "lucide-react";
+import { Search, Sidebar as SidebarIcon, SquarePen } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface recentChatInterface {
@@ -19,23 +15,11 @@ interface recentChatInterface {
 }
 
 export default function SideBar({
-  setConversationHistory,
-  setWebsiteDetails,
-  setDetailsFromLLM,
-  setStylesFromLLM,
-  setInitialStyles,
-  setHeroImg,
-  setChatId,
-  setGeneratingSite,
+  navigateToConversation,
+  resetConversation,
 }: {
-  setConversationHistory: any;
-  setWebsiteDetails: any;
-  setDetailsFromLLM: any;
-  setStylesFromLLM: any;
-  setInitialStyles: any;
-  setHeroImg: any;
-  setChatId: any;
-  setGeneratingSite: any;
+  navigateToConversation: any;
+  resetConversation: any;
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [recentChats, setRecentChats] = useState<recentChatInterface[]>([]);
@@ -63,75 +47,6 @@ export default function SideBar({
     } catch (error) {
       console.error("Failed to fetch recent chats:", error);
     }
-  };
-
-  const setCurrentConversation = async (chatId: string) => {
-    const { data, error } = await supabase
-      .from("user_conversations")
-      .select("*")
-      .eq("id", chatId)
-      .single();
-
-    if (error) {
-      console.error(error);
-      return;
-    }
-    if (data) {
-      if (data.conv_history) {
-        console.log(data.conv_history);
-        setConversationHistory(data.conv_history);
-      }
-      if (data.biz_details) setWebsiteDetails(data.biz_details);
-      if (data.style) setStylesFromLLM(data.style);
-      if (data.content) {
-        setDetailsFromLLM(data.content);
-        setGeneratingSite(true);
-      }
-      if (data.style) setInitialStyles(data.style);
-      if (data.hero_img) setHeroImg(data.hero_img);
-      setChatId(data.id);
-    }
-  };
-
-  const resetConversation = () => {
-    setConversationHistory([{
-      role: "model",
-      parts: [
-        {
-          text: "Hello!\n I am Web-Gen, the new age website generator!. Tell me what type of website do you want, and it will be ready for you in minutes",
-        },
-      ],
-    }]);
-    setWebsiteDetails({
-      businessName: "",
-      businessType: "",
-      targetAudience: "",
-      tone: "",
-      primaryGoal: "",
-      designPreferences: "",
-    });
-    setDetailsFromLLM({});
-    setStylesFromLLM({
-      color: "blue",
-      muted: "slate",
-      font: {
-        primary: "Inter, sans-serif",
-        body: "Inter, sans-serif",
-      },
-    });
-    setInitialStyles({
-      color: "blue",
-      muted: "slate",
-      font: {
-        primary: "Inter, sans-serif",
-        body: "Inter, sans-serif",
-      },
-    });
-    setHeroImg(
-      "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
-    );
-    setChatId(null);
-    setGeneratingSite(false);
   };
 
   const navItems = [
@@ -201,10 +116,10 @@ export default function SideBar({
           <p className="text-muted-foreground mb-2 px-1">Recent Chats</p>
           {recentChats.length ? (
             <div className="flex flex-col gap-1">
-              {recentChats.map((item) => (
+              {recentChats.reverse().map((item) => (
                 <button
                   key={item.chatId}
-                  onClick={() => setCurrentConversation(item.chatId)}
+                  onClick={() => navigateToConversation(item.chatId)}
                   className="text-left px-2 py-1 rounded-md hover:bg-muted transition cursor-pointer"
                 >
                   {item.chatName}
