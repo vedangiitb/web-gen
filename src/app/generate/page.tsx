@@ -88,6 +88,7 @@ export default function GenerateWebsite() {
   };
 
   const getConversation = async (id: string) => {
+    if (!id) return;
     const { data, error } = await supabase
       .from("user_conversations")
       .select("*")
@@ -105,6 +106,8 @@ export default function GenerateWebsite() {
       if (data[0]?.content) {
         setDetailsFromLLM(data[0]?.content);
         setShowPreview(true);
+      } else {
+        setShowPreview(false);
       }
       if (data[0].style) {
         setStylesFromLLM(data[0]?.style);
@@ -125,18 +128,17 @@ export default function GenerateWebsite() {
           setGeneratingSite,
           setShowPreview,
           user.accessToken,
-          chatId,
-          updatedb
+          (updateData: any) => updatedb(updateData, data[0]?.id)
         );
     }
   };
 
-  const updatedb = async (updateData: any) => {
-    if (!chatId) return;
+  const updatedb = async (updateData: any, id = chatId) => {
+    if (!id) return;
     const { data, error } = await supabase
       .from("user_conversations")
       .update(updateData)
-      .eq("id", chatId)
+      .eq("id", id)
       .select("id");
 
     if (error) console.error(error);
@@ -163,7 +165,6 @@ export default function GenerateWebsite() {
           setGeneratingSite,
           setShowPreview,
           user.accessToken,
-          chatId,
           updatedb
         );
       }

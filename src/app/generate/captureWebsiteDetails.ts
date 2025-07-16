@@ -29,7 +29,6 @@ export async function captureWebsiteDetails(
   setGeneratingSite: React.Dispatch<React.SetStateAction<boolean>>,
   setShowPreview: React.Dispatch<React.SetStateAction<boolean>>,
   accessToken: string,
-  chatId: string | null,
   updatedb: any
 ): Promise<void> {
   setIsLoading(true);
@@ -39,7 +38,6 @@ export async function captureWebsiteDetails(
   const generateConversationName = (name: string) =>
     name ? `Website generation for ${name}` : "Website Generation";
 
-  console.log("chatId:", chatId);
   try {
     const response = await fetch(
       "https://jxceaahrdymuhokduqdt.supabase.co/functions/v1/site-details",
