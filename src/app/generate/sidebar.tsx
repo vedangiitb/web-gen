@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/tooltip";
 import { supabase } from "@/lib/supabaseClient";
 import { Search, Sidebar as SidebarIcon, SquarePen } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 interface recentChatInterface {
@@ -14,16 +15,11 @@ interface recentChatInterface {
   chatName: string;
 }
 
-export default function SideBar({
-  navigateToConversation,
-  resetConversation,
-}: {
-  navigateToConversation: any;
-  resetConversation: any;
-}) {
+export default function SideBar() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [recentChats, setRecentChats] = useState<recentChatInterface[]>([]);
   const user = useAuth();
+  const router = useRouter();
 
   useEffect(() => {
     getRecentChats();
@@ -53,7 +49,9 @@ export default function SideBar({
     {
       icon: <SquarePen className="w-5 h-5" />,
       label: "New Chat",
-      action: resetConversation,
+      action: () => {
+        router.push("/");
+      },
     },
     {
       icon: <Search className="w-5 h-5" />,
@@ -119,7 +117,9 @@ export default function SideBar({
               {recentChats.reverse().map((item) => (
                 <button
                   key={item.chatId}
-                  onClick={() => navigateToConversation(item.chatId)}
+                  onClick={() => {
+                    router.push(`/generate?id=${item.chatId}`);
+                  }}
                   className="text-left px-2 py-1 rounded-md hover:bg-muted transition cursor-pointer"
                 >
                   {item.chatName}

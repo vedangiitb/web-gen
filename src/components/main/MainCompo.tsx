@@ -2,10 +2,7 @@
 import RenderAIResponse from "@/app/generate/RenderAIResponse";
 import RenderUserMessage from "@/app/generate/RenderUserMessage";
 import SideBar from "@/app/generate/sidebar";
-import {
-  navigateToConversation,
-  resetConversation,
-} from "@/app/generate/utils";
+import TypingIndicator from "@/app/generate/TypingIndicator";
 import NavBar from "@/components/others/navbar";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,7 +16,6 @@ import { ArrowUp, PanelLeftClose, PanelLeftOpen, Sun } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
-import TypingIndicator from "@/app/generate/TypingIndicator";
 
 type ConversationRow = {
   id: string;
@@ -87,10 +83,7 @@ export default function MainCompo() {
   return (
     <div className="max-h-screen text-foreground flex">
       {/* Header */}
-      <SideBar
-        navigateToConversation={navigateToConversation}
-        resetConversation={resetConversation}
-      />
+      <SideBar />
 
       <div className="w-full">
         <NavBar />

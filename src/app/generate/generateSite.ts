@@ -1,4 +1,3 @@
-import { supabase } from "@/lib/supabaseClient";
 import { extractJsonFromResponse } from "@/utils/extractJsonFromResponse";
 
 export async function generateSite(
@@ -13,7 +12,8 @@ export async function generateSite(
   setDetailsFromLLM: any,
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   // setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
-  accessToken: string
+  accessToken: string,
+  updatedb: any
 ) {
   setIsLoading(true);
   const response = await fetch(
@@ -35,5 +35,9 @@ export async function generateSite(
   console.log(text);
   setDetailsFromLLM(text);
   setIsLoading(false);
+  if (text)
+    updatedb({
+      content: text,
+    });
   // setSiteComplete(false);
 }

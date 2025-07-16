@@ -1,4 +1,3 @@
-import { supabase } from "@/lib/supabaseClient";
 import { extractJsonFromResponse } from "@/utils/extractJsonFromResponse";
 
 export async function generateSiteStyles(
@@ -15,7 +14,8 @@ export async function generateSiteStyles(
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>,
   // setSiteComplete: React.Dispatch<React.SetStateAction<boolean>>,
   accessToken: string,
-  setHeroImgQuery: React.Dispatch<React.SetStateAction<string>>
+  setHeroImgQuery: React.Dispatch<React.SetStateAction<string>>,
+  updatedb: any
 ) {
   setIsLoading(true);
   const response = await fetch(
@@ -37,6 +37,9 @@ export async function generateSiteStyles(
   console.log(text);
   setStylesFromLLM(text);
   setInitialCols(text);
+  updatedb({
+    style: text,
+  });
   if (text?.query) setHeroImgQuery(text.query);
   setIsLoading(false);
 

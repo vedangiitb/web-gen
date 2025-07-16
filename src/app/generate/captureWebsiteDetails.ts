@@ -27,17 +27,17 @@ export async function captureWebsiteDetails(
     }>
   >,
   setGeneratingSite: React.Dispatch<React.SetStateAction<boolean>>,
+  setShowPreview: React.Dispatch<React.SetStateAction<boolean>>,
   accessToken: string,
-  chatId: string | null
+  chatId: string | null,
+  updatedb: any
 ): Promise<void> {
   setIsLoading(true);
 
-  const newHistory = [
-    ...conversationHistory,
-    { role: "user", parts: [{ text: userMessage }] },
-  ];
+  setConversationHistory(conversationHistory);
 
-  setConversationHistory(newHistory);
+  const generateConversationName = (name: string) =>
+    name ? `Website generation for ${name}` : "Website Generation";
 
   console.log("chatId:", chatId);
   try {
@@ -84,22 +84,45 @@ export async function captureWebsiteDetails(
         "Sorry, I couldn't understand the response. Please try again!";
     }
 
-    if (readyToGenerate) setGeneratingSite(true);
+    if (readyToGenerate) {
+      setGeneratingSite(true);
+      setShowPreview(true);
+    }
     setWebsiteDetails(updatedDetails);
 
     setConversationHistory([
-      ...newHistory,
+      ...conversationHistory,
       { role: "model", parts: [{ text: responseToUser }] },
     ]);
+
+    updatedb({
+      name: generateConversationName(updatedDetails?.businessType),
+      biz_details: updatedDetails,
+      conv_history: [
+        ...conversationHistory,
+        { role: "model", parts: [{ text: responseToUser }] },
+      ],
+    });
   } catch (error) {
     console.error("Error sending message to Gemini:", error);
     setConversationHistory([
-      ...newHistory,
+      ...conversationHistory,
       {
         role: "model",
         parts: [{ text: "Sorry, there was a server error. Please try again." }],
       },
     ]);
+    updatedb({
+      conv_history: [
+        ...conversationHistory,
+        {
+          role: "model",
+          parts: [
+            { text: "Sorry, there was a server error. Please try again." },
+          ],
+        },
+      ],
+    });
   } finally {
     setIsLoading(false);
   }

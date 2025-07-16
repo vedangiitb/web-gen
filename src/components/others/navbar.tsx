@@ -1,5 +1,5 @@
 "use client";
-import { Link, LogOut, Moon, Sun } from "lucide-react";
+import { LogOut, Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Button } from "../ui/button";
@@ -9,6 +9,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import Link from "next/link";
 
 export default function NavBar() {
   const user = useAuth();
@@ -42,10 +43,10 @@ export default function NavBar() {
           {user.currentUser === "Login" ? (
             <Link
               href="/login"
-              className="cursor-pointer text-[#00289f] bg-transparent border-none outline-none"
+              className="cursor-pointer text-[#00289f] "
               type="button"
             >
-              {user.currentUser}
+              <p>Login</p>
             </Link>
           ) : (
             <Popover>

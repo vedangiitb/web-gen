@@ -2,46 +2,23 @@
 import { useAuth } from "@/components/auth/AuthContext";
 import NavBar from "@/components/others/navbar";
 import {
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/lib/supabaseClient";
-import { Accordion } from "@radix-ui/react-accordion";
-import {
-  ArrowUp,
-  Check,
-  ExternalLink,
-  Paintbrush,
-  PanelLeftClose,
-  PanelLeftOpen,
-  Pen,
-  Settings,
-  Sun,
-} from "lucide-react";
+import { ExternalLink, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { captureWebsiteDetails } from "./captureWebsiteDetails";
+import ChatBox from "./ChatBox";
+import ChatHistory from "./ChatHistory";
 import { generateSite } from "./generateSite";
 import { generateSiteStyles } from "./generateSiteStyles";
-import RenderAIResponse from "./RenderAIResponse";
-import RenderUserMessage from "./RenderUserMessage";
+import PreviewFrame from "./PreviewFrame";
 import SideBar from "./sidebar";
-import { getFontsList, getHeroImg, getRelColList } from "./stylesEdit";
-import TypingIndicator from "./TypingIndicator";
-import { navigateToConversation, resetConversation } from "./utils";
-import { useSearchParams } from "next/navigation";
+import { getHeroImg } from "./stylesEdit";
+import StyleSettings from "./StyleSettings";
 
 type WebsiteDetails = {
   businessName: string;
@@ -53,12 +30,8 @@ type WebsiteDetails = {
 };
 
 export default function GenerateWebsite() {
-// TODO Workflow:
-// #1 Get the data from the server
-
   const serarchParams = useSearchParams();
   const id = serarchParams.get("id");
-
   const user = useAuth();
   const [prompt, setPrompt] = useState<string>("");
   const [isGen, setIsGen] = useState<boolean>(true);
@@ -98,79 +71,7 @@ export default function GenerateWebsite() {
   const [heroImgquery, setHeroImgQuery] = useState("");
   const [chatVisible, setChatVisible] = useState(true);
   const [chatId, setChatId] = useState<string | null>(null);
-
-  const generateConversationName = (name: string) =>
-    name ? `Website generation for ${name}` : "Website Generation";
-
-  const updateDetails = async () => {
-    if (!chatId) return;
-
-    const { data, error } = await supabase
-      .from("user_conversations")
-      .update({
-        name: generateConversationName(websiteDetails.businessName),
-        biz_details: websiteDetails,
-        hero_img: heroImg,
-        content: detailsFromLLM,
-        style: stylesFromLLM,
-      })
-      .eq("id", chatId)
-      .select("id");
-
-    if (error) console.error("Error updating full details:", error);
-  };
-
-  const updateWebsiteDetails = async () => {
-    if (!chatId) return;
-
-    const { data, error } = await supabase
-      .from("user_conversations")
-      .update({
-        name: generateConversationName(websiteDetails.businessName),
-        biz_details: websiteDetails,
-      })
-      .eq("id", chatId)
-      .select("id");
-
-    if (error) console.error("Error updating website details:", error);
-  };
-
-  const updateConversation = async () => {
-    if (!chatId || conversationHistory.length <= 1) return;
-    const { data, error } = await supabase
-      .from("user_conversations")
-      .update({
-        biz_details: websiteDetails,
-        conv_history: conversationHistory,
-      })
-      .eq("id", chatId)
-      .select("id");
-
-    if (error) console.error(error);
-  };
-
-  const submitPrompt = useCallback(
-    (e?: React.FormEvent) => {
-      if (e) e.preventDefault();
-      if (!prompt.trim()) return;
-
-      if (!generatingsite) {
-        captureWebsiteDetails(
-          prompt,
-          setConversationHistory,
-          conversationHistory,
-          setIsLoading,
-          websiteDetails,
-          setWebsiteDetails,
-          setGeneratingSite,
-          user.accessToken,
-          chatId
-        );
-      }
-      setPrompt("");
-    },
-    [prompt, conversationHistory]
-  );
+  const [showPreview, setShowPreview] = useState(false);
 
   const openInNewWindow = () => {
     const previewData = {
@@ -186,36 +87,98 @@ export default function GenerateWebsite() {
     window.open("/preview", "_blank");
   };
 
+  const getConversation = async (id: string) => {
+    const { data, error } = await supabase
+      .from("user_conversations")
+      .select("*")
+      .eq("id", id);
+    console.log(data);
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    if (data && data[0]?.conv_history) {
+      setConversationHistory(data[0]?.conv_history);
+      setChatId(data[0]?.id);
+
+      if (data[0]?.content) {
+        setDetailsFromLLM(data[0]?.content);
+        setShowPreview(true);
+      }
+      if (data[0].style) {
+        setStylesFromLLM(data[0]?.style);
+        setInitialStyles(data[0]?.style);
+      }
+      if (data[0]?.hero_img) {
+        setHeroImg(data[0]?.hero_img);
+      }
+
+      if (data[0]?.conv_history.length <= 2)
+        captureWebsiteDetails(
+          data[0]?.conv_history[1].parts[0].text,
+          setConversationHistory,
+          data[0]?.conv_history,
+          setIsLoading,
+          websiteDetails,
+          setWebsiteDetails,
+          setGeneratingSite,
+          setShowPreview,
+          user.accessToken,
+          chatId,
+          updatedb
+        );
+    }
+  };
+
+  const updatedb = async (updateData: any) => {
+    if (!chatId) return;
+    const { data, error } = await supabase
+      .from("user_conversations")
+      .update(updateData)
+      .eq("id", chatId)
+      .select("id");
+
+    if (error) console.error(error);
+  };
+
+  const submitPrompt = useCallback(
+    (e?: React.FormEvent) => {
+      if (e) e.preventDefault();
+      if (!prompt.trim()) return;
+
+      if (!generatingsite && !showPreview) {
+        const newHistory = [
+          ...conversationHistory,
+          { role: "user", parts: [{ text: prompt }] },
+        ];
+
+        captureWebsiteDetails(
+          prompt,
+          setConversationHistory,
+          newHistory,
+          setIsLoading,
+          websiteDetails,
+          setWebsiteDetails,
+          setGeneratingSite,
+          setShowPreview,
+          user.accessToken,
+          chatId,
+          updatedb
+        );
+      }
+      setPrompt("");
+    },
+    [prompt, conversationHistory]
+  );
+
   useEffect(() => {
-    console.log(heroImgquery);
-    getHeroImg(heroImgquery, setHeroImg);
+    if (id) getConversation(id);
+  }, [id]);
+
+  useEffect(() => {
+    getHeroImg(heroImgquery, setHeroImg, updatedb);
   }, [heroImgquery]);
-
-  useEffect(() => {
-    setConversationHistory((items) => [
-      ...items,
-      {
-        role: "model",
-        parts: [
-          {
-            text: "Hello!\n I am Web-Gen, the new age website generator!. Tell me what type of website do you want, and it will be ready for you in minutes",
-          },
-        ],
-      },
-    ]);
-  }, []);
-
-  useEffect(() => {
-    updateConversation();
-  }, [conversationHistory]);
-
-  useEffect(() => {
-    updateWebsiteDetails();
-  }, [websiteDetails]);
-
-  useEffect(() => {
-    updateDetails();
-  }, [heroImg, detailsFromLLM, stylesFromLLM]);
 
   useEffect(() => {
     if (generatingsite && Object.keys(detailsFromLLM).length === 0) {
@@ -223,7 +186,8 @@ export default function GenerateWebsite() {
         websiteDetails,
         setDetailsFromLLM,
         setIsLoading,
-        user.accessToken
+        user.accessToken,
+        updatedb
       );
 
       generateSiteStyles(
@@ -232,7 +196,8 @@ export default function GenerateWebsite() {
         setInitialStyles,
         setIsLoading,
         user.accessToken,
-        setHeroImgQuery
+        setHeroImgQuery,
+        updatedb
       );
     }
   }, [generatingsite]);
@@ -265,10 +230,7 @@ export default function GenerateWebsite() {
   return (
     <div className="max-h-screen text-foreground flex">
       {/* Header */}
-      <SideBar
-        navigateToConversation={navigateToConversation}
-        resetConversation={resetConversation}
-      />
+      <SideBar />
 
       <div className="w-full">
         <NavBar />
@@ -282,62 +244,19 @@ export default function GenerateWebsite() {
             >
               <div className="h-full flex flex-col justify-between overflow-hidden">
                 {/* Chat History */}
-                <div
-                  className="flex-1 overflow-y-auto custom-scrollbar"
-                  aria-live="polite"
-                  style={{ maxHeight: "calc(100vh - 150px)" }}
-                >
-                  {conversationHistory.map(
-                    (
-                      item: { role: string; parts: { text: string }[] },
-                      idx: number
-                    ) => (
-                      <div key={idx}>
-                        {item.role === "user" ? (
-                          <RenderUserMessage data={item.parts[0].text} />
-                        ) : (
-                          <RenderAIResponse data={item.parts[0].text} />
-                        )}
-                      </div>
-                    )
-                  )}
-                  {isLoading && (
-                    <TypingIndicator generatingsite={generatingsite} />
-                  )}
-                </div>
+                <ChatHistory
+                  conversationHistory={conversationHistory}
+                  isLoading={isLoading}
+                  generatingsite={generatingsite}
+                />
 
                 {/* Input Form */}
-                <form
-                  className="flex w-full max-w-2xl rounded-2xl items-center border border-border p-2 mx-auto shadow-sm bg-background"
-                  onSubmit={submitPrompt}
-                >
-                  <Textarea
-                    className="border-none max-h-32 outline-none focus:outline-none focus:ring-2 focus:ring-ring shadow-none resize-none bg-background flex-1 text-foreground placeholder:text-muted-foreground"
-                    style={{
-                      boxShadow: "none",
-                      backgroundColor: "var(--background)",
-                    }}
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        submitPrompt(e);
-                      }
-                    }}
-                    placeholder="A landing page for my Japanese restaurant website..."
-                    aria-label="Prompt"
-                  />
-                  <Button
-                    className="ml-2 rounded-full shadow-lg w-10 h-10"
-                    variant="secondary"
-                    type="submit"
-                    aria-label="Submit prompt"
-                    disabled={isLoading}
-                  >
-                    <ArrowUp size={18} />
-                  </Button>
-                </form>
+                <ChatBox
+                  prompt={prompt}
+                  submitPrompt={submitPrompt}
+                  setPrompt={setPrompt}
+                  isLoading={isLoading}
+                />
               </div>
             </ResizablePanel>
 
@@ -366,154 +285,15 @@ export default function GenerateWebsite() {
                   <h3 className="font-semibold text-lg">Preview</h3>
 
                   <div className="flex gap-4">
-                    {generatingsite ? (
-                      <div>
-                        <Popover>
-                          <PopoverTrigger>
-                            <Settings
-                              className="cursor-pointer"
-                              aria-label="Open settings"
-                            />
-                          </PopoverTrigger>
-                          <PopoverContent className="space-y-3 mr-4 p-4 rounded-lg shadow-lg bg-background border border-border max-w-xs">
-                            <Accordion type="single" className="w-full">
-                              <AccordionItem value="item-1">
-                                <AccordionTrigger className="cursor-pointer">
-                                  <div className="flex gap-2">
-                                    <Paintbrush></Paintbrush>
-                                    <span className="font-semibold text-base">
-                                      Theme Colors
-                                    </span>
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
-                                  {getRelColList(initialStyles).map(
-                                    (item, idx) => {
-                                      const colorClass = `${item.color}`;
-                                      const mutedClass = `${item.muted}`;
-                                      const isSelected =
-                                        item.col1 === stylesFromLLM.color &&
-                                        item.col2 === stylesFromLLM.muted;
-
-                                      return (
-                                        <div
-                                          key={idx}
-                                          className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
-                                            isSelected
-                                              ? "ring-2 ring-primary bg-primary/10"
-                                              : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
-                                          }`}
-                                          onClick={() =>
-                                            setStylesFromLLM((prev) => {
-                                              return {
-                                                color: item.col1,
-                                                muted: item.col2,
-                                                font: prev.font,
-                                              };
-                                            })
-                                          }
-                                          aria-selected={isSelected}
-                                          tabIndex={0}
-                                          title={`Select ${item.col1} / ${item.col2}`}
-                                        >
-                                          <div className="flex gap-1">
-                                            <div
-                                              className={`w-6 h-6 rounded ${colorClass} border border-border shadow-sm`}
-                                              title={item.col1}
-                                            />
-                                            <div
-                                              className={`w-6 h-6 rounded ${mutedClass} border border-border shadow-sm`}
-                                              title={item.col2}
-                                            />
-                                          </div>
-                                          <span className="text-xs font-mono text-muted-foreground">
-                                            {item.col1} / {item.col2}
-                                          </span>
-                                          {isSelected && (
-                                            <Check
-                                              className="text-primary ml-auto"
-                                              size={18}
-                                              aria-label="Selected"
-                                            />
-                                          )}
-                                        </div>
-                                      );
-                                    }
-                                  )}
-                                </AccordionContent>
-                              </AccordionItem>
-
-                              <AccordionItem value="item-2">
-                                <AccordionTrigger className="cursor-pointer">
-                                  <div className="flex gap-2">
-                                    <Pen></Pen>
-                                    <span className="font-semibold text-base">
-                                      Font Styles
-                                    </span>
-                                  </div>
-                                </AccordionTrigger>
-                                <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
-                                  {getFontsList().map((item, idx) => {
-                                    const isSelected =
-                                      item.primary ===
-                                        stylesFromLLM.font.primary &&
-                                      item.body === stylesFromLLM.font.body;
-
-                                    return (
-                                      <div
-                                        key={idx}
-                                        className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
-                                          isSelected
-                                            ? "ring-2 ring-primary bg-primary/10"
-                                            : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
-                                        }`}
-                                        onClick={() =>
-                                          setStylesFromLLM((prev) => {
-                                            return {
-                                              ...prev,
-                                              font: {
-                                                primary: item.primary,
-                                                body: item.body,
-                                              },
-                                            };
-                                          })
-                                        }
-                                        aria-selected={isSelected}
-                                        tabIndex={0}
-                                        title={`Select ${item.primary} / ${item.body}`}
-                                      >
-                                        <span
-                                          className={`font-${item.primary} text-base`}
-                                        >
-                                          {item.primary}
-                                        </span>
-                                        <span className="text-xs font-mono text-muted-foreground">
-                                          {item.body}
-                                        </span>
-                                        {isSelected && (
-                                          <Check
-                                            className="text-primary ml-auto"
-                                            size={18}
-                                            aria-label="Selected"
-                                          />
-                                        )}
-                                      </div>
-                                    );
-                                  })}
-                                </AccordionContent>
-                              </AccordionItem>
-                            </Accordion>
-
-                            {/* <Accordion
-                              type="single"
-                              className="w-full"
-                            ></Accordion> */}
-                          </PopoverContent>
-                        </Popover>
-                      </div>
+                    {showPreview ? (
+                      <StyleSettings
+                        stylesFromLLM={stylesFromLLM}
+                        setStylesFromLLM={setStylesFromLLM}
+                        initialStyles={initialStyles}
+                      />
                     ) : null}
 
-                    {generatingsite ? (
+                    {showPreview ? (
                       <ExternalLink
                         className="cursor-pointer"
                         onClick={openInNewWindow}
@@ -522,7 +302,7 @@ export default function GenerateWebsite() {
                   </div>
                 </div>
 
-                {generatingsite ? (
+                {showPreview ? (
                   <iframe
                     id="preview-frame"
                     src="/preview"
@@ -534,30 +314,8 @@ export default function GenerateWebsite() {
                     }}
                   />
                 ) : (
-                  <div className="flex-1 flex flex-col items-center justify-center text-muted-foreground border border-border rounded-lg bg-muted/50">
-                    <div className="text-center p-6">
-                      <div className="mx-auto bg-accent/20 w-16 h-16 rounded-full flex items-center justify-center mb-4">
-                        <Sun size={24} className="text-accent-foreground" />
-                      </div>
-                      <h4 className="font-medium mb-1">No Preview Available</h4>
-                      <p className="text-sm max-w-xs">
-                        Website preview will appear here after a website is
-                        generated.
-                      </p>
-                    </div>
-                  </div>
+                  <PreviewFrame />
                 )}
-
-                {/* <iframe
-                  id="preview-frame"
-                  src="/preview"
-                  style={{
-                    width: "100%",
-                    height: "800px",
-                    border: "1px solid #ddd",
-                    borderRadius: "8px",
-                  }}
-                /> */}
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>

@@ -80,7 +80,8 @@ export const getFontsList = () => {
 
 export const getHeroImg = async (
   heroImgquery: any,
-  setHeroImg: React.Dispatch<React.SetStateAction<string>>
+  setHeroImg: React.Dispatch<React.SetStateAction<string>>,
+  updatedb:any
 ) => {
   if (!heroImgquery) return;
   const response = await fetch(
@@ -88,4 +89,7 @@ export const getHeroImg = async (
   );
   const data1 = await response.json();
   if (data1?.results[0]?.urls?.full) setHeroImg(data1?.results[0]?.urls?.full);
+  updatedb({
+    hero_img: data1?.results[0]?.urls?.full,
+  });
 };
