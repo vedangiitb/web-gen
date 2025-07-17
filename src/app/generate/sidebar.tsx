@@ -120,7 +120,7 @@ export default function SideBar() {
                   onClick={() => {
                     router.push(`/generate?id=${item.chatId}`);
                   }}
-                  className="text-left px-2 py-1 rounded-md hover:bg-muted transition cursor-pointer"
+                  className="text-left px-2 py-1 rounded-md hover:bg-muted transition cursor-pointer overflow-hidden whitespace-nowrap text-ellipsis"
                 >
                   {item.chatName}
                 </button>

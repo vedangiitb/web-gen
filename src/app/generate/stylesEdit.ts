@@ -1,11 +1,10 @@
 import { colorMap } from "@/components/generator/colorMap";
-import { supabase } from "@/lib/supabaseClient";
 
 export const getRelColList = (initialStyles: GenStyles) => {
   const allPairs = [
     {
       color: colorMap[initialStyles?.color].button,
-      muted: colorMap[initialStyles?.muted],
+      muted: colorMap[initialStyles?.muted].button,
       col1: initialStyles?.color,
       col2: initialStyles?.muted,
     },

@@ -1,5 +1,6 @@
 import { AuthProvider } from "@/components/auth/AuthContext";
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/sonner";
 import {
   Courier_Prime,
   Geist,
@@ -160,6 +161,7 @@ export default function RootLayout({
   `}
         >
           {children}
+          <Toaster />
         </body>
       </AuthProvider>
     </html>

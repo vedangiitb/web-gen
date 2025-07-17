@@ -7,7 +7,12 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import { supabase } from "@/lib/supabaseClient";
-import { ExternalLink, PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import {
+  ExternalLink,
+  PanelLeftClose,
+  PanelLeftOpen,
+  Save,
+} from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { captureWebsiteDetails } from "./captureWebsiteDetails";
@@ -19,6 +24,7 @@ import PreviewFrame from "./PreviewFrame";
 import SideBar from "./sidebar";
 import { getHeroImg } from "./stylesEdit";
 import StyleSettings from "./StyleSettings";
+import { toast } from "sonner";
 
 type WebsiteDetails = {
   businessName: string;
@@ -72,6 +78,7 @@ export default function GenerateWebsite() {
   const [chatVisible, setChatVisible] = useState(true);
   const [chatId, setChatId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [changes, setChanges] = useState(false);
 
   const openInNewWindow = () => {
     const previewData = {
@@ -80,56 +87,59 @@ export default function GenerateWebsite() {
       heroImg: heroImg,
     };
 
-    // ✅ Save data BEFORE opening the tab
     localStorage.setItem("previewData", JSON.stringify(previewData));
-
-    // ✅ Then open the new tab
     window.open("/preview", "_blank");
   };
 
   const getConversation = async (id: string) => {
     if (!id) return;
-    const { data, error } = await supabase
-      .from("user_conversations")
-      .select("*")
-      .eq("id", id);
-    console.log(data);
-    if (error) {
-      console.error(error);
-      return;
-    }
 
-    if (data && data[0]?.conv_history) {
-      setConversationHistory(data[0]?.conv_history);
-      setChatId(data[0]?.id);
+    try {
+      const { data, error } = await supabase
+        .from("user_conversations")
+        .select("*")
+        .eq("id", id)
+        .single();
 
-      if (data[0]?.content) {
-        setDetailsFromLLM(data[0]?.content);
-        setShowPreview(true);
-      } else {
-        setShowPreview(false);
-      }
-      if (data[0].style) {
-        setStylesFromLLM(data[0]?.style);
-        setInitialStyles(data[0]?.style);
-      }
-      if (data[0]?.hero_img) {
-        setHeroImg(data[0]?.hero_img);
-      }
+      if (error) throw error;
+      if (!data) return;
 
-      if (data[0]?.conv_history.length <= 2)
-        captureWebsiteDetails(
-          data[0]?.conv_history[1].parts[0].text,
-          setConversationHistory,
-          data[0]?.conv_history,
-          setIsLoading,
-          websiteDetails,
-          setWebsiteDetails,
-          setGeneratingSite,
-          setShowPreview,
-          user.accessToken,
-          (updateData: any) => updatedb(updateData, data[0]?.id)
-        );
+      const { conv_history, id: chatId, content, style, hero_img } = data;
+
+      if (conv_history) {
+        setConversationHistory(conv_history);
+        setChatId(chatId);
+
+        content ? setDetailsFromLLM(content) : setShowPreview(false);
+        if (content) setShowPreview(true);
+
+        if (style) {
+          setStylesFromLLM(style);
+          setInitialStyles(style);
+        }
+
+        if (hero_img) setHeroImg(hero_img);
+
+        if (conv_history.length <= 2) {
+          const inputText = conv_history[1]?.parts?.[0]?.text ?? "";
+          if (inputText) {
+            captureWebsiteDetails(
+              inputText,
+              setConversationHistory,
+              conv_history,
+              setIsLoading,
+              websiteDetails,
+              setWebsiteDetails,
+              setGeneratingSite,
+              setShowPreview,
+              user.accessToken,
+              (updateData: any) => updatedb(updateData, chatId)
+            );
+          }
+        }
+      }
+    } catch (err) {
+      console.error("Error fetching conversation:", err);
     }
   };
 
@@ -141,7 +151,11 @@ export default function GenerateWebsite() {
       .eq("id", id)
       .select("id");
 
-    if (error) console.error(error);
+    if (error) {
+      console.error(error);
+      return false;
+    }
+    return true;
   };
 
   const submitPrompt = useCallback(
@@ -212,11 +226,9 @@ export default function GenerateWebsite() {
       heroImg: heroImg,
     };
 
-    // Save to localStorage
     localStorage.setItem("previewData", JSON.stringify(previewData));
     console.log("📦 Saved to localStorage:", previewData);
 
-    // Send postMessage to iframe if it's present
     const iframe = document.getElementById(
       "preview-frame"
     ) as HTMLIFrameElement;
@@ -230,7 +242,6 @@ export default function GenerateWebsite() {
 
   return (
     <div className="max-h-screen text-foreground flex">
-      {/* Header */}
       <SideBar />
 
       <div className="w-full">
@@ -238,20 +249,17 @@ export default function GenerateWebsite() {
 
         <main className="h-[calc(100vh-5rem)]">
           <ResizablePanelGroup direction="horizontal" className="h-full">
-            {/* Chat Panel */}
             <ResizablePanel
               minSize={30}
-              className={`px-8 h-full ${!chatVisible ? "hidden" : ""}`}
+              className={`pl-8 pr-4 h-full ${!chatVisible ? "hidden" : ""}`}
             >
               <div className="h-full flex flex-col justify-between overflow-hidden">
-                {/* Chat History */}
                 <ChatHistory
                   conversationHistory={conversationHistory}
                   isLoading={isLoading}
                   generatingsite={generatingsite}
                 />
 
-                {/* Input Form */}
                 <ChatBox
                   prompt={prompt}
                   submitPrompt={submitPrompt}
@@ -268,7 +276,7 @@ export default function GenerateWebsite() {
 
             <ResizablePanel
               minSize={30}
-              className={`pl-2 ${!isGen ? "hidden" : ""}`}
+              className={`px-2 ${!isGen ? "hidden" : ""}`}
             >
               <div className="h-full flex flex-col p-2">
                 <div className="flex justify-between items-center mb-3">
@@ -287,16 +295,40 @@ export default function GenerateWebsite() {
 
                   <div className="flex gap-4">
                     {showPreview ? (
+                      <div>
+                        <Save
+                          className={`cursor-pointer w-5 h-5 ${
+                            changes ? "" : "text-muted-foreground"
+                          }`}
+                          onClick={async () => {
+                            if (!changes) return;
+                            const ret = updatedb({
+                              style: stylesFromLLM,
+                              content: detailsFromLLM,
+                            });
+                            if (await ret)
+                            {
+                              toast("Details updated successfullly!");
+                              setChanges(false)
+                            }
+                            else toast("Error while updating details");
+                          }}
+                        />
+                      </div>
+                    ) : null}
+
+                    {showPreview ? (
                       <StyleSettings
                         stylesFromLLM={stylesFromLLM}
                         setStylesFromLLM={setStylesFromLLM}
                         initialStyles={initialStyles}
+                        setChanges={setChanges}
                       />
                     ) : null}
 
                     {showPreview ? (
                       <ExternalLink
-                        className="cursor-pointer"
+                        className="cursor-pointer w-5 h-5"
                         onClick={openInNewWindow}
                       ></ExternalLink>
                     ) : null}
