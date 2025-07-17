@@ -1,9 +1,8 @@
 // components/Hero/modern.tsx
 "use client";
-import { Button } from "@/components/ui/button";
-import { colorMap } from "./colorMap";
 import { useState } from "react";
-import { Check, X } from "lucide-react";
+import { colorMap } from "./colorMap";
+import EditingControls from "./EditingControls";
 export type HeroProps = {
   content: {
     heading: string;
@@ -30,6 +29,7 @@ export default function Hero({
   const bgColors = colorMap[style?.color || "zinc"];
   const primary = style?.font.primary;
   const bodyFont = style?.font.body;
+
   const [editElement, setEditElement] = useState<
     "heading" | "subheading" | "primaryButton" | "secondaryButton" | ""
   >("");
@@ -200,30 +200,5 @@ export default function Hero({
         )}
       </div>
     </section>
-  );
-}
-
-function EditingControls({
-  handleSave,
-  setEditElement,
-}: {
-  handleSave: any;
-  setEditElement: any;
-}) {
-  return (
-    <div className="relative -top-2 flex gap-1">
-      <button
-        onClick={handleSave}
-        className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-full shadow"
-      >
-        <Check size={16} />
-      </button>
-      <button
-        onClick={() => setEditElement("")}
-        className="bg-gray-300 hover:bg-gray-400 text-black p-1 rounded-full shadow"
-      >
-        <X size={16} />
-      </button>
-    </div>
   );
 }

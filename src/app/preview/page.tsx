@@ -154,7 +154,15 @@ export default function PreviewPage() {
             />
           );
         else
-          return <Component key={idx} content={section.props} style={styles} />;
+          return (
+            <Component
+              key={idx}
+              content={section.props}
+              style={styles}
+              editMode={editMode}
+              updateData={updateData}
+            />
+          );
       })}
     </main>
   );

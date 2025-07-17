@@ -1,24 +1,51 @@
-// app/components/CallToAction.tsx
+"use client";
+import { useState } from "react";
 import { Button } from "@/components/ui/button"; // shadcn/ui Button
 import { colorMap } from "./colorMap";
+import EditingControls from "./EditingControls";
+
 export type CallToActionProps = {
   content: {
-    heading: string;
+    ctaheading: string;
     subtext: string;
     buttonText: string;
-    onClick?: () => void; // Optional: handle button click
+    onClick?: () => void;
   };
   style: GenStyles;
+  editMode: boolean;
+  updateData: (section: string, newContent: any) => void;
 };
 
-export default function CallToAction({ content, style }: CallToActionProps) {
+export default function CallToAction({
+  content,
+  style,
+  editMode,
+  updateData,
+}: CallToActionProps) {
   if (!content) return null;
 
   const mutedColors = colorMap[style?.muted || "gray"];
   const bgColors = colorMap[style?.color || "zinc"];
-
   const primary = style?.font.primary;
   const bodyFont = style?.font.body;
+
+  // Track which field ("ctaheading", "subtext", "buttonText") is being edited
+  const [editElement, setEditElement] = useState<string>("");
+
+  const isEditing = (id: string) => editMode && editElement === id;
+
+  function handleEditClick(id: string) {
+    if (editMode) setEditElement(id);
+  }
+
+  function handleSave(field: "ctaheading" | "subtext" | "buttonText") {
+    const el = document.getElementById(field);
+    console.log(el)
+    if (!el) return;
+    const newContent = { ...content, [field]: el.textContent || "" };
+    updateData("CallToAction", newContent);
+    setEditElement("");
+  }
 
   return (
     <section
@@ -52,20 +79,92 @@ export default function CallToAction({ content, style }: CallToActionProps) {
       </svg>
 
       <div className="relative z-10 max-w-2xl mx-auto">
+        {/* Heading */}
         <h2
-          className={`text-3xl md:text-4xl font-bold mb-4 ${bgColors.text} drop-shadow`}
+          id="ctaheading"
+          suppressContentEditableWarning
+          contentEditable={isEditing("ctaheading")}
+          className={`text-3xl md:text-4xl font-bold mb-4 ${
+            bgColors.text
+          } drop-shadow ${
+            editMode
+              ? `outline-dashed px-1 transition ${
+                  isEditing("ctaheading") ? "outline-blue-500 shadow-md" : ""
+                }`
+              : ""
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEditClick("ctaheading");
+          }}
         >
-          {content.heading}
+          {content.ctaheading}
         </h2>
-        <p className={`mb-8 text-lg md:text-xl ${bgColors.accentText} ${bodyFont}`}>
+        {isEditing("ctaheading") && (
+          <EditingControls
+            handleSave={() => handleSave("ctaheading")}
+            setEditElement={setEditElement}
+          />
+        )}
+
+        {/* Subtext */}
+        <p
+          id="subtext"
+          suppressContentEditableWarning
+          contentEditable={isEditing("subtext")}
+          className={`mb-8 text-lg md:text-xl ${
+            bgColors.accentText
+          } ${bodyFont} ${
+            editMode
+              ? `outline-dashed px-1 transition ${
+                  isEditing("subtext") ? "outline-blue-500 shadow-md" : ""
+                }`
+              : ""
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEditClick("subtext");
+          }}
+        >
           {content.subtext}
         </p>
+        {isEditing("subtext") && (
+          <EditingControls
+            handleSave={() => handleSave("subtext")}
+            setEditElement={setEditElement}
+          />
+        )}
+
+        {/* Button */}
         <Button
+          id="buttonText"
           size="lg"
-          className={`transition ${bgColors.button} ${bgColors.buttonTxt} ${bgColors.buttonHover} font-semibold `}
-          onClick={content.onClick}
+          suppressContentEditableWarning
+          contentEditable={isEditing("buttonText")}
+          className={`transition ${bgColors.button} ${bgColors.buttonTxt} ${
+            bgColors.buttonHover
+          } font-semibold ${editMode ? "outline-dashed px-1 transition" : ""} ${
+            isEditing("buttonText") ? "outline-blue-500 shadow-md" : ""
+          }`}
+          onClick={(e) => {
+            // Avoid accidental click during editing
+            if (editMode) {
+              e.preventDefault();
+              e.stopPropagation();
+              handleEditClick("buttonText");
+            } else {
+              content.onClick?.();
+            }
+          }}
+          tabIndex={editMode ? -1 : 0}
         >
           {content.buttonText}
+          {isEditing("buttonText") && (
+            <EditingControls
+              handleSave={() => handleSave("buttonText")}
+              setEditElement={setEditElement}
+            />
+          )}
         </Button>
       </div>
     </section>
