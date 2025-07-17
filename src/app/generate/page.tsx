@@ -25,7 +25,13 @@ import SideBar from "./sidebar";
 import { getHeroImg } from "./stylesEdit";
 import StyleSettings from "./StyleSettings";
 import { toast } from "sonner";
-
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { updatedb } from "./updateDb";
 type WebsiteDetails = {
   businessName: string;
   businessType: string;
@@ -79,6 +85,7 @@ export default function GenerateWebsite() {
   const [chatId, setChatId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [changes, setChanges] = useState(false);
+  const [editMode, setEditMode] = useState(false);
 
   const openInNewWindow = () => {
     const previewData = {
@@ -103,6 +110,7 @@ export default function GenerateWebsite() {
 
       if (error) throw error;
       if (!data) return;
+      localStorage.setItem("chatId", id);
 
       const { conv_history, id: chatId, content, style, hero_img } = data;
 
@@ -143,20 +151,20 @@ export default function GenerateWebsite() {
     }
   };
 
-  const updatedb = async (updateData: any, id = chatId) => {
-    if (!id) return;
-    const { data, error } = await supabase
-      .from("user_conversations")
-      .update(updateData)
-      .eq("id", id)
-      .select("id");
+  // const updatedb = async (updateData: any, id = chatId) => {
+  //   if (!id) return;
+  //   const { data, error } = await supabase
+  //     .from("user_conversations")
+  //     .update(updateData)
+  //     .eq("id", id)
+  //     .select("id");
 
-    if (error) {
-      console.error(error);
-      return false;
-    }
-    return true;
-  };
+  //   if (error) {
+  //     console.error(error);
+  //     return false;
+  //   }
+  //   return true;
+  // };
 
   const submitPrompt = useCallback(
     (e?: React.FormEvent) => {
@@ -240,6 +248,21 @@ export default function GenerateWebsite() {
     );
   }, [detailsFromLLM, stylesFromLLM, heroImg]);
 
+  const toggleEditMode = () => {
+    const iframe = document.getElementById(
+      "preview-frame"
+    ) as HTMLIFrameElement;
+    iframe?.contentWindow?.postMessage(
+      {
+        type: "editMode",
+        value: !editMode,
+      },
+      window.location.origin
+    );
+
+    setEditMode(!editMode);
+  };
+
   return (
     <div className="max-h-screen text-foreground flex">
       <SideBar />
@@ -293,46 +316,51 @@ export default function GenerateWebsite() {
                   )}
                   <h3 className="font-semibold text-lg">Preview</h3>
 
-                  <div className="flex gap-4">
-                    {showPreview ? (
-                      <div>
-                        <Save
-                          className={`cursor-pointer w-5 h-5 ${
-                            changes ? "" : "text-muted-foreground"
-                          }`}
-                          onClick={async () => {
-                            if (!changes) return;
-                            const ret = updatedb({
-                              style: stylesFromLLM,
-                              content: detailsFromLLM,
-                            });
-                            if (await ret)
-                            {
-                              toast("Details updated successfullly!");
-                              setChanges(false)
-                            }
-                            else toast("Error while updating details");
-                          }}
-                        />
-                      </div>
-                    ) : null}
+                  {showPreview ? (
+                    <div className="flex gap-4">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Switch
+                            className={`border-2 h-5 w-8 border-muted-foreground bg-muted-foreground`}
+                            checked={editMode}
+                            onCheckedChange={toggleEditMode}
+                          />
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="text-xs">
+                          Turn edit Mode {editMode ? "off" : "on"}
+                        </TooltipContent>
+                      </Tooltip>
 
-                    {showPreview ? (
+                      <Save
+                        className={`cursor-pointer w-5 h-5 ${
+                          changes ? "" : "text-muted-foreground"
+                        }`}
+                        onClick={async () => {
+                          if (!changes) return;
+                          const ret = updatedb({
+                            style: stylesFromLLM,
+                            content: detailsFromLLM,
+                          });
+                          if (await ret) {
+                            toast("Details updated successfullly!");
+                            setChanges(false);
+                          } else toast("Error while updating details");
+                        }}
+                      />
+
                       <StyleSettings
                         stylesFromLLM={stylesFromLLM}
                         setStylesFromLLM={setStylesFromLLM}
                         initialStyles={initialStyles}
                         setChanges={setChanges}
                       />
-                    ) : null}
 
-                    {showPreview ? (
                       <ExternalLink
                         className="cursor-pointer w-5 h-5"
                         onClick={openInNewWindow}
                       ></ExternalLink>
-                    ) : null}
-                  </div>
+                    </div>
+                  ) : null}
                 </div>
 
                 {showPreview ? (

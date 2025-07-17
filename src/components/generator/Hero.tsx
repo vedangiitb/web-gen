@@ -2,6 +2,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { colorMap } from "./colorMap";
+import { useState } from "react";
+import { Check, X } from "lucide-react";
 export type HeroProps = {
   content: {
     heading: string;
@@ -12,53 +14,176 @@ export type HeroProps = {
   };
   style: GenStyles;
   heroImg: string;
+  editMode: boolean;
+  updateData: any;
 };
 
-export default function Hero({ content, style, heroImg }: HeroProps) {
+export default function Hero({
+  content,
+  style,
+  heroImg,
+  editMode,
+  updateData,
+}: HeroProps) {
   if (!content) return <div></div>;
 
   const bgColors = colorMap[style?.color || "zinc"];
   const primary = style?.font.primary;
   const bodyFont = style?.font.body;
+  const [editElement, setEditElement] = useState<
+    "heading" | "subheading" | "primaryButton" | "secondaryButton" | ""
+  >("");
+
+  const handleClick = (id: string) => {
+    if (
+      [
+        "heading",
+        "subheading",
+        "primaryButton",
+        "secondaryButton",
+        "",
+      ].includes(id)
+    )
+      setEditElement(id as typeof editElement);
+  };
+
+  const isEditing = (id: string) => editMode && editElement === id;
+
+  const handleSave = () => {
+    const val = document.getElementById(editElement);
+    if (!val) return;
+
+    const newContent = { ...content };
+
+    if (
+      editElement === "heading" ||
+      editElement === "subheading" ||
+      editElement === "primaryButton" ||
+      editElement === "secondaryButton"
+    ) {
+      newContent[editElement] = (val as HTMLInputElement).textContent || "";
+      updateData("Hero", newContent);
+    }
+
+    console.log("Updated content:", newContent);
+    setEditElement("");
+  };
 
   return (
     <section
-      className={`
-        flex flex-col-reverse md:flex-row items-center gap-10
-        px-8 md:px-16 py-20 md:py-28 ${primary}
-      `}
+      className={`flex flex-col-reverse md:flex-row items-center gap-10 px-8 md:px-16 py-20 md:py-28 ${primary}`}
     >
-      {/* Text Content */}
       <div className="flex-1 w-full">
+        {/* Heading */}
         <h1
-          className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${bgColors.text}`}
+          suppressContentEditableWarning
+          contentEditable={isEditing("heading")}
+          id="heading"
+          className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${
+            bgColors.text
+          }
+            ${
+              editMode
+                ? `outline-dashed ${
+                    isEditing("heading") ? "outline-blue-500 shadow-md" : ""
+                  }`
+                : ""
+            }
+          `}
+          onClick={(e) => handleClick((e.target as HTMLElement).id)}
         >
           {content.heading}
         </h1>
+        {isEditing("heading") && (
+          <EditingControls
+            handleSave={handleSave}
+            setEditElement={setEditElement}
+          />
+        )}
+
+        {/* Subheading */}
         <p
-          className={`text-lg md:text-xl mb-8 ${bgColors.accentText} ${bodyFont}`}
+          contentEditable={isEditing("subheading")}
+          id="subheading"
+          className={`text-lg md:text-xl mb-8 ${bgColors.accentText} ${bodyFont}
+            ${
+              editMode
+                ? `outline-dashed ${
+                    isEditing("subheading") ? "outline-blue-500 shadow-md" : ""
+                  }`
+                : ""
+            }
+          `}
+          onClick={(e) => handleClick((e.target as HTMLElement).id)}
         >
           {content.subheading}
         </p>
+
+        {isEditing("subheading") && (
+          <EditingControls
+            handleSave={handleSave}
+            setEditElement={setEditElement}
+          />
+        )}
+
+        {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4">
           {content.primaryButton && (
-            <Button
-              size="lg"
-              className={`transition ${bgColors.button} ${bgColors.buttonTxt} ${bgColors.buttonHover}`}
+            <button
+              contentEditable={isEditing("primaryButton")}
+              id="primaryButton"
+              className={`transition ${bgColors.button} ${bgColors.buttonTxt} ${
+                bgColors.buttonHover
+              } px-6 py-3 rounded-lg text-lg font-semibold 
+                ${
+                  editMode
+                    ? `outline-dashed ${
+                        isEditing("primaryButton")
+                          ? "outline-blue-500 shadow-md"
+                          : ""
+                      }`
+                    : ""
+                }
+              `}
+              onClick={(e) => handleClick((e.target as HTMLElement).id)}
             >
               {content.primaryButton}
-            </Button>
+            </button>
           )}
+
           {content.secondaryButton && (
-            <Button
-              variant="outline"
-              size="lg"
-              className={`transition ${bgColors.secondaryButtonBg} ${bgColors.secondaryButtonTxt} ${bgColors.secondaryButtonHover} ${bgColors.secondaryButtonOutline} `}
+            <button
+              contentEditable={isEditing("secondaryButton")}
+              id="secondaryButton"
+              className={`transition ${bgColors.secondaryButtonBg} ${
+                bgColors.secondaryButtonTxt
+              } ${bgColors.secondaryButtonHover} ${
+                bgColors.secondaryButtonOutline
+              }
+                px-6 py-3 rounded-lg text-lg font-semibold
+                ${
+                  editMode
+                    ? `outline-dashed ${
+                        isEditing("secondaryButton")
+                          ? "outline-blue-500 shadow-md"
+                          : ""
+                      }`
+                    : ""
+                }
+              `}
+              onClick={(e) => handleClick((e.target as HTMLElement).id)}
             >
               {content.secondaryButton}
-            </Button>
+            </button>
           )}
         </div>
+
+        {(isEditing("primaryButton") || isEditing("secondaryButton")) && (
+          <EditingControls
+            handleSave={handleSave}
+            setEditElement={setEditElement}
+          />
+        )}
       </div>
 
       {/* Image */}
@@ -75,5 +200,30 @@ export default function Hero({ content, style, heroImg }: HeroProps) {
         )}
       </div>
     </section>
+  );
+}
+
+function EditingControls({
+  handleSave,
+  setEditElement,
+}: {
+  handleSave: any;
+  setEditElement: any;
+}) {
+  return (
+    <div className="relative -top-2 flex gap-1">
+      <button
+        onClick={handleSave}
+        className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-full shadow"
+      >
+        <Check size={16} />
+      </button>
+      <button
+        onClick={() => setEditElement("")}
+        className="bg-gray-300 hover:bg-gray-400 text-black p-1 rounded-full shadow"
+      >
+        <X size={16} />
+      </button>
+    </div>
   );
 }
