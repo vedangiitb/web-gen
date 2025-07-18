@@ -11,7 +11,12 @@ export type PricingProps = {
   updateData: (section: string, content: any) => void;
 };
 
-export default function Pricing({ content, style, editMode, updateData }: PricingProps) {
+export default function Pricing({
+  content,
+  style,
+  editMode,
+  updateData,
+}: PricingProps) {
   if (!content) return null;
 
   const bgColors = colorMap[style?.color || "zinc"];
@@ -26,7 +31,15 @@ export default function Pricing({ content, style, editMode, updateData }: Pricin
   const isEditing = (id: string) => editMode && editElement === id;
 
   // Edit plan name/price/feature save logic
-  function handleSave({ planIdx, type, featIdx }: { planIdx: number, type: "name" | "price" | "feature", featIdx?: number }) {
+  function handleSave({
+    planIdx,
+    type,
+    featIdx,
+  }: {
+    planIdx: number;
+    type: "name" | "price" | "feature";
+    featIdx?: number;
+  }) {
     if (type === "feature" && typeof featIdx === "number") {
       const fieldId = `plan-${planIdx}-feature-${featIdx}`;
       const el = document.getElementById(fieldId);
@@ -41,12 +54,16 @@ export default function Pricing({ content, style, editMode, updateData }: Pricin
       const el = document.getElementById(fieldId);
       if (!el) return;
       const newPlans = [...content.plans];
-      newPlans[planIdx] = { ...newPlans[planIdx], [type]: el.textContent || "" };
+      newPlans[planIdx] = {
+        ...newPlans[planIdx],
+        [type]: el.textContent || "",
+      };
       updateData("Pricing", { ...content, plans: newPlans });
     }
     setEditElement("");
   }
 
+  // TODO: Implement Add/delete plans
   // Optional: For add/delete plans/features, you can uncomment the relevant code
   // const handleAddPlan = () => { ... }
   // const handleDeletePlan = (planIdx: number) => { ... }
@@ -93,8 +110,17 @@ export default function Pricing({ content, style, editMode, updateData }: Pricin
               id={`plan-${planIdx}-name`}
               suppressContentEditableWarning
               contentEditable={isEditing(`plan-${planIdx}-name`)}
-              className={`text-xl font-semibold mb-2 ${editMode ? "outline-dashed px-1 transition " : ""}${isEditing(`plan-${planIdx}-name`) ? "outline-blue-500 shadow-md" : ""}`}
-              onClick={e => { e.stopPropagation(); handleEditClick(`plan-${planIdx}-name`); }}
+              className={`text-xl font-semibold mb-2 ${
+                editMode ? "outline-dashed px-1 transition " : ""
+              }${
+                isEditing(`plan-${planIdx}-name`)
+                  ? "outline-blue-500 shadow-md"
+                  : ""
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditClick(`plan-${planIdx}-name`);
+              }}
             >
               {plan.name}
             </h3>
@@ -110,8 +136,19 @@ export default function Pricing({ content, style, editMode, updateData }: Pricin
               id={`plan-${planIdx}-price`}
               suppressContentEditableWarning
               contentEditable={isEditing(`plan-${planIdx}-price`)}
-              className={`text-3xl font-bold ${bgColors.secondaryButtonBg} ${bgColors.secondaryTxtCol} mb-6 px-4 py-2 rounded-md ${editMode ? "outline-dashed px-1 transition " : ""}${isEditing(`plan-${planIdx}-price`) ? "outline-blue-500 shadow-md" : ""}`}
-              onClick={e => { e.stopPropagation(); handleEditClick(`plan-${planIdx}-price`); }}
+              className={`text-3xl font-bold ${bgColors.secondaryButtonBg} ${
+                bgColors.secondaryTxtCol
+              } mb-6 px-4 py-2 rounded-md ${
+                editMode ? "outline-dashed px-1 transition " : ""
+              }${
+                isEditing(`plan-${planIdx}-price`)
+                  ? "outline-blue-500 shadow-md"
+                  : ""
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditClick(`plan-${planIdx}-price`);
+              }}
             >
               {plan.price}
             </p>
@@ -125,20 +162,36 @@ export default function Pricing({ content, style, editMode, updateData }: Pricin
             {/* Features */}
             <ul className="w-full space-y-3 mb-2">
               {plan.features.map((feat, featIdx) => (
-                <li key={featIdx} className={`flex items-center gap-2 ${bodyFont} relative`}>
+                <li
+                  key={featIdx}
+                  className={`flex items-center gap-2 ${bodyFont} relative`}
+                >
                   <CheckCircle className={`h-5 w-5`} />
                   <span
                     id={`plan-${planIdx}-feature-${featIdx}`}
                     suppressContentEditableWarning
-                    contentEditable={isEditing(`plan-${planIdx}-feature-${featIdx}`)}
-                    className={`${editMode ? "outline-dashed px-1 transition" : ""} ${isEditing(`plan-${planIdx}-feature-${featIdx}`) ? "outline-blue-500 shadow-md" : ""}`}
-                    onClick={e => { e.stopPropagation(); handleEditClick(`plan-${planIdx}-feature-${featIdx}`); }}
+                    contentEditable={isEditing(
+                      `plan-${planIdx}-feature-${featIdx}`
+                    )}
+                    className={`${
+                      editMode ? "outline-dashed px-1 transition" : ""
+                    } ${
+                      isEditing(`plan-${planIdx}-feature-${featIdx}`)
+                        ? "outline-blue-500 shadow-md"
+                        : ""
+                    }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditClick(`plan-${planIdx}-feature-${featIdx}`);
+                    }}
                   >
                     {feat}
                   </span>
                   {isEditing(`plan-${planIdx}-feature-${featIdx}`) && (
                     <EditingControls
-                      handleSave={() => handleSave({ planIdx, type: "feature", featIdx })}
+                      handleSave={() =>
+                        handleSave({ planIdx, type: "feature", featIdx })
+                      }
                       setEditElement={setEditElement}
                     />
                   )}

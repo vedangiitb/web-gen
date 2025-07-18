@@ -33,6 +33,7 @@ export default function SideBar() {
         .from("user_conversations")
         .select("id, name")
         .eq("user_id", user.userId)
+        .order("created_at", { ascending: false })
         .throwOnError();
 
       if (data) {
@@ -114,7 +115,7 @@ export default function SideBar() {
           <p className="text-muted-foreground mb-2 px-1">Recent Chats</p>
           {recentChats.length ? (
             <div className="flex flex-col gap-1">
-              {recentChats.reverse().map((item) => (
+              {recentChats.map((item) => (
                 <button
                   key={item.chatId}
                   onClick={() => {

@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { MenuIcon } from "lucide-react";
+import { MenuIcon, X } from "lucide-react";
 import { colorMap } from "./colorMap";
 import EditingControls from "./EditingControls";
+import { Input } from "../ui/input";
 
 export type NavbarProps = {
   content: { logoText: string; links: string[]; ctaText: string };
@@ -23,8 +24,8 @@ export default function Navbar({
   const bgColors = colorMap[style?.color || "zinc"];
   const primary = style?.font.primary;
 
-  // Track which field is being edited: 'logoText', 'ctaText', or 'link-0', 'link-1', etc.
   const [editElement, setEditElement] = useState<string>("");
+  const [showAddLink, setShowAddLink] = useState(false);
 
   const isEditing = (id: string) => editMode && editElement === id;
 
@@ -49,9 +50,23 @@ export default function Navbar({
     setEditElement("");
   }
 
-  // Optional: Add/Edit/Delete links (logic provided as comments)
-  // function handleAddLink() { ... }
-  // function handleDeleteLink(idx: number) { ... }
+  function handleAddLink(name: string, link: string) {
+    const newLinks = [...content.links, name];
+    content.links = newLinks;
+    const newContent = { ...content, links: newLinks };
+
+    updateData("Navbar", newContent);
+    setEditElement("");
+  }
+
+  function handleDeleteLink(idx: number) {
+    let newLinks = [...content.links];
+    newLinks.splice(idx, 1);
+    content.links = newLinks;
+    const newContent = { ...content, links: newLinks };
+    updateData("Navbar", newContent);
+    setEditElement("");
+  }
 
   return (
     <nav
@@ -60,7 +75,6 @@ export default function Navbar({
         ${bgColors.bgFrom} backdrop-blur  ${bgColors.bgTo} shadow-sm ${primary}
       `}
     >
-      {/* Logo */}
       <div
         id="logoText"
         suppressContentEditableWarning
@@ -78,23 +92,24 @@ export default function Navbar({
         }}
       >
         {content.logoText}
-        {isEditing("logoText") && (
-          <EditingControls
-            handleSave={() => handleSave("logoText")}
-            setEditElement={setEditElement}
-          />
-        )}
       </div>
+      {isEditing("logoText") && (
+        <EditingControls
+          handleSave={() => handleSave("logoText")}
+          setEditElement={setEditElement}
+        />
+      )}
 
       {/* Links */}
       <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0">
         {content.links.map((link, idx) => (
-          <li
-            key={idx}
-            id={`link-${idx}`}
-            suppressContentEditableWarning
-            contentEditable={isEditing(`link-${idx}`)}
-            className={`
+          <div>
+            <li
+              key={idx}
+              id={`link-${idx}`}
+              suppressContentEditableWarning
+              contentEditable={isEditing(`link-${idx}`)}
+              className={`
               ${bgColors.text} 
               ${bgColors.linkHover}
               font-medium cursor-pointer transition-colors
@@ -103,41 +118,37 @@ export default function Navbar({
               ${editMode ? "outline-dashed px-1 transition" : ""}
               ${isEditing(`link-${idx}`) ? "outline-blue-500 shadow-md" : ""}
             `}
-            onClick={(e) => {
-              e.stopPropagation();
-              handleEditClick(`link-${idx}`);
-            }}
-          >
-            <span className="relative z-10">{link}</span>
-            <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-current transition-all duration-500 group-hover:w-full" />
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditClick(`link-${idx}`);
+              }}
+            >
+              <span className="relative z-10">{link}</span>
+              <span className="absolute left-0 bottom-0 h-[2px] w-0 bg-current transition-all duration-500 group-hover:w-full" />
+            </li>
             {isEditing(`link-${idx}`) && (
               <EditingControls
                 handleSave={() => handleSave("link-" + idx, idx)}
                 setEditElement={setEditElement}
+                deleteElement={() => handleDeleteLink(idx)}
               />
             )}
-            {/* Uncomment for Delete button:
-            {editMode && (
-              <button
-                className="ml-2 text-red-500 hover:text-red-700"
-                onClick={() => handleDeleteLink(idx)}
-              >
-                &times;
-              </button>
-            )} */}
-          </li>
+          </div>
         ))}
-        {/* Uncomment for Add Link
+        {/* Uncomment for Add Link */}
         {editMode && (
           <li>
             <button
-              onClick={handleAddLink}
+              onClick={() => setShowAddLink(true)}
               className="text-blue-600 underline ml-2"
             >
               + Add Link
             </button>
+            {showAddLink && (
+              <AddLink cancel={setShowAddLink} addLink={handleAddLink} />
+            )}
           </li>
-        )} */}
+        )}
       </ul>
 
       {/* CTA Button */}
@@ -162,18 +173,82 @@ export default function Navbar({
         tabIndex={editMode ? -1 : 0}
       >
         {content.ctaText}
-        {isEditing("ctaText") && (
-          <EditingControls
-            handleSave={() => handleSave("ctaText")}
-            setEditElement={setEditElement}
-          />
-        )}
       </Button>
+      {isEditing("ctaText") && (
+        <EditingControls
+          handleSave={() => handleSave("ctaText")}
+          setEditElement={setEditElement}
+        />
+      )}
 
       {/* Mobile menu icon */}
       <div className="md:hidden">
         <MenuIcon className={`h-6 w-6 ${bgColors.text}`} />
       </div>
     </nav>
+  );
+}
+
+function AddLink({
+  cancel,
+  addLink,
+}: {
+  cancel: React.Dispatch<React.SetStateAction<boolean>>;
+  addLink: (name: string, url: string) => void;
+}) {
+  const [name, setName] = useState("");
+  const [link, setLink] = useState("");
+
+  return (
+    <div className="absolute z-50 w-[300px] bg-muted border border-muted-foreground rounded-2xl p-4 shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-foreground">Add Link</h2>
+        <button
+          onClick={() => cancel(false)}
+          className="text-muted-foreground hover:text-foreground transition"
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Name Input */}
+      <div className="mb-3">
+        <label className="text-sm font-medium text-muted-foreground">
+          Name
+        </label>
+        <Input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g., GitHub"
+          className="mt-1"
+        />
+      </div>
+
+      {/* Link Input */}
+      <div className="mb-4">
+        <label className="text-sm font-medium text-muted-foreground">
+          URL (Optional)
+        </label>
+        <Input
+          value={link}
+          onChange={(e) => setLink(e.target.value)}
+          placeholder="e.g., https://github.com"
+          className="mt-1"
+        />
+      </div>
+
+      {/* Action Button */}
+      <Button
+        className="w-full"
+        onClick={() => {
+          addLink(name, link);
+          cancel(false);
+        }}
+        disabled={!name}
+      >
+        Add Link
+      </Button>
+    </div>
   );
 }

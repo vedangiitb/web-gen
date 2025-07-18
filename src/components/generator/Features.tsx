@@ -1,8 +1,10 @@
 "use client";
-import { CheckCircle } from "lucide-react"; // Lucide is used by shadcn/ui for icons
+import { CheckCircle, X } from "lucide-react"; // Lucide is used by shadcn/ui for icons
 import { colorMap } from "./colorMap";
 import { useState } from "react";
 import EditingControls from "./EditingControls";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 
 export type FeaturesProps = {
   content: {
@@ -29,6 +31,7 @@ export default function Features({
   const bodyFont = style?.font.body;
 
   const [editElement, setEditElement] = useState<string>("");
+  const [addingFeature, setAddingFeature] = useState(false);
 
   const isEditing = (id: string) => editMode && editElement === id;
 
@@ -51,6 +54,23 @@ export default function Features({
 
     updateData("Features", newContent);
     setEditElement("");
+  };
+
+  const addFeature = (text: string) => {
+    let newFeatures = [...content.featureList];
+    newFeatures.push(text);
+    content.featureList = newFeatures;
+    const newContent = { ...content, featureList: newFeatures };
+    updateData("Features", newContent);
+  };
+
+  const deleteFeature = (idx: number) => {
+    let newFeatures = [...content.featureList];
+    newFeatures.splice(idx, 1);
+    content.featureList = newFeatures;
+    const newContent = { ...content, featureList: newFeatures };
+    updateData("Features", newContent);
+    setEditElement("")
   };
 
   return (
@@ -110,12 +130,66 @@ export default function Features({
                 <EditingControls
                   handleSave={handleSave}
                   setEditElement={setEditElement}
+                  deleteElement={() => deleteFeature(idx)}
                 />
               )}
             </li>
           );
         })}
       </ul>
+
+      {editMode && (
+        <Button onClick={() => setAddingFeature(true)}>Add Feature</Button>
+      )}
+
+      {addingFeature && (
+        <AddFeature cancel={setAddingFeature} addFeature={addFeature} />
+      )}
     </section>
+  );
+}
+
+function AddFeature({ cancel, addFeature }: { cancel: any; addFeature: any }) {
+  const [feature, setFeature] = useState("");
+  return (
+    <div className="absolute z-50 w-[300px] bg-muted border border-muted-foreground rounded-2xl p-4 shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-foreground">
+          Add New Feature
+        </h2>
+        <button
+          onClick={() => cancel(false)}
+          className="text-muted-foreground hover:text-foreground transition"
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Name Input */}
+      <div className="mb-3">
+        <label className="text-sm font-medium text-muted-foreground">
+          Name
+        </label>
+        <Input
+          value={feature}
+          onChange={(e) => setFeature(e.target.value)}
+          placeholder="new feature"
+          className="mt-1"
+        />
+      </div>
+
+      {/* Action Button */}
+      <Button
+        className="w-full"
+        onClick={() => {
+          addFeature(feature);
+          cancel(false);
+        }}
+        disabled={!feature}
+      >
+        Add Feature
+      </Button>
+    </div>
   );
 }

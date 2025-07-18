@@ -11,7 +11,12 @@ export type TestimonialProps = {
   updateData: (section: string, content: any) => void;
 };
 
-export default function Testimonials({ content, style, editMode, updateData }: TestimonialProps) {
+export default function Testimonials({
+  content,
+  style,
+  editMode,
+  updateData,
+}: TestimonialProps) {
   if (!content) return null;
 
   const bgColors = colorMap[style?.color || "zinc"];
@@ -44,6 +49,7 @@ export default function Testimonials({ content, style, editMode, updateData }: T
     setEditElement(""); // Optionally keep editing on, if you want
   };
 
+  // TODO: Implement add/delete testimonial
   // Optionally: Add/Delete controls
   // const handleAdd = () => {
   //   updateData("Testimonials", {
@@ -97,11 +103,16 @@ export default function Testimonials({ content, style, editMode, updateData }: T
               className={`text-lg italic mb-6 ${mutedColors.text} ${bodyFont} ${
                 editMode
                   ? `outline-dashed px-1 transition ${
-                      isEditing(`review-${idx}`) ? "outline-blue-500 shadow-md" : ""
+                      isEditing(`review-${idx}`)
+                        ? "outline-blue-500 shadow-md"
+                        : ""
                     }`
                   : ""
               }`}
-              onClick={e => { e.stopPropagation(); handleEditClick(`review-${idx}`); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleEditClick(`review-${idx}`);
+              }}
             >
               {review}
             </p>
@@ -119,12 +130,8 @@ export default function Testimonials({ content, style, editMode, updateData }: T
                 return (
                   <span
                     key={i}
-                    className={
-                      editMode
-                        ? "cursor-pointer"
-                        : ""
-                    }
-                    onClick={e => {
+                    className={editMode ? "cursor-pointer" : ""}
+                    onClick={(e) => {
                       if (editMode) {
                         setEditElement(`rating-${idx}`);
                         handleSaveRating(idx, i + 1);

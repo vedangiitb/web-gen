@@ -8,6 +8,9 @@ import {
 } from "@/components/ui/accordion";
 import { colorMap } from "./colorMap";
 import EditingControls from "./EditingControls";
+import { Button } from "../ui/button";
+import { X } from "lucide-react";
+import { Input } from "../ui/input";
 
 export type FAQProps = {
   content: {
@@ -18,7 +21,12 @@ export type FAQProps = {
   updateData: (section: string, content: any) => void;
 };
 
-export default function FAQ({ content, style, editMode, updateData }: FAQProps) {
+export default function FAQ({
+  content,
+  style,
+  editMode,
+  updateData,
+}: FAQProps) {
   if (!content) return null;
 
   const bgColors = colorMap[style?.color || "zinc"];
@@ -26,8 +34,8 @@ export default function FAQ({ content, style, editMode, updateData }: FAQProps) 
   const primary = style?.font.primary;
   const bodyFont = style?.font.body;
 
-  // Track which field (e.g. "q-0-question", "q-2-answer") is being edited
   const [editElement, setEditElement] = useState<string>("");
+  const [addFaq, setAddFaq] = useState(false);
 
   const isEditing = (id: string) => editMode && editElement === id;
 
@@ -49,15 +57,21 @@ export default function FAQ({ content, style, editMode, updateData }: FAQProps) 
     setEditElement("");
   };
 
-  // Optional: Add/Remove Q/A
-  // const handleAdd = () => {
-  //   const newQuestions = [...content.questions, { question: "New question", answer: "Answer here" }];
-  //   updateData("FAQ", { ...content, questions: newQuestions });
-  // };
-  // const handleDelete = (idx: number) => {
-  //   const newQuestions = content.questions.filter((_, qidx) => qidx !== idx);
-  //   updateData("FAQ", { ...content, questions: newQuestions });
-  // };
+  const handleAdd = (faq: string, answer: string) => {
+    const newQuestions = [
+      ...content.questions,
+      { question: faq, answer: answer },
+    ];
+    content.questions = newQuestions;
+    updateData("FAQ", { ...content, questions: newQuestions });
+    setEditElement("");
+  };
+  const handleDelete = (idx: number) => {
+    const newQuestions = content.questions.filter((_, qidx) => qidx !== idx);
+    content.questions = newQuestions;
+    updateData("FAQ", { ...content, questions: newQuestions });
+    setEditElement("");
+  };
 
   return (
     <section className={`max-w-4xl mx-auto px-8 md:px-16 py-16 ${primary}`}>
@@ -66,16 +80,6 @@ export default function FAQ({ content, style, editMode, updateData }: FAQProps) 
       >
         Frequently Asked Questions
       </h2>
-
-      {/* Uncomment if you want add button */}
-      {/* {editMode && (
-        <button
-          onClick={handleAdd}
-          className="mb-6 px-4 py-2 rounded bg-blue-500 text-white font-semibold hover:bg-blue-600"
-        >
-          Add Question
-        </button>
-      )} */}
 
       <Accordion type="single" collapsible className="space-y-4">
         {content.questions.map((q, idx) => (
@@ -94,11 +98,16 @@ export default function FAQ({ content, style, editMode, updateData }: FAQProps) 
                 className={
                   editMode
                     ? `outline-dashed rounded-sm px-1 transition ${
-                        isEditing(`q-${idx}-question`) ? "outline-blue-500 shadow-md" : ""
+                        isEditing(`q-${idx}-question`)
+                          ? "outline-blue-500 shadow-md"
+                          : ""
                       }`
                     : ""
                 }
-                onClick={e => { e.stopPropagation(); handleEditClick(`q-${idx}-question`); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditClick(`q-${idx}-question`);
+                }}
               >
                 {q.question}
               </span>
@@ -106,10 +115,13 @@ export default function FAQ({ content, style, editMode, updateData }: FAQProps) 
                 <EditingControls
                   handleSave={() => handleSave(idx, "question")}
                   setEditElement={setEditElement}
+                  deleteElement={() => handleDelete(idx)}
                 />
               )}
             </AccordionTrigger>
-            <AccordionContent className={`px-6 py-4 ${mutedColors.accentText} ${bodyFont}`}>
+            <AccordionContent
+              className={`px-6 py-4 ${mutedColors.accentText} ${bodyFont}`}
+            >
               <div
                 suppressContentEditableWarning
                 contentEditable={isEditing(`q-${idx}-answer`)}
@@ -117,11 +129,16 @@ export default function FAQ({ content, style, editMode, updateData }: FAQProps) 
                 className={
                   editMode
                     ? `outline-dashed min-h-[30px] rounded-sm px-1 transition ${
-                        isEditing(`q-${idx}-answer`) ? "outline-blue-500 shadow-md" : ""
+                        isEditing(`q-${idx}-answer`)
+                          ? "outline-blue-500 shadow-md"
+                          : ""
                       }`
                     : ""
                 }
-                onClick={e => { e.stopPropagation(); handleEditClick(`q-${idx}-answer`); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditClick(`q-${idx}-answer`);
+                }}
               >
                 {q.answer}
               </div>
@@ -132,18 +149,79 @@ export default function FAQ({ content, style, editMode, updateData }: FAQProps) 
                 />
               )}
             </AccordionContent>
-            {/* Uncomment if you want per-item delete button */}
-            {/* {editMode && (
-              <button
-                onClick={() => handleDelete(idx)}
-                className="absolute top-2 right-2 text-red-500 hover:text-red-700"
-              >
-                &times;
-              </button>
-            )} */}
           </AccordionItem>
         ))}
       </Accordion>
+
+      {editMode && (
+        <Button onClick={() => setAddFaq(true)}>Add Question</Button>
+      )}
+
+      {addFaq && <AddFAQ cancel={setAddFaq} addFaq={handleAdd} />}
     </section>
+  );
+}
+
+function AddFAQ({
+  cancel,
+  addFaq,
+}: {
+  cancel: React.Dispatch<React.SetStateAction<boolean>>;
+  addFaq: (faq: string, answer: string) => void;
+}) {
+  const [faq, setFaq] = useState("");
+  const [answer, setAnswer] = useState("");
+
+  return (
+    <div className="absolute z-50 w-[300px] bg-muted border border-muted-foreground rounded-2xl p-4 shadow-lg">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-semibold text-foreground">Add FAQ</h2>
+        <button
+          onClick={() => cancel(false)}
+          className="text-muted-foreground hover:text-foreground transition"
+        >
+          <X size={18} />
+        </button>
+      </div>
+
+      {/* Name Input */}
+      <div className="mb-3">
+        <label className="text-sm font-medium text-muted-foreground">
+          FAQ
+        </label>
+        <Input
+          value={faq}
+          onChange={(e) => setFaq(e.target.value)}
+          placeholder="Question"
+          className="mt-1"
+        />
+      </div>
+
+      {/* Link Input */}
+      <div className="mb-4">
+        <label className="text-sm font-medium text-muted-foreground">
+          Answer
+        </label>
+        <Input
+          value={answer}
+          onChange={(e) => setAnswer(e.target.value)}
+          placeholder="answer"
+          className="mt-1"
+        />
+      </div>
+
+      {/* Action Button */}
+      <Button
+        className="w-full"
+        onClick={() => {
+          addFaq(faq, answer);
+          cancel(false);
+        }}
+        disabled={!faq || !answer}
+      >
+        Add Link
+      </Button>
+    </div>
   );
 }

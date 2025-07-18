@@ -1,14 +1,16 @@
-import { Check, X } from "lucide-react";
+import { Check, Trash2, X } from "lucide-react";
 
 export default function EditingControls({
   handleSave,
   setEditElement,
+  deleteElement,
 }: {
   handleSave: any;
   setEditElement: any;
+  deleteElement?: any;
 }) {
   return (
-    <div className="relative -top-2 flex gap-1">
+    <div className="relative flex gap-1">
       <button
         onClick={handleSave}
         className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-full shadow"
@@ -21,6 +23,15 @@ export default function EditingControls({
       >
         <X size={16} />
       </button>
+
+      {deleteElement ? (
+        <button
+          onClick={deleteElement}
+          className="bg-gray-300 hover:bg-gray-400 text-black p-1 rounded-full shadow"
+        >
+          <Trash2 className="text-red-700" size={16} />
+        </button>
+      ) : null}
     </div>
   );
 }
