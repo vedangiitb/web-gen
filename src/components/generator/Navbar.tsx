@@ -75,30 +75,32 @@ export default function Navbar({
         ${bgColors.bgFrom} backdrop-blur  ${bgColors.bgTo} shadow-sm ${primary}
       `}
     >
-      <div
-        id="logoText"
-        suppressContentEditableWarning
-        contentEditable={isEditing("logoText")}
-        className={`font-extrabold text-2xl tracking-tight ${bgColors.text} ${
-          editMode
-            ? `outline-dashed px-1 transition ${
-                isEditing("logoText") ? "outline-blue-500 shadow-md" : ""
-              }`
-            : ""
-        }`}
-        onClick={(e) => {
-          e.stopPropagation();
-          handleEditClick("logoText");
-        }}
-      >
-        {content.logoText}
+      <div>
+        <div
+          id="logoText"
+          suppressContentEditableWarning
+          contentEditable={isEditing("logoText")}
+          className={`font-extrabold text-2xl tracking-tight ${bgColors.text} ${
+            editMode
+              ? `cursor-pointer outline-dashed px-1 transition ${
+                  isEditing("logoText") ? "outline-blue-500 shadow-md" : ""
+                }`
+              : ""
+          }`}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleEditClick("logoText");
+          }}
+        >
+          {content.logoText}
+        </div>
+        {isEditing("logoText") && (
+          <EditingControls
+            handleSave={() => handleSave("logoText")}
+            setEditElement={setEditElement}
+          />
+        )}
       </div>
-      {isEditing("logoText") && (
-        <EditingControls
-          handleSave={() => handleSave("logoText")}
-          setEditElement={setEditElement}
-        />
-      )}
 
       {/* Links */}
       <ul className="hidden md:flex items-center gap-8 list-none m-0 p-0">
@@ -115,7 +117,7 @@ export default function Navbar({
               font-medium cursor-pointer transition-colors
               relative overflow-hidden
               group
-              ${editMode ? "outline-dashed px-1 transition" : ""}
+              ${editMode ? "cursor-pointer outline-dashed px-1 transition" : ""}
               ${isEditing(`link-${idx}`) ? "outline-blue-500 shadow-md" : ""}
             `}
               onClick={(e) => {
@@ -135,15 +137,13 @@ export default function Navbar({
             )}
           </div>
         ))}
-        {/* Uncomment for Add Link */}
         {editMode && (
           <li>
-            <button
+            <Button
               onClick={() => setShowAddLink(true)}
-              className="text-blue-600 underline ml-2"
             >
               + Add Link
-            </button>
+            </Button>
             {showAddLink && (
               <AddLink cancel={setShowAddLink} addLink={handleAddLink} />
             )}
@@ -152,34 +152,36 @@ export default function Navbar({
       </ul>
 
       {/* CTA Button */}
-      <Button
-        id="ctaText"
-        suppressContentEditableWarning
-        contentEditable={isEditing("ctaText")}
-        className={`
+      <div>
+        <Button
+          id="ctaText"
+          suppressContentEditableWarning
+          contentEditable={isEditing("ctaText")}
+          className={`
           ${bgColors.button} ${bgColors.buttonHover} ${
-          bgColors.buttonTxt
-        } transition
-          ${editMode ? "outline-dashed px-1 transition" : ""}
+            bgColors.buttonTxt
+          } transition
+          ${editMode ? "cursor-pointer outline-dashed px-1 transition" : ""}
           ${isEditing("ctaText") ? "outline-blue-500 shadow-md" : ""}
         `}
-        onClick={(e) => {
-          if (editMode) {
-            e.preventDefault();
-            e.stopPropagation();
-            handleEditClick("ctaText");
-          }
-        }}
-        tabIndex={editMode ? -1 : 0}
-      >
-        {content.ctaText}
-      </Button>
-      {isEditing("ctaText") && (
-        <EditingControls
-          handleSave={() => handleSave("ctaText")}
-          setEditElement={setEditElement}
-        />
-      )}
+          onClick={(e) => {
+            if (editMode) {
+              e.preventDefault();
+              e.stopPropagation();
+              handleEditClick("ctaText");
+            }
+          }}
+          tabIndex={editMode ? -1 : 0}
+        >
+          {content.ctaText}
+        </Button>
+        {isEditing("ctaText") && (
+          <EditingControls
+            handleSave={() => handleSave("ctaText")}
+            setEditElement={setEditElement}
+          />
+        )}
+      </div>
 
       {/* Mobile menu icon */}
       <div className="md:hidden">

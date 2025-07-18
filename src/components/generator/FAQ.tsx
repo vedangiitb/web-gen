@@ -97,7 +97,7 @@ export default function FAQ({
                 id={`q-${idx}-question`}
                 className={
                   editMode
-                    ? `outline-dashed rounded-sm px-1 transition ${
+                    ? `cursor-pointer outline-dashed rounded-sm px-1 transition ${
                         isEditing(`q-${idx}-question`)
                           ? "outline-blue-500 shadow-md"
                           : ""
@@ -128,7 +128,7 @@ export default function FAQ({
                 id={`q-${idx}-answer`}
                 className={
                   editMode
-                    ? `outline-dashed min-h-[30px] rounded-sm px-1 transition ${
+                    ? `cursor-pointer outline-dashed min-h-[30px] rounded-sm px-1 transition ${
                         isEditing(`q-${idx}-answer`)
                           ? "outline-blue-500 shadow-md"
                           : ""

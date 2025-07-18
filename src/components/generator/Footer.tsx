@@ -89,7 +89,7 @@ export default function Footer({ content, style, editMode, updateData }: FooterP
             id="companyInfo"
             suppressContentEditableWarning
             contentEditable={isEditing("companyInfo")}
-            className={`inline-block ${editMode ? "outline-dashed px-1 transition" : ""} ${isEditing("companyInfo") ? "outline-blue-500 shadow-md" : ""}`}
+            className={`inline-block ${editMode ? "cursor-pointer outline-dashed px-1 transition" : ""} ${isEditing("companyInfo") ? "outline-blue-500 shadow-md" : ""}`}
             onClick={e => { e.stopPropagation(); handleEditClick("companyInfo"); }}
           >
             {content.companyInfo}
@@ -110,7 +110,7 @@ export default function Footer({ content, style, editMode, updateData }: FooterP
                 id={`link-${idx}-label`}
                 suppressContentEditableWarning
                 contentEditable={isEditing(`link-${idx}-label`)}
-                className={`hover:text-blue-400 transition-colors duration-200 cursor-pointer ${editMode ? "outline-dashed px-1 transition" : ""} ${isEditing(`link-${idx}-label`) ? "outline-blue-500 shadow-md" : ""}`}
+                className={`hover:text-blue-400 transition-colors duration-200 cursor-pointer ${editMode ? "cursor-pointer outline-dashed px-1 transition" : ""} ${isEditing(`link-${idx}-label`) ? "outline-blue-500 shadow-md" : ""}`}
                 onClick={e => { e.stopPropagation(); handleEditClick(`link-${idx}-label`); }}
               >
                 {link.label}
@@ -126,7 +126,7 @@ export default function Footer({ content, style, editMode, updateData }: FooterP
                 id={`link-${idx}-href`}
                 suppressContentEditableWarning
                 contentEditable={isEditing(`link-${idx}-href`)}
-                className={`text-xs underline cursor-pointer ${editMode ? "outline-dashed px-1 transition" : ""} ${isEditing(`link-${idx}-href`) ? "outline-blue-500 shadow-md" : ""}`}
+                className={`text-xs underline cursor-pointer ${editMode ? "cursor-pointer outline-dashed px-1 transition" : ""} ${isEditing(`link-${idx}-href`) ? "outline-blue-500 shadow-md" : ""}`}
                 style={{ minWidth: "70px" }}
                 onClick={e => { e.stopPropagation(); handleEditClick(`link-${idx}-href`); }}
                 title="Edit link URL"
@@ -162,7 +162,7 @@ export default function Footer({ content, style, editMode, updateData }: FooterP
                 id={`social-${idx}-type`}
                 suppressContentEditableWarning
                 contentEditable={isEditing(`social-${idx}-type`)}
-                className={`text-neutral-400 hover:text-blue-400 transition-colors rounded-full cursor-pointer ${editMode ? "outline-dashed px-1" : ""} ${isEditing(`social-${idx}-type`) ? "outline-blue-500 shadow-md" : ""}`}
+                className={`text-neutral-400 hover:text-blue-400 transition-colors rounded-full cursor-pointer ${editMode ? "cursor-pointer outline-dashed px-1" : ""} ${isEditing(`social-${idx}-type`) ? "outline-blue-500 shadow-md" : ""}`}
                 style={{ minHeight: 24, minWidth: 24, display: "inline-flex" }}
                 onClick={e => { e.stopPropagation(); handleEditClick(`social-${idx}-type`); }}
                 title="Edit social icon type (e.g. facebook, twitter...)"
@@ -180,7 +180,7 @@ export default function Footer({ content, style, editMode, updateData }: FooterP
                 id={`social-${idx}-href`}
                 suppressContentEditableWarning
                 contentEditable={isEditing(`social-${idx}-href`)}
-                className={`text-xs underline cursor-pointer mt-1 text-neutral-400 group-hover:text-blue-400 ${editMode ? "outline-dashed px-1" : ""} ${isEditing(`social-${idx}-href`) ? "outline-blue-500 shadow-md" : ""}`}
+                className={`text-xs underline cursor-pointer mt-1 text-neutral-400 group-hover:text-blue-400 ${editMode ? "cursor-pointer outline-dashed px-1" : ""} ${isEditing(`social-${idx}-href`) ? "outline-blue-500 shadow-md" : ""}`}
                 onClick={e => { e.stopPropagation(); handleEditClick(`social-${idx}-href`); }}
                 title="Edit social URL"
                 style={{ minWidth: "70px" }}

@@ -102,7 +102,7 @@ export default function Testimonials({
               contentEditable={isEditing(`review-${idx}`)}
               className={`text-lg italic mb-6 ${mutedColors.text} ${bodyFont} ${
                 editMode
-                  ? `outline-dashed px-1 transition ${
+                  ? `cursor-pointer outline-dashed px-1 transition ${
                       isEditing(`review-${idx}`)
                         ? "outline-blue-500 shadow-md"
                         : ""

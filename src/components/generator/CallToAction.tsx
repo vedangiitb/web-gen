@@ -88,7 +88,7 @@ export default function CallToAction({
             bgColors.text
           } drop-shadow ${
             editMode
-              ? `outline-dashed px-1 transition ${
+              ? `cursor-pointer outline-dashed px-1 transition ${
                   isEditing("ctaheading") ? "outline-blue-500 shadow-md" : ""
                 }`
               : ""
@@ -116,7 +116,7 @@ export default function CallToAction({
             bgColors.accentText
           } ${bodyFont} ${
             editMode
-              ? `outline-dashed px-1 transition ${
+              ? `cursor-pointer outline-dashed px-1 transition ${
                   isEditing("subtext") ? "outline-blue-500 shadow-md" : ""
                 }`
               : ""
@@ -143,7 +143,7 @@ export default function CallToAction({
           contentEditable={isEditing("buttonText")}
           className={`transition ${bgColors.button} ${bgColors.buttonTxt} ${
             bgColors.buttonHover
-          } font-semibold ${editMode ? "outline-dashed px-1 transition" : ""} ${
+          } font-semibold ${editMode ? "cursor-pointer outline-dashed px-1 transition" : ""} ${
             isEditing("buttonText") ? "outline-blue-500 shadow-md" : ""
           }`}
           onClick={(e) => {

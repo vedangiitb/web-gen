@@ -111,7 +111,7 @@ export default function Pricing({
               suppressContentEditableWarning
               contentEditable={isEditing(`plan-${planIdx}-name`)}
               className={`text-xl font-semibold mb-2 ${
-                editMode ? "outline-dashed px-1 transition " : ""
+                editMode ? "cursor-pointer outline-dashed px-1 transition " : ""
               }${
                 isEditing(`plan-${planIdx}-name`)
                   ? "outline-blue-500 shadow-md"
@@ -139,7 +139,7 @@ export default function Pricing({
               className={`text-3xl font-bold ${bgColors.secondaryButtonBg} ${
                 bgColors.secondaryTxtCol
               } mb-6 px-4 py-2 rounded-md ${
-                editMode ? "outline-dashed px-1 transition " : ""
+                editMode ? "cursor-pointer outline-dashed px-1 transition " : ""
               }${
                 isEditing(`plan-${planIdx}-price`)
                   ? "outline-blue-500 shadow-md"
@@ -174,7 +174,7 @@ export default function Pricing({
                       `plan-${planIdx}-feature-${featIdx}`
                     )}
                     className={`${
-                      editMode ? "outline-dashed px-1 transition" : ""
+                      editMode ? "cursor-pointer outline-dashed px-1 transition" : ""
                     } ${
                       isEditing(`plan-${planIdx}-feature-${featIdx}`)
                         ? "outline-blue-500 shadow-md"

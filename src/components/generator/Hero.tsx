@@ -74,57 +74,61 @@ export default function Hero({
       className={`flex flex-col-reverse md:flex-row items-center gap-10 px-8 md:px-16 py-20 md:py-28 ${primary}`}
     >
       <div className="flex-1 w-full">
-        {/* Heading */}
-        <h1
-          suppressContentEditableWarning
-          contentEditable={isEditing("heading")}
-          id="heading"
-          className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${
-            bgColors.text
-          }
+        <div>
+          <h1
+            suppressContentEditableWarning
+            contentEditable={isEditing("heading")}
+            id="heading"
+            className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${
+              bgColors.text
+            }
             ${
               editMode
-                ? `outline-dashed ${
+                ? `cursor-pointer outline-dashed ${
                     isEditing("heading") ? "outline-blue-500 shadow-md" : ""
                   }`
                 : ""
             }
           `}
-          onClick={(e) => handleClick((e.target as HTMLElement).id)}
-        >
-          {content.heading}
-        </h1>
-        {isEditing("heading") && (
-          <EditingControls
-            handleSave={handleSave}
-            setEditElement={setEditElement}
-          />
-        )}
+            onClick={(e) => handleClick((e.target as HTMLElement).id)}
+          >
+            {content.heading}
+          </h1>
+          {isEditing("heading") && (
+            <EditingControls
+              handleSave={handleSave}
+              setEditElement={setEditElement}
+            />
+          )}
+        </div>
 
-        {/* Subheading */}
-        <p
-          contentEditable={isEditing("subheading")}
-          id="subheading"
-          className={`text-lg md:text-xl mb-8 ${bgColors.accentText} ${bodyFont}
+        <div>
+          <p
+            contentEditable={isEditing("subheading")}
+            id="subheading"
+            className={`text-lg md:text-xl mb-8 ${
+              bgColors.accentText
+            } ${bodyFont}
             ${
               editMode
-                ? `outline-dashed ${
+                ? `cursor-pointer outline-dashed ${
                     isEditing("subheading") ? "outline-blue-500 shadow-md" : ""
                   }`
                 : ""
             }
           `}
-          onClick={(e) => handleClick((e.target as HTMLElement).id)}
-        >
-          {content.subheading}
-        </p>
+            onClick={(e) => handleClick((e.target as HTMLElement).id)}
+          >
+            {content.subheading}
+          </p>
 
-        {isEditing("subheading") && (
-          <EditingControls
-            handleSave={handleSave}
-            setEditElement={setEditElement}
-          />
-        )}
+          {isEditing("subheading") && (
+            <EditingControls
+              handleSave={handleSave}
+              setEditElement={setEditElement}
+            />
+          )}
+        </div>
 
         {/* Buttons */}
         <div className="flex flex-col sm:flex-row gap-4">
@@ -132,7 +136,7 @@ export default function Hero({
             <button
               contentEditable={isEditing("primaryButton")}
               id="primaryButton"
-              className={`transition ${bgColors.button} ${bgColors.buttonTxt} ${
+              className={`cursor-pointer transition ${bgColors.button} ${bgColors.buttonTxt} ${
                 bgColors.buttonHover
               } px-6 py-3 rounded-lg text-lg font-semibold 
                 ${
@@ -155,7 +159,7 @@ export default function Hero({
             <button
               contentEditable={isEditing("secondaryButton")}
               id="secondaryButton"
-              className={`transition ${bgColors.secondaryButtonBg} ${
+              className={`cursor-pointer transition ${bgColors.secondaryButtonBg} ${
                 bgColors.secondaryButtonTxt
               } ${bgColors.secondaryButtonHover} ${
                 bgColors.secondaryButtonOutline

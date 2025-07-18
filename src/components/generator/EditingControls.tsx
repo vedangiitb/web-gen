@@ -10,7 +10,7 @@ export default function EditingControls({
   deleteElement?: any;
 }) {
   return (
-    <div className="relative flex gap-1">
+    <div className="absolute flex gap-1">
       <button
         onClick={handleSave}
         className="bg-blue-500 hover:bg-blue-600 text-white p-1 rounded-full shadow"

@@ -83,7 +83,7 @@ export default function Features({
           bgColors.text
         } ${
           editMode
-            ? `outline-dashed ${
+            ? `cursor-pointer outline-dashed ${
                 isEditing("title") ? "outline-blue-500 shadow-md" : ""
               }`
             : ""
@@ -117,7 +117,7 @@ export default function Features({
                 id={id}
                 className={`text-lg font-medium ${bodyFont} ${
                   editMode
-                    ? `outline-dashed ${
+                    ? `cursor-pointer outline-dashed ${
                         isEditing(id) ? "outline-blue-500 shadow-md" : ""
                       }`
                     : ""
