@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { colorMap } from "./colorMap";
 import EditingControls from "./EditingControls";
+import { Pen } from "lucide-react";
 export type HeroProps = {
   content: {
     heading: string;
@@ -15,6 +16,7 @@ export type HeroProps = {
   heroImg: string;
   editMode: boolean;
   updateData: any;
+  setShowImgBox: any;
 };
 
 export default function Hero({
@@ -23,6 +25,7 @@ export default function Hero({
   heroImg,
   editMode,
   updateData,
+  setShowImgBox,
 }: HeroProps) {
   if (!content) return <div></div>;
 
@@ -136,7 +139,9 @@ export default function Hero({
             <button
               contentEditable={isEditing("primaryButton")}
               id="primaryButton"
-              className={`cursor-pointer transition ${bgColors.button} ${bgColors.buttonTxt} ${
+              className={`cursor-pointer transition ${bgColors.button} ${
+                bgColors.buttonTxt
+              } ${
                 bgColors.buttonHover
               } px-6 py-3 rounded-lg text-lg font-semibold 
                 ${
@@ -159,11 +164,11 @@ export default function Hero({
             <button
               contentEditable={isEditing("secondaryButton")}
               id="secondaryButton"
-              className={`cursor-pointer transition ${bgColors.secondaryButtonBg} ${
-                bgColors.secondaryButtonTxt
-              } ${bgColors.secondaryButtonHover} ${
-                bgColors.secondaryButtonOutline
-              }
+              className={`cursor-pointer transition ${
+                bgColors.secondaryButtonBg
+              } ${bgColors.secondaryButtonTxt} ${
+                bgColors.secondaryButtonHover
+              } ${bgColors.secondaryButtonOutline}
                 px-6 py-3 rounded-lg text-lg font-semibold
                 ${
                   editMode
@@ -193,14 +198,31 @@ export default function Hero({
       {/* Image */}
       <div className="flex-1 w-full flex justify-center items-center">
         {content.imageUrl && (
-          <img
-            src={
-              heroImg ||
-              "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
-            }
-            alt="Hero Image"
-            className="w-full max-w-md rounded-2xl shadow-xl object-cover"
-          />
+          <div
+            className="relative group"
+            onClick={() => {
+              if (!editMode) return;
+              setShowImgBox();
+            }}
+          >
+            <img
+              src={
+                heroImg ||
+                "https://images.unsplash.com/photo-1510936111840-65e151ad71bb?crop=entropy&cs=srgb&fm=jpg&ixid=M3w0Mzk3Njh8MHwxfHNlYXJjaHwxfHxibGFua3xlbnwwfDB8fHwxNzUyMTY2NjU3fDA&ixlib=rb-4.1.0&q=85"
+              }
+              alt="Hero Image"
+              className={`w-full max-w-md rounded-2xl shadow-xl object-cover ${
+                editMode
+                  ? "transition duration-300 group-hover:brightness-75"
+                  : ""
+              }`}
+            />
+            {editMode ? (
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:cursor-pointer transition duration-300">
+                <Pen></Pen>
+              </div>
+            ) : null}
+          </div>
         )}
       </div>
     </section>

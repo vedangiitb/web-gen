@@ -46,6 +46,10 @@ export default function PreviewPage() {
 
   const [editMode, setEditMode] = useState(false);
 
+  const setShowImgBox = () => {
+    window.parent.postMessage({ type: 'showImgBox' }, '*'); // use specific origin in production!
+  };
+
   useEffect(() => {
     const loadPreviewData = () => {
       const dataJSON = localStorage.getItem("previewData");
@@ -151,6 +155,7 @@ export default function PreviewPage() {
               heroImg={heroImg}
               editMode={editMode}
               updateData={updateData}
+              setShowImgBox={setShowImgBox}
             />
           );
         else

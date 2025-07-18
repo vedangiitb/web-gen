@@ -6,6 +6,12 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import { Switch } from "@/components/ui/switch";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { supabase } from "@/lib/supabaseClient";
 import {
   ExternalLink,
@@ -15,22 +21,17 @@ import {
 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 import { captureWebsiteDetails } from "./captureWebsiteDetails";
 import ChatBox from "./ChatBox";
 import ChatHistory from "./ChatHistory";
 import { generateSite } from "./generateSite";
 import { generateSiteStyles } from "./generateSiteStyles";
+import ImageSearcher from "./imageSearcher";
 import PreviewFrame from "./PreviewFrame";
 import SideBar from "./sidebar";
 import { getHeroImg } from "./stylesEdit";
 import StyleSettings from "./StyleSettings";
-import { toast } from "sonner";
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { updatedb } from "./updateDb";
 type WebsiteDetails = {
   businessName: string;
@@ -60,7 +61,7 @@ export default function GenerateWebsite() {
     primaryGoal: "",
     designPreferences: "",
   });
-  const [detailsFromLLM, setDetailsFromLLM] = useState({});
+  const [detailsFromLLM, setDetailsFromLLM] = useState([]);
   const [stylesFromLLM, setStylesFromLLM] = useState<GenStyles>({
     color: "blue",
     muted: "slate",
@@ -86,6 +87,7 @@ export default function GenerateWebsite() {
   const [showPreview, setShowPreview] = useState(false);
   const [changes, setChanges] = useState(false);
   const [editMode, setEditMode] = useState(false);
+  const [showImgBox, setShowImgBox] = useState(false);
 
   const openInNewWindow = () => {
     const previewData = {
@@ -97,6 +99,16 @@ export default function GenerateWebsite() {
     localStorage.setItem("previewData", JSON.stringify(previewData));
     window.open("/preview", "_blank");
   };
+  useEffect(() => {
+    const handleMessage = (event: any) => {
+      if (event.data?.type === "showImgBox") {
+        setShowImgBox((prev) => !prev);
+      }
+    };
+
+    window.addEventListener("message", handleMessage);
+    return () => window.removeEventListener("message", handleMessage);
+  }, []);
 
   const getConversation = async (id: string) => {
     if (!id) return;
@@ -150,21 +162,6 @@ export default function GenerateWebsite() {
       console.error("Error fetching conversation:", err);
     }
   };
-
-  // const updatedb = async (updateData: any, id = chatId) => {
-  //   if (!id) return;
-  //   const { data, error } = await supabase
-  //     .from("user_conversations")
-  //     .update(updateData)
-  //     .eq("id", id)
-  //     .select("id");
-
-  //   if (error) {
-  //     console.error(error);
-  //     return false;
-  //   }
-  //   return true;
-  // };
 
   const submitPrompt = useCallback(
     (e?: React.FormEvent) => {
@@ -225,7 +222,7 @@ export default function GenerateWebsite() {
     }
   }, [generatingsite]);
 
-  useEffect(() => {
+  const updateWebsiteData = () => {
     if (!detailsFromLLM || !stylesFromLLM) return;
 
     const previewData = {
@@ -246,6 +243,10 @@ export default function GenerateWebsite() {
       },
       window.location.origin
     );
+  };
+
+  useEffect(() => {
+    updateWebsiteData();
   }, [detailsFromLLM, stylesFromLLM, heroImg]);
 
   const toggleEditMode = () => {
@@ -263,6 +264,11 @@ export default function GenerateWebsite() {
     setEditMode(!editMode);
   };
 
+  const updateImage = (imgLink: string) => {
+    setHeroImg(imgLink);
+    updatedb({ hero_img: imgLink });
+  };
+
   return (
     <div className="max-h-screen text-foreground flex">
       <SideBar />
@@ -270,7 +276,7 @@ export default function GenerateWebsite() {
       <div className="w-full">
         <NavBar />
 
-        <main className="h-[calc(100vh-5rem)]">
+        <main className="flex h-[calc(100vh-5rem)]">
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <ResizablePanel
               minSize={30}
@@ -380,6 +386,14 @@ export default function GenerateWebsite() {
               </div>
             </ResizablePanel>
           </ResizablePanelGroup>
+
+          {showImgBox && (
+            <ImageSearcher
+              access_token={user.accessToken}
+              cancel={setShowImgBox}
+              updateImage={updateImage}
+            />
+          )}
         </main>
       </div>
     </div>
