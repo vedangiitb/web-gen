@@ -159,7 +159,8 @@ export default function GenerateWebsite() {
         setIsLoading,
         websiteDetails,
         setWebsiteDetails,
-        setGeneratingSite
+        setGeneratingSite,
+        user.accessToken
       );
   }, [id]);
 

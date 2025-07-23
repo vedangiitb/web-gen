@@ -12,7 +12,7 @@ export function AIPopoverContent({
 }: {
   onClose: () => void;
   content?: string;
-  replaceContent?: (content: string) => null;
+  replaceContent?: (content: string) => void;
 }) {
   const [aiPrompt, setAiPrompt] = useState("");
   const user = useAuth();

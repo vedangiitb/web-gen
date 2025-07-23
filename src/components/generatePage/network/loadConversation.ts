@@ -1,7 +1,6 @@
 import { supabase } from "@/lib/supabaseClient";
-import { updatedb } from "./updateDb";
 import { captureWebsiteDetails } from "./captureWebsiteDetails";
-import { useAuth } from "@/components/auth/AuthContext";
+import { updatedb } from "./updateDb";
 export const getConversation = async (
   id: string,
   setConversationHistory: any,
@@ -14,9 +13,9 @@ export const getConversation = async (
   setIsLoading: any,
   websiteDetails: any,
   setWebsiteDetails: any,
-  setGeneratingSite: any
+  setGeneratingSite: any,
+  authToken: string
 ) => {
-  const user = useAuth();
   if (!id) return;
 
   try {
@@ -58,7 +57,7 @@ export const getConversation = async (
             setWebsiteDetails,
             setGeneratingSite,
             setShowPreview,
-            user.accessToken,
+            authToken,
             (updateData: any) => updatedb(updateData, chatId)
           );
         }

@@ -9,7 +9,7 @@ export function AIButtonWithPopover({
   replaceContent,
 }: {
   content?: string;
-  replaceContent?: (content: string) => null;
+  replaceContent?: (content: string) => void;
 }) {
   const [open, setOpen] = useState(false);
 

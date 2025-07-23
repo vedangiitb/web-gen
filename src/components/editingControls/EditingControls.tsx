@@ -14,10 +14,10 @@ export default function EditingControls({
   setEditElement: any;
   deleteElement?: any;
   content?: string;
-  replaceContent?: (content: string) => null;
+  replaceContent?: (content: string) => void;
 }) {
   return (
-    <div className="absolute flex gap-1 outfit mt-2">
+    <div className="absolute z-30 flex gap-1 outfit mt-2">
       <SaveButton onClick={handleSave} />
       <CancelButton onClick={() => setEditElement("")} />
       <AIButtonWithPopover content={content} replaceContent={replaceContent} />
