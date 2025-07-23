@@ -11,7 +11,7 @@ import type { NavbarProps } from "@/components/generator/Navbar";
 import type { PricingProps } from "@/components/generator/Pricing";
 import type { TestimonialProps } from "@/components/generator/Testimonials";
 import { colorMap } from "@/components/generator/colorMap";
-import { updatedb } from "../generate/updateDb";
+import { updatedb } from "../../components/generatePage/network/updateDb";
 type Section =
   | { type: "CallToAction"; props: CallToActionProps }
   | { type: "FAQ"; props: FAQProps }

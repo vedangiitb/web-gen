@@ -50,6 +50,10 @@ body {
   background: var(--accent);
 }
 
+.outfit {
+  font-family: var(--font-outfit);
+}
+
 .roboto {
   font-family: var(--font-roboto);
 }

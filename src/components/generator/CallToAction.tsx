@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button"; // shadcn/ui Button
 import { colorMap } from "./colorMap";
-import EditingControls from "./EditingControls";
+import EditingControls from "../editingControls/EditingControls";
 
 export type CallToActionProps = {
   content: {

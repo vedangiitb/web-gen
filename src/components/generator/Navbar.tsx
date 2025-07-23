@@ -3,8 +3,9 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MenuIcon, X } from "lucide-react";
 import { colorMap } from "./colorMap";
-import EditingControls from "./EditingControls";
+import EditingControls from "../editingControls/EditingControls";
 import { Input } from "../ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export type NavbarProps = {
   content: { logoText: string; links: string[]; ctaText: string };
@@ -138,15 +139,12 @@ export default function Navbar({
           </div>
         ))}
         {editMode && (
-          <li>
-            <Button
-              onClick={() => setShowAddLink(true)}
-            >
-              + Add Link
-            </Button>
-            {showAddLink && (
-              <AddLink cancel={setShowAddLink} addLink={handleAddLink} />
-            )}
+          <li key="add-new-link">
+            <NewLink
+              showAddLink={showAddLink}
+              setShowAddLink={setShowAddLink}
+              handleAddLink={handleAddLink}
+            />
           </li>
         )}
       </ul>
@@ -191,66 +189,77 @@ export default function Navbar({
   );
 }
 
-function AddLink({
-  cancel,
-  addLink,
+function NewLink({
+  showAddLink,
+  setShowAddLink,
+  handleAddLink,
 }: {
-  cancel: React.Dispatch<React.SetStateAction<boolean>>;
-  addLink: (name: string, url: string) => void;
+  showAddLink: boolean;
+  setShowAddLink: React.Dispatch<React.SetStateAction<boolean>>;
+  handleAddLink: any;
 }) {
   const [name, setName] = useState("");
   const [link, setLink] = useState("");
 
   return (
-    <div className="absolute z-50 w-[300px] bg-muted border border-muted-foreground rounded-2xl p-4 shadow-lg">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-foreground">Add Link</h2>
-        <button
-          onClick={() => cancel(false)}
-          className="text-muted-foreground hover:text-foreground transition"
-        >
-          <X size={18} />
-        </button>
-      </div>
+    <Popover open={showAddLink} onOpenChange={setShowAddLink}>
+      <PopoverTrigger>
+        <Button className="outfit" onClick={() => setShowAddLink(true)}>
+          + Add Link
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent>
+        <div>
+          {/* Header */}
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold text-foreground">Add Link</h2>
+            <button
+              onClick={() => setShowAddLink(false)}
+              className="text-muted-foreground hover:text-foreground transition"
+            >
+              <X size={18} />
+            </button>
+          </div>
 
-      {/* Name Input */}
-      <div className="mb-3">
-        <label className="text-sm font-medium text-muted-foreground">
-          Name
-        </label>
-        <Input
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="e.g., GitHub"
-          className="mt-1"
-        />
-      </div>
+          {/* Name Input */}
+          <div className="mb-3">
+            <label className="text-sm font-medium text-muted-foreground">
+              Name
+            </label>
+            <Input
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="e.g., GitHub"
+              className="mt-1"
+            />
+          </div>
 
-      {/* Link Input */}
-      <div className="mb-4">
-        <label className="text-sm font-medium text-muted-foreground">
-          URL (Optional)
-        </label>
-        <Input
-          value={link}
-          onChange={(e) => setLink(e.target.value)}
-          placeholder="e.g., https://github.com"
-          className="mt-1"
-        />
-      </div>
+          {/* Link Input */}
+          <div className="mb-4">
+            <label className="text-sm font-medium text-muted-foreground">
+              URL (Optional)
+            </label>
+            <Input
+              value={link}
+              onChange={(e) => setLink(e.target.value)}
+              placeholder="e.g., https://github.com"
+              className="mt-1"
+            />
+          </div>
 
-      {/* Action Button */}
-      <Button
-        className="w-full"
-        onClick={() => {
-          addLink(name, link);
-          cancel(false);
-        }}
-        disabled={!name}
-      >
-        Add Link
-      </Button>
-    </div>
+          {/* Action Button */}
+          <Button
+            className="w-full"
+            onClick={() => {
+              handleAddLink(name, link);
+              setShowAddLink(false);
+            }}
+            disabled={!name}
+          >
+            Add Link
+          </Button>
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }

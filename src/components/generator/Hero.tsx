@@ -2,7 +2,7 @@
 "use client";
 import { useState } from "react";
 import { colorMap } from "./colorMap";
-import EditingControls from "./EditingControls";
+import EditingControls from "../editingControls/EditingControls";
 import { Pen } from "lucide-react";
 export type HeroProps = {
   content: {
@@ -72,6 +72,21 @@ export default function Hero({
     setEditElement("");
   };
 
+  const replaceContent = (content: string) => {};
+
+  const rollBackEdit = () => {
+    if (
+      editElement === "heading" ||
+      editElement === "subheading" ||
+      editElement === "primaryButton" ||
+      editElement === "secondaryButton"
+    ) {
+      console.log("setting back...");
+      content[editElement] = content[editElement];
+      setEditElement("");
+    }
+  };
+
   return (
     <section
       className={`flex flex-col-reverse md:flex-row items-center gap-10 px-8 md:px-16 py-20 md:py-28 ${primary}`}
@@ -100,7 +115,8 @@ export default function Hero({
           {isEditing("heading") && (
             <EditingControls
               handleSave={handleSave}
-              setEditElement={setEditElement}
+              setEditElement={rollBackEdit}
+              content={content.heading}
             />
           )}
         </div>
@@ -128,7 +144,8 @@ export default function Hero({
           {isEditing("subheading") && (
             <EditingControls
               handleSave={handleSave}
-              setEditElement={setEditElement}
+              setEditElement={rollBackEdit}
+              content={content.subheading}
             />
           )}
         </div>
@@ -190,7 +207,12 @@ export default function Hero({
         {(isEditing("primaryButton") || isEditing("secondaryButton")) && (
           <EditingControls
             handleSave={handleSave}
-            setEditElement={setEditElement}
+            setEditElement={rollBackEdit}
+            content={
+              isEditing("primaryButton")
+                ? content.primaryButton
+                : content.secondaryButton
+            }
           />
         )}
       </div>
@@ -218,7 +240,7 @@ export default function Hero({
               }`}
             />
             {editMode ? (
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 group-hover:cursor-pointer transition duration-300">
+              <div className="absolute inset-0 flex items-center justify-center group-hover:opacity-100 group-hover:cursor-pointer transition duration-300">
                 <Pen></Pen>
               </div>
             ) : null}

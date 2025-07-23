@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { CheckCircle } from "lucide-react";
 import { colorMap } from "./colorMap";
-import EditingControls from "./EditingControls";
+import EditingControls from "../editingControls/EditingControls";
 
 export type PricingProps = {
   content: { plans: { name: string; price: string; features: string[] }[] };

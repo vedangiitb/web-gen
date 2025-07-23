@@ -153,12 +153,7 @@ export default function StyleSettings({
                 })}
               </AccordionContent>
             </AccordionItem>
-          </Accordion>
-
-          {/* <Accordion
-                              type="single"
-                              className="w-full"
-                            ></Accordion> */}
+          </Accordion>{" "}
         </PopoverContent>
       </Popover>
     </div>
