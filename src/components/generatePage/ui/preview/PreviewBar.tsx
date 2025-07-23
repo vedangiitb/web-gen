@@ -5,7 +5,7 @@ export default function PreviewBar({
   setChatVisible,
   showPreview,
   editMode,
-  toggleEditMode,
+  setEditMode,
   stylesFromLLM,
   setStylesFromLLM,
   initialStyles,
@@ -18,7 +18,7 @@ export default function PreviewBar({
   setChatVisible: (visible: boolean) => void;
   showPreview?: boolean;
   editMode?: boolean;
-  toggleEditMode?: () => void;
+  setEditMode?: React.Dispatch<React.SetStateAction<boolean>>;
   stylesFromLLM?: any;
   setStylesFromLLM?: (styles: any) => void;
   initialStyles?: any;
@@ -27,6 +27,22 @@ export default function PreviewBar({
   openInNewWindow?: () => void;
   detailsFromLLM?: any;
 }) {
+
+  const toggleEditMode = () => {
+    if (!setEditMode) return;
+    const iframe = document.getElementById(
+      "preview-frame"
+    ) as HTMLIFrameElement;
+    iframe?.contentWindow?.postMessage(
+      {
+        type: "editMode",
+        value: !editMode,
+      },
+      window.location.origin
+    );
+    setEditMode(!editMode);
+  };
+  
   return (
     <div className="h-full flex flex-col p-2">
       <PreviewTopbar

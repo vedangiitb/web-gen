@@ -1,15 +1,15 @@
 "use client";
 import { useAuth } from "@/components/auth/AuthContext";
 import { getHeroImg } from "@/components/generatePage/network/getHeroImg";
+import { getConversation } from "@/components/generatePage/network/loadConversation";
 import ChatPanel from "@/components/generatePage/ui/chat/ChatPanel";
-import PreviewTopbar from "@/components/generatePage/ui/preview/PreviewTopbar";
+import PreviewBar from "@/components/generatePage/ui/preview/PreviewBar";
 import NavBar from "@/components/others/navbar";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { supabase } from "@/lib/supabaseClient";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { captureWebsiteDetails } from "../../components/generatePage/network/captureWebsiteDetails";
@@ -18,16 +18,6 @@ import { generateSiteStyles } from "../../components/generatePage/network/genera
 import { updatedb } from "../../components/generatePage/network/updateDb";
 import ImageSearcher from "../../components/generatePage/ui/imageSearcher/imageSearcher";
 import SideBar from "../../components/generatePage/ui/sidebar/sidebar";
-import PreviewBar from "@/components/generatePage/ui/preview/PreviewBar";
-
-type WebsiteDetails = {
-  businessName: string;
-  businessType: string;
-  targetAudience: string;
-  tone: string;
-  primaryGoal: string;
-  designPreferences: string;
-};
 
 export default function GenerateWebsite() {
   const serarchParams = useSearchParams();
@@ -87,59 +77,6 @@ export default function GenerateWebsite() {
     window.open("/preview", "_blank");
   };
 
-  const getConversation = async (id: string) => {
-    if (!id) return;
-
-    try {
-      const { data, error } = await supabase
-        .from("user_conversations")
-        .select("*")
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
-      if (!data) return;
-      localStorage.setItem("chatId", id);
-
-      const { conv_history, id: chatId, content, style, hero_img } = data;
-
-      if (conv_history) {
-        setConversationHistory(conv_history);
-        setChatId(chatId);
-
-        content ? setDetailsFromLLM(content) : setShowPreview(false);
-        if (content) setShowPreview(true);
-
-        if (style) {
-          setStylesFromLLM(style);
-          setInitialStyles(style);
-        }
-
-        if (hero_img) setHeroImg(hero_img);
-
-        if (conv_history.length <= 2) {
-          const inputText = conv_history[1]?.parts?.[0]?.text ?? "";
-          if (inputText) {
-            captureWebsiteDetails(
-              inputText,
-              setConversationHistory,
-              conv_history,
-              setIsLoading,
-              websiteDetails,
-              setWebsiteDetails,
-              setGeneratingSite,
-              setShowPreview,
-              user.accessToken,
-              (updateData: any) => updatedb(updateData, chatId)
-            );
-          }
-        }
-      }
-    } catch (err) {
-      console.error("Error fetching conversation:", err);
-    }
-  };
-
   const submitPrompt = useCallback(
     (e?: React.FormEvent) => {
       if (e) e.preventDefault();
@@ -192,21 +129,6 @@ export default function GenerateWebsite() {
     );
   };
 
-  const toggleEditMode = () => {
-    const iframe = document.getElementById(
-      "preview-frame"
-    ) as HTMLIFrameElement;
-    iframe?.contentWindow?.postMessage(
-      {
-        type: "editMode",
-        value: !editMode,
-      },
-      window.location.origin
-    );
-
-    setEditMode(!editMode);
-  };
-
   const updateImage = (imgLink: string) => {
     setHeroImg(imgLink);
     updatedb({ hero_img: imgLink });
@@ -224,7 +146,21 @@ export default function GenerateWebsite() {
   }, []);
 
   useEffect(() => {
-    if (id) getConversation(id);
+    if (id)
+      getConversation(
+        id,
+        setConversationHistory,
+        setChatId,
+        setDetailsFromLLM,
+        setShowPreview,
+        setStylesFromLLM,
+        setInitialStyles,
+        setHeroImg,
+        setIsLoading,
+        websiteDetails,
+        setWebsiteDetails,
+        setGeneratingSite
+      );
   }, [id]);
 
   useEffect(() => {
@@ -294,7 +230,7 @@ export default function GenerateWebsite() {
                 setChatVisible={setChatVisible}
                 showPreview={showPreview}
                 editMode={editMode}
-                toggleEditMode={toggleEditMode}
+                setEditMode={setEditMode}
                 stylesFromLLM={stylesFromLLM}
                 setStylesFromLLM={setStylesFromLLM}
                 initialStyles={initialStyles}
