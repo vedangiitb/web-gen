@@ -18,6 +18,7 @@ export function AIPopoverContent({
   const user = useAuth();
 
   const handleGenerate = async () => {
+    setGenerating(true);
     if (!user) return;
     const response = await fetch(
       "https://jxceaahrdymuhokduqdt.supabase.co/functions/v1/ai-content-generator",
@@ -44,8 +45,11 @@ export function AIPopoverContent({
       .replace(/\n?```$/, "");
 
     if (text && replaceContent) replaceContent(text);
+    setGenerating(false);
     onClose();
   };
+
+  const [generating, setGenerating] = useState(false);
 
   return (
     <>
@@ -68,7 +72,13 @@ export function AIPopoverContent({
         <Button variant="outline" onClick={onClose}>
           Cancel
         </Button>
-        <Button onClick={handleGenerate}>Generate</Button>
+        <Button
+          onClick={handleGenerate}
+          disabled={generating}
+          className={`${generating ? "cursor-not-allowed" : "cursor-pointer"}`}
+        >
+          {generating ? "Generating..." : "Generate"}
+        </Button>
       </div>
     </>
   );
