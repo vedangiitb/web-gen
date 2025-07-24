@@ -15,14 +15,14 @@ export default function ChatBox({
 }) {
   return (
     <form
-      className="flex w-full max-w-2xl rounded-2xl items-center border border-border p-2 mx-auto shadow-sm bg-background"
+      className="flex w-full max-w-2xl rounded-2xl items-center border border-border p-2 mx-auto shadow-sm bg-accent"
       onSubmit={submitPrompt}
     >
       <Textarea
-        className="border-none max-h-32 outline-none focus:outline-none focus:ring-2 focus:ring-ring shadow-none resize-none bg-background flex-1 text-foreground placeholder:text-muted-foreground"
+        className="border-none max-h-32 outline-none focus:outline-none shadow-none resize-none flex-1 text-card-foreground placeholder:text-muted-foreground"
         style={{
           boxShadow: "none",
-          backgroundColor: "var(--background)",
+          backgroundColor: "var(--accent)",
         }}
         value={prompt}
         onChange={(e) => setPrompt(e.target.value)}
@@ -36,11 +36,10 @@ export default function ChatBox({
         aria-label="Prompt"
       />
       <Button
-        className="ml-2 rounded-full shadow-lg w-10 h-10"
-        variant="secondary"
+        className="ml-2 rounded-full shadow-lg w-10 h-10 cursor-pointer"
         type="submit"
         aria-label="Submit prompt"
-        disabled={isLoading}
+        disabled={isLoading || !prompt}
       >
         <ArrowUp size={18} />
       </Button>

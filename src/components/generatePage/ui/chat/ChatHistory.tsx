@@ -13,7 +13,7 @@ export default function ChatHistory({
 }) {
   return (
     <div
-      className="flex-1 overflow-y-auto custom-scrollbar pr-2"
+      className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-10"
       aria-live="polite"
       style={{ maxHeight: "calc(100vh - 150px)" }}
     >

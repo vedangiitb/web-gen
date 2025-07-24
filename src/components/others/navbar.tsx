@@ -1,20 +1,12 @@
 "use client";
-import { LogOut, Moon, Sun } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import { Button } from "../ui/button";
-import { useRouter } from "next/navigation";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import Link from "next/link";
 
 export default function NavBar() {
   const user = useAuth();
-  const { logout } = useAuth();
-  const router = useRouter();
   const [darkMode, setDarkMode] = useState<boolean>(true);
 
   useEffect(() => {
@@ -40,33 +32,36 @@ export default function NavBar() {
           >
             {darkMode ? <Moon size={18} /> : <Sun size={18} />}
           </Button>
-          {user.currentUser === "Login" ? (
-            <Link
-              href="/login"
-              className="cursor-pointer text-[#00289f] "
-              type="button"
-            >
-              <p>Login</p>
-            </Link>
-          ) : (
-            <Popover>
-              <PopoverTrigger>
-                <span className="cursor-pointer">{user.currentUser}</span>
-              </PopoverTrigger>
-              <PopoverContent className="space-y-2">
-                <div
-                  className="flex items-center cursor-pointer"
-                  onClick={() => {
-                    logout();
-                    router.push("/");
-                  }}
-                >
-                  <LogOut className="h-4 w-4 mr-2" />
-                  <p>Logout</p>
-                </div>
-              </PopoverContent>
-            </Popover>
-          )}
+          {
+            user.currentUser === "Login" ? (
+              <Link
+                href="/login"
+                className="cursor-pointer text-[#00289f] "
+                type="button"
+              >
+                <p>Login</p>
+              </Link>
+            ) : null
+            // (
+            //   <Popover>
+            //     <PopoverTrigger>
+            //       <span className="cursor-pointer">{user.currentUser}</span>
+            //     </PopoverTrigger>
+            //     <PopoverContent className="space-y-2">
+            //       <div
+            //         className="flex items-center cursor-pointer"
+            //         onClick={() => {
+            //           logout();
+            //           router.push("/");
+            //         }}
+            //       >
+            //         <LogOut className="h-4 w-4 mr-2" />
+            //         <p>Logout</p>
+            //       </div>
+            //     </PopoverContent>
+            //   </Popover>
+            // )
+          }
         </div>
       </header>
     </div>
