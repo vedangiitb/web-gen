@@ -41,7 +41,7 @@ export default function Title1({
             }`}
             suppressContentEditableWarning={isEditing}
             contentEditable={isEditing}
-            id="heading"
+            id={id}
             onClick={(e) => handleClick((e.target as HTMLElement).id)}
             style={{
               pointerEvents: editMode ? "auto" : "none",
@@ -60,7 +60,7 @@ export default function Title1({
           }`}
           suppressContentEditableWarning={isEditing}
           contentEditable={isEditing}
-          id="heading"
+          id={id}
           onClick={(e) => handleClick((e.target as HTMLElement).id)}
         >
           {renderText}

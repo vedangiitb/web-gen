@@ -11,7 +11,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { useAuth } from "../auth/AuthContext";
 import ChatPanel from "../generatePage/ui/chat/ChatPanel";
-import PreviewBar from "../generatePage/ui/preview/PreviewBar";
+import PreviewBar from "../generatePage/ui/preview/PreviewPanel";
 
 type ConversationRow = {
   id: string;

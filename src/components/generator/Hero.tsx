@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
 import { colorMap } from "./colorMap";
 import Btn from "./elements/btn1";
 import Img from "./elements/img";
 import SubHeading from "./elements/subHead";
 import Title1 from "./elements/title1";
+import { useSectionEditor } from "./lib/useSectionEditor";
 
 export type HeroProps = {
   content: {
@@ -17,15 +17,9 @@ export type HeroProps = {
   style: GenStyles;
   heroImg: string;
   editMode: boolean;
-  updateData: any;
-  setShowImgBox: any;
+  updateData: (key: string, value: any) => void;
+  setShowImgBox: (show: boolean) => void;
 };
-
-type EditableKey =
-  | "heading"
-  | "subheading"
-  | "primaryButton"
-  | "secondaryButton";
 
 export default function Hero({
   content,
@@ -35,107 +29,17 @@ export default function Hero({
   updateData,
   setShowImgBox,
 }: HeroProps) {
-  if (!content) return <div></div>;
+  const {
+    localContent,
+    isEditing,
+    handleClick,
+    handleSave,
+    rollBackEdit,
+    replaceContent,
+  } = useSectionEditor("Hero", content, updateData);
 
-  const [localContent, setLocalContent] = useState(content);
   const bgColors = colorMap[style?.color || "zinc"];
-  const primary = style?.font.primary;
-  const bodyFont = style?.font.body;
-
-  const [editElement, setEditElement] = useState<EditableKey | "">("");
-  const [isAIGenerating, setAIGenerating] = useState(false);
-  const [backupContent, setBackupContent] = useState<
-    Partial<Record<EditableKey, string>>
-  >({});
-
-  useEffect(() => {
-    setLocalContent(content);
-    setAIGenerating(false); // AI generation ends
-  }, [content]);
-
-  const handleClick = (id: string) => {
-    if (
-      [
-        "heading",
-        "subheading",
-        "primaryButton",
-        "secondaryButton",
-        "",
-      ].includes(id)
-    ) {
-      if (id !== "") {
-        setBackupContent((prev) => ({
-          ...prev,
-          [id]: localContent[id as EditableKey],
-        }));
-      }
-      setEditElement(id as EditableKey | "");
-    }
-  };
-
-  const isEditing = (id: string) => editMode && editElement === id;
-
-  const handleSave = () => {
-    const val = document.getElementById(editElement);
-    if (!val) return;
-
-    const newVal = (val as HTMLInputElement).textContent || "";
-
-    if (
-      editElement === "heading" ||
-      editElement === "subheading" ||
-      editElement === "primaryButton" ||
-      editElement === "secondaryButton"
-    ) {
-      const updatedLocalContent = {
-        ...localContent,
-        [editElement]: newVal,
-      };
-
-      setLocalContent(updatedLocalContent); // update local
-      updateData("Hero", updatedLocalContent); // send to parent
-    }
-
-    setEditElement("");
-  };
-
-  const replaceContent = (newContent: string) => {
-    if (
-      editElement === "heading" ||
-      editElement === "subheading" ||
-      editElement === "primaryButton" ||
-      editElement === "secondaryButton"
-    ) {
-      console.log(newContent);
-      console.log(editElement);
-      const updatedContent = { ...localContent, [editElement]: newContent };
-      setLocalContent(updatedContent);
-    }
-  };
-
-  const rollBackEdit = () => {
-    if (
-      (editElement === "heading" ||
-        editElement === "subheading" ||
-        editElement === "primaryButton" ||
-        editElement === "secondaryButton") &&
-      backupContent[editElement]
-    ) {
-      console.log("setting back...");
-      console.log(backupContent[editElement]);
-      console.log(localContent[editElement]);
-      console.log(editElement);
-      setLocalContent((prev) => {
-        const updated = {
-          ...prev,
-          [editElement]: backupContent[editElement]!,
-        };
-        console.log("New localContent:", updated);
-        return updated;
-      });
-      setEditElement("");
-    }
-  };
+  const { primary, body } = style?.font;
 
   return (
     <section
@@ -143,7 +47,7 @@ export default function Hero({
     >
       <div className="flex-1 w-full">
         <Title1
-          id={"heading"}
+          id="heading"
           isEditing={isEditing("heading")}
           editMode={editMode}
           color={bgColors.text}
@@ -156,7 +60,7 @@ export default function Hero({
         />
 
         <SubHeading
-          id={"subheading"}
+          id="subheading"
           isEditing={isEditing("subheading")}
           editMode={editMode}
           color={bgColors.accentText}
@@ -165,13 +69,13 @@ export default function Hero({
           handleSave={handleSave}
           rollBackEdit={rollBackEdit}
           replaceContent={replaceContent}
-          font={bodyFont}
+          font={body}
         />
 
         <div className="flex flex-col sm:flex-row gap-4">
           {localContent.primaryButton && (
             <Btn
-              id={"primaryButton"}
+              id="primaryButton"
               isEditing={isEditing("primaryButton")}
               editMode={editMode}
               txtcolor={bgColors.buttonTxt}
@@ -188,7 +92,7 @@ export default function Hero({
 
           {localContent.secondaryButton && (
             <Btn
-              id={"secondaryButton"}
+              id="secondaryButton"
               isEditing={isEditing("secondaryButton")}
               editMode={editMode}
               txtcolor={bgColors.secondaryButtonTxt}
@@ -210,7 +114,7 @@ export default function Hero({
         heroImg={heroImg}
         editMode={editMode}
         setShowImgBox={setShowImgBox}
-        alt={"hero"}
+        alt="hero"
       />
     </section>
   );

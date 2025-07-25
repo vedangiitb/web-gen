@@ -3,7 +3,7 @@ import { useAuth } from "@/components/auth/AuthContext";
 import { getHeroImg } from "@/components/generatePage/network/getHeroImg";
 import { getConversation } from "@/components/generatePage/network/loadConversation";
 import ChatPanel from "@/components/generatePage/ui/chat/ChatPanel";
-import PreviewBar from "@/components/generatePage/ui/preview/PreviewBar";
+import PreviewBar from "@/components/generatePage/ui/preview/PreviewPanel";
 import NavBar from "@/components/others/navbar";
 import {
   ResizableHandle,
