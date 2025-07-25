@@ -1,7 +1,7 @@
 // hooks/useSectionEditor.ts
 import { useEffect, useState } from "react";
 
-// TODO: Passing types for sections
+// TODO: Passing types for sections & integrate with sections
 
 type EditableContent = Record<string, string>;
 
@@ -18,8 +18,10 @@ export function useSectionEditor<T extends EditableContent>(
     setLocalContent(initialContent);
   }, [initialContent]);
 
+  const isEditing = (key: keyof T) => editingKey === key;
+
   const handleClick = (key: string) => {
-    if (key !== "") {
+    if (key !== "" && isEditing(key)) {
       setBackupContent((prev) => ({
         ...prev,
         [key]: localContent[key],
@@ -27,8 +29,6 @@ export function useSectionEditor<T extends EditableContent>(
     }
     setEditingKey(key);
   };
-
-  const isEditing = (key: keyof T) => editingKey === key;
 
   const handleSave = () => {
     const el = document.getElementById(editingKey as string);
