@@ -1,79 +1,87 @@
-// hooks/useSectionEditor.ts
 import { useEffect, useState } from "react";
 
-// TODO: Passing types for sections & integrate with sections
-
-type EditableContent = Record<string, string>;
-
-export function useSectionEditor<T extends EditableContent>(
+export function useSectionEditor<
+  SectionContent extends Record<string, string>,
+  Key extends keyof SectionContent = keyof SectionContent
+>(
   sectionName: string,
-  initialContent: T,
-  updateSection: (section: string, content: T) => void
+  initialContent: SectionContent,
+  updateSection: (section: string, updatedContent: SectionContent) => void,
+  editableKeys: readonly Key[],
+  editMode: boolean
 ) {
-  const [localContent, setLocalContent] = useState<T>(initialContent);
-  const [editingKey, setEditingKey] = useState<keyof T | "">("");
-  const [backupContent, setBackupContent] = useState<Partial<T>>({});
+  const [localContent, setLocalContent] = useState(initialContent);
+  const [editingKey, setEditingKey] = useState<Key | "">("");
+  const [backupContent, setBackupContent] = useState<Partial<SectionContent>>(
+    {}
+  );
 
   useEffect(() => {
     setLocalContent(initialContent);
   }, [initialContent]);
 
-  const isEditing = (key: keyof T) => editingKey === key;
+  const isValidKey = (key: any): key is Key => editableKeys.includes(key);
 
-  const handleClick = (key: string) => {
-    if (key !== "" && isEditing(key)) {
-      setBackupContent((prev) => ({
-        ...prev,
-        [key]: localContent[key],
-      }));
-    }
+  const handleClick = (key: string | "") => {
+    if (!editMode || key === "" || !isValidKey(key)) return;
+    setBackupContent((prev) => ({
+      ...prev,
+      [key]: localContent[key],
+    }));
     setEditingKey(key);
   };
 
+  const isEditing = (key: Key) => editMode && editingKey === key;
+
   const handleSave = () => {
+    if (!editMode || !editingKey || !isValidKey(editingKey)) return;
+
     const el = document.getElementById(editingKey as string);
     if (!el) return;
 
     const newVal = el.textContent || "";
 
-    if (editingKey !== "") {
-      const updated = {
-        ...localContent,
-        [editingKey]: newVal,
-      };
-      setLocalContent(updated);
-      updateSection(sectionName, updated);
-      setEditingKey("");
-    }
+    const updated = {
+      ...localContent,
+      [editingKey]: newVal,
+    };
+
+    setLocalContent(updated);
+    updateSection(sectionName, updated);
+    setEditingKey("");
   };
 
   const replaceContent = (newText: string) => {
-    if (editingKey !== "") {
-      setLocalContent((prev) => ({
-        ...prev,
-        [editingKey]: newText,
-      }));
-    }
+    if (!editMode || !editingKey || !isValidKey(editingKey)) return;
+    setLocalContent((prev) => ({
+      ...prev,
+      [editingKey]: newText,
+    }));
   };
 
   const rollBackEdit = () => {
-    if (editingKey !== "" && backupContent[editingKey]) {
+    if (!editMode || !editingKey || !isValidKey(editingKey)) return;
+
+    const backup = backupContent[editingKey];
+    if (backup !== undefined) {
       setLocalContent((prev) => ({
         ...prev,
-        [editingKey]: backupContent[editingKey]!,
+        [editingKey]: backup,
       }));
       setEditingKey("");
     }
   };
 
   return {
-    localContent,
-    editingKey,
-    isEditing,
-    handleClick,
-    handleSave,
-    rollBackEdit,
-    replaceContent,
-    setEditingKey,
+    state: {
+      localContent,
+      isEditing,
+    },
+    handlers: {
+      handleClick,
+      handleSave,
+      rollBackEdit,
+      replaceContent,
+    },
   };
 }

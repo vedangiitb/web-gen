@@ -33,7 +33,10 @@ export default function Btn({
   outlineColor?: string;
 }) {
   return (
-    <div className={`${font}`}>
+    <div className={`${font} relative group`}>
+      {editMode && (
+        <div className="absolute inset-0 bg-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 rounded" />
+      )}
       {renderText &&
         (isEditing ? (
           <AnimatePresence mode="wait">

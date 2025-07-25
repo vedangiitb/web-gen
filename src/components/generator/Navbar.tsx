@@ -8,7 +8,11 @@ import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
 export type NavbarProps = {
-  content: { logoText: string; links: string[]; ctaText: string };
+  content: {
+    logoText: string;
+    links: string[];
+    ctaText: string;
+  };
   style: GenStyles;
   editMode: boolean;
   updateData: (section: string, content: any) => void;
@@ -72,7 +76,7 @@ export default function Navbar({
   return (
     <nav
       className={`
-        flex items-center justify-between px-8 md:px-16 py-4 
+        flex items-center sticky top-0 w-full z-30 justify-between px-8 md:px-16 py-4 
         ${bgColors.bgFrom} backdrop-blur  ${bgColors.bgTo} shadow-sm ${primary}
       `}
     >

@@ -1,32 +1,13 @@
 "use client";
-import { useEffect, useState } from "react";
 import { colorMap } from "./colorMap";
 import Btn from "./elements/btn1";
 import Img from "./elements/img";
 import SubHeading from "./elements/subHead";
 import Title1 from "./elements/title1";
+import { useSectionEditor } from "./lib/useSectionEditor";
+import { EditableHeroKeys, HeroContent, HeroProps } from "./types/Hero";
 
-export type HeroProps = {
-  content: {
-    heading: string;
-    subheading: string;
-    primaryButton: string;
-    secondaryButton: string;
-    imageUrl: string;
-  };
-  style: GenStyles;
-  heroImg: string;
-  editMode: boolean;
-  updateData: (key: string, value: any) => void;
-  setShowImgBox: (show: boolean) => void;
-};
-
-type EditableKey = keyof Pick<
-  HeroProps["content"],
-  "heading" | "subheading" | "primaryButton" | "secondaryButton"
->;
-
-const editableKeys: EditableKey[] = [
+const editableKeys: EditableHeroKeys[] = [
   "heading",
   "subheading",
   "primaryButton",
@@ -41,68 +22,20 @@ export default function Hero({
   updateData,
   setShowImgBox,
 }: HeroProps) {
-  const [localContent, setLocalContent] = useState(content);
-  const [editKey, setEditKey] = useState<EditableKey | "">("");
-  const [backupContent, setBackupContent] = useState<
-    Partial<Record<EditableKey, string>>
-  >({});
-
+  if (!content) return
   const bgColors = colorMap[style?.color || "zinc"];
   const { primary, body } = style?.font || {};
 
-  useEffect(() => {
-    setLocalContent(content);
-  }, [content]);
-
-  const handleClick = (key: string) => {
-    if (editableKeys.includes(key as EditableKey)) {
-      setBackupContent((prev) => ({
-        ...prev,
-        [key]: localContent[key as EditableKey],
-      }));
-      setEditKey(key as EditableKey);
-    } else {
-      setEditKey("");
-    }
-  };
-
-  const isEditing = (key: string) => editMode && editKey === key;
-
-  const handleSave = () => {
-    const element = document.getElementById(editKey);
-    if (!element) return;
-
-    const newValue = element.textContent || "";
-    if (editableKeys.includes(editKey as EditableKey)) {
-      const updated = { ...localContent, [editKey]: newValue };
-      setLocalContent(updated);
-      updateData("Hero", updated);
-      setEditKey("");
-    }
-  };
-
-  const replaceContent = (newContent: string) => {
-    if (editableKeys.includes(editKey as EditableKey)) {
-      setLocalContent((prev) => ({
-        ...prev,
-        [editKey]: newContent,
-      }));
-    }
-  };
-
-  const rollBackEdit = () => {
-    if (
-      editableKeys.includes(editKey as EditableKey) &&
-      editKey !== "" &&
-      backupContent[editKey as EditableKey]
-    ) {
-      setLocalContent((prev) => ({
-        ...prev,
-        [editKey as EditableKey]: backupContent[editKey as EditableKey]!,
-      }));
-      setEditKey("");
-    }
-  };
+  const {
+    state: { localContent, isEditing },
+    handlers: { handleClick, handleSave, rollBackEdit, replaceContent },
+  } = useSectionEditor<HeroContent, EditableHeroKeys>(
+    "Hero",
+    content,
+    updateData,
+    editableKeys,
+    editMode
+  );
 
   return (
     <section
@@ -114,7 +47,7 @@ export default function Hero({
           isEditing={isEditing("heading")}
           editMode={editMode}
           color={bgColors.text}
-          renderText={localContent.heading}
+          renderText={localContent.heading || ""}
           handleClick={handleClick}
           handleSave={handleSave}
           rollBackEdit={rollBackEdit}
@@ -127,7 +60,7 @@ export default function Hero({
           isEditing={isEditing("subheading")}
           editMode={editMode}
           color={bgColors.accentText}
-          renderText={localContent.subheading}
+          renderText={localContent.subheading || ""}
           handleClick={handleClick}
           handleSave={handleSave}
           rollBackEdit={rollBackEdit}

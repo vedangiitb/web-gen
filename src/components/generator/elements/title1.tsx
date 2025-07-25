@@ -13,7 +13,7 @@ export default function Title1({
   handleSave,
   rollBackEdit,
   replaceContent,
-  font
+  font,
 }: {
   id: string;
   isEditing: boolean;
@@ -24,10 +24,14 @@ export default function Title1({
   handleSave: () => void;
   rollBackEdit: () => void;
   replaceContent: (newContent: string) => void;
-  font?:string
+  font?: string;
 }) {
   return (
-    <div className={`${font}`}>
+    <div className={`${font} relative group`}>
+      {editMode && (
+        <div className="absolute inset-0 bg-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 rounded" />
+      )}
+
       {isEditing ? (
         <AnimatePresence mode="wait">
           <motion.h1
@@ -36,9 +40,9 @@ export default function Title1({
             exit={{ opacity: 0, y: -20, filter: "blur(8px)" }}
             transition={{ duration: 0.55, type: "spring" }}
             className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${color}
-              ${editMode ? "cursor-pointer outline-dashed" : ""} ${
+          ${editMode ? "cursor-pointer outline-dashed" : ""} ${
               isEditing ? "outline-blue-500 shadow-md" : ""
-            }`}
+            } relative z-20`}
             suppressContentEditableWarning={isEditing}
             contentEditable={isEditing}
             id={id}
@@ -55,11 +59,9 @@ export default function Title1({
         <h1
           key={renderText}
           className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${color}
-              ${editMode ? "cursor-pointer outline-dashed" : ""} ${
+          ${editMode ? "cursor-pointer outline-dashed" : ""} ${
             isEditing ? "outline-blue-500 shadow-md" : ""
-          }`}
-          suppressContentEditableWarning={isEditing}
-          contentEditable={isEditing}
+          } relative z-20`}
           id={id}
           onClick={(e) => handleClick((e.target as HTMLElement).id)}
         >

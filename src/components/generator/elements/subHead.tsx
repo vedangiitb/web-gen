@@ -27,7 +27,10 @@ export default function SubHeading({
   font?: string;
 }) {
   return (
-    <div className={`${font}`}>
+    <div className={`${font} relative group`}>
+      {editMode && (
+        <div className="absolute inset-0 bg-blue-400/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 rounded" />
+      )}
       {isEditing ? (
         <AnimatePresence mode="wait">
           <motion.p
