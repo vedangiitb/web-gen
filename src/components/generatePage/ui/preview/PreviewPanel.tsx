@@ -1,5 +1,6 @@
+import { useState } from "react";
 import PreviewFrame from "./PreviewFrame";
-import PreviewTopbar from "./PreviewTopbar";
+import PreviewTopbar from "./Topbar/PreviewTopbar";
 export default function PreviewBar({
   chatVisible,
   setChatVisible,
@@ -27,7 +28,6 @@ export default function PreviewBar({
   openInNewWindow?: () => void;
   detailsFromLLM?: any;
 }) {
-
   const toggleEditMode = () => {
     if (!setEditMode) return;
     const iframe = document.getElementById(
@@ -42,7 +42,17 @@ export default function PreviewBar({
     );
     setEditMode(!editMode);
   };
-  
+
+  const [width, setW] = useState("100%");
+
+  const setWidth = (mode: "phone" | "tablet" | "pc") => {
+    if (mode == "phone") {
+      setW("375px");
+    } else if (mode == "tablet") {
+      setW("600px");
+    } else setW("100%");
+  };
+
   return (
     <div className="h-full flex flex-col p-2">
       <PreviewTopbar
@@ -58,6 +68,8 @@ export default function PreviewBar({
         changes={changes}
         openInNewWindow={openInNewWindow}
         detailsFromLLM={detailsFromLLM}
+        setWidth={setWidth}
+        width={width}
       />
 
       {showPreview ? (
@@ -65,10 +77,11 @@ export default function PreviewBar({
           id="preview-frame"
           src="/preview"
           style={{
-            width: "100%",
+            margin: "auto",
             height: "800px",
+            width: width,
             border: "1px solid #ddd",
-            borderRadius: "8px",
+            borderRadius: "6px",
           }}
         />
       ) : (

@@ -1,6 +1,10 @@
 "use client";
 import { Sidebar as SidebarIcon } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function SidebarToggle({
   isExpanded,
@@ -10,12 +14,15 @@ export default function SidebarToggle({
   onToggle: () => void;
 }) {
   return (
-    <div className="flex justify-end">
+    <div className={`flex justify-between items-center ${isExpanded?"p-2":""}`}>
+      {isExpanded ? <p>Web Gen</p> : null}
       <Tooltip>
-        <TooltipTrigger asChild>
+        <TooltipTrigger asChild className="p-0">
           <button
             onClick={onToggle}
-            className="p-2 rounded-md hover:bg-muted transition cursor-pointer"
+            className={`flex justify-center items-center p-2 rounded-md hover:bg-muted transition cursor-pointer ${
+              !isExpanded ? "w-full" : ""
+            }`}
           >
             <SidebarIcon className="w-5 h-5" />
           </button>

@@ -13,9 +13,9 @@ export default function ChatHistory({
 }) {
   return (
     <div
-      className="flex-1 overflow-y-auto custom-scrollbar pr-2 pb-10"
+      className="flex-1 overflow-y-auto custom-scrollbar pr-2 py-8"
       aria-live="polite"
-      style={{ maxHeight: "calc(100vh - 150px)" }}
+      style={{ maxHeight: "calc(100vh)" }}
     >
       {conversationHistory.map(
         (item: { role: string; parts: { text: string }[] }, idx: number) => (

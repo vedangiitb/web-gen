@@ -59,7 +59,7 @@ export default function Title1({
         <h1
           key={renderText}
           className={`text-4xl md:text-5xl font-extrabold mb-6 leading-tight drop-shadow ${color}
-          ${editMode ? "cursor-pointer outline-dashed" : ""} ${
+          ${editMode ? "cursor-pointer hover:outline-dashed" : ""} ${
             isEditing ? "outline-blue-500 shadow-md" : ""
           } relative z-20`}
           id={id}

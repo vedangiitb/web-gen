@@ -1,8 +1,9 @@
 "use client";
 import { useState } from "react";
-import SidebarToggle from "./SidebarToggle";
+import DarkMode from "./DarkMode";
 import NavItems from "./NavItems";
 import RecentChats from "./RecentChats";
+import SidebarToggle from "./SidebarToggle";
 import UserPopover from "./UserPopover";
 
 export default function Sidebar() {
@@ -22,7 +23,12 @@ export default function Sidebar() {
         <NavItems isExpanded={isExpanded} />
         <RecentChats isExpanded={isExpanded} />
       </div>
-      <UserPopover isExpanded={isExpanded} />
+
+      <div>
+        <DarkMode isExpanded={isExpanded} />
+
+        <UserPopover isExpanded={isExpanded} />
+      </div>
     </div>
   );
 }

@@ -1,9 +1,3 @@
-import { Switch } from "@/components/ui/switch";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   ExternalLink,
   PanelLeftClose,
@@ -11,8 +5,10 @@ import {
   Save,
 } from "lucide-react";
 import { toast } from "sonner";
-import { updatedb } from "../../network/updateDb";
+import { updatedb } from "../../../network/updateDb";
+import EditMode from "./EditMode";
 import StyleSettings from "./StyleSettings";
+import WidthSetting from "./widthSetting";
 
 export default function PreviewTopbar({
   chatVisible,
@@ -27,6 +23,8 @@ export default function PreviewTopbar({
   changes,
   openInNewWindow,
   detailsFromLLM,
+  setWidth,
+  width,
 }: {
   chatVisible: boolean;
   setChatVisible: (visible: boolean) => void;
@@ -40,9 +38,11 @@ export default function PreviewTopbar({
   changes?: boolean;
   openInNewWindow?: () => void;
   detailsFromLLM?: any;
+  width: string;
+  setWidth: (mode: "phone" | "tablet" | "pc") => void;
 }) {
   return (
-    <div className="flex justify-between items-center mb-3">
+    <div className="flex justify-between items-center mb-3 border-b-2 py-2">
       {chatVisible ? (
         <PanelLeftClose
           className="h-8 w-8 p-1 cursor-pointer hover:bg-muted rounded-md transition-colors duration-300"
@@ -58,18 +58,9 @@ export default function PreviewTopbar({
 
       {showPreview && setChanges ? (
         <div className="flex gap-4">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Switch
-                className={`border-2 h-5 w-8 border-muted-foreground bg-muted-foreground`}
-                checked={editMode}
-                onCheckedChange={toggleEditMode}
-              />
-            </TooltipTrigger>
-            <TooltipContent side="right" className="text-xs">
-              Turn edit Mode {editMode ? "off" : "on"}
-            </TooltipContent>
-          </Tooltip>
+          <EditMode editMode={editMode} toggleEditMode={toggleEditMode} />
+
+          <WidthSetting width={width} setWidth={setWidth} />
 
           <Save
             className={`cursor-pointer w-5 h-5 ${

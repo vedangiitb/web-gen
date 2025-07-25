@@ -54,7 +54,7 @@ export default function SubHeading({
         <p
           key={renderText}
           className={`text-lg md:text-xl mb-8 ${color}
-              ${editMode ? "cursor-pointer outline-dashed" : ""} ${
+              ${editMode ? "cursor-pointer hover:outline-dashed" : ""} ${
             isEditing ? "outline-blue-500 shadow-md" : ""
           }`}
           suppressContentEditableWarning={isEditing}

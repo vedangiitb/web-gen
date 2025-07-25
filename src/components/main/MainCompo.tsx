@@ -81,12 +81,12 @@ export default function MainCompo() {
       <SideBar />
 
       <div className="w-full">
-        <NavBar />
-        <main className="h-[calc(100vh-5rem)]">
+        {/* <NavBar /> */}
+        <main className="h-[calc(100vh-1rem)]">
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <ResizablePanel
               minSize={30}
-              className={`px-8 h-full ${!chatVisible ? "hidden" : ""}`}
+              className={`px-8 pt-10 h-full ${!chatVisible ? "hidden" : ""}`}
             >
               <ChatPanel
                 conversationHistory={conversationHistory}

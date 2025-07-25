@@ -17,7 +17,7 @@ export default function ChatPanel({
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
-    <div className="h-full flex flex-col justify-between overflow-hidden">
+    <div className="pl-7 pr-2 h-full flex flex-col justify-between overflow-hidden">
       <ChatHistory
         conversationHistory={conversationHistory}
         isLoading={isLoading}

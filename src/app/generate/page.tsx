@@ -199,13 +199,12 @@ export default function GenerateWebsite() {
       <SideBar />
 
       <div className="w-full">
-        <NavBar />
+        {/* <NavBar /> */}
 
-        <main className="flex h-[calc(100vh-5rem)]">
+        <main className="flex h-[calc(100vh-1rem)]">
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <ResizablePanel
-              minSize={30}
-              className={`pl-8 pr-4 h-full ${!chatVisible ? "hidden" : ""}`}
+              className={`pl-1 h-full ${!chatVisible ? "hidden" : ""}`}
             >
               <ChatPanel
                 conversationHistory={conversationHistory}
@@ -223,7 +222,7 @@ export default function GenerateWebsite() {
             />
 
             <ResizablePanel
-              minSize={30}
+              minSize={60}
               className={`px-2 ${!isGen ? "hidden" : ""}`}
             >
               <PreviewBar

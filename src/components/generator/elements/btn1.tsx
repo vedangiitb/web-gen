@@ -69,7 +69,7 @@ export default function Btn({
                 key={renderText}
                 className={`transition ${bgColor} ${txtcolor} ${hoverColor}
                   px-6 py-3 rounded-lg text-lg font-semibold
-                  ${editMode ? "cursor-pointer outline-dashed" : ""} ${
+                  ${editMode ? "cursor-pointer hover:outline-dashed" : ""} ${
                   isEditing ? "outline-blue-500 shadow-md" : ""
                 }`}
                 suppressContentEditableWarning={isEditing}
