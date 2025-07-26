@@ -19,143 +19,131 @@ export default function StyleSettings({
   initialStyles,
   setChanges,
 }: {
-  stylesFromLLM: GenStyles;
+  stylesFromLLM: any;
   setStylesFromLLM: any;
-  initialStyles: GenStyles;
+  initialStyles: any;
   setChanges: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   return (
-    <div>
-      <Popover>
-        <PopoverTrigger>
-          <Settings
-            className="cursor-pointer w-5 h-5"
-            aria-label="Open settings"
-          />
-        </PopoverTrigger>
-        <PopoverContent className="space-y-3 mr-4 p-4 rounded-lg shadow-lg bg-background border border-border max-w-xs">
-          <Accordion type="single" className="w-full">
-            <AccordionItem value="item-1">
-              <AccordionTrigger className="cursor-pointer">
-                <div className="flex gap-2 items-center">
-                  <Paintbrush className="w-4 h-4"></Paintbrush>
-                  <span className="font-medium text-sm">Theme Colors</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
-                {getRelColList(initialStyles).map((item, idx) => {
-                  const colorClass = `${item.color}`;
-                  const mutedClass = `${item.muted}`;
-                  const isSelected =
-                    item.col1 === stylesFromLLM.color &&
-                    item.col2 === stylesFromLLM.muted;
+    <Popover>
+      <PopoverTrigger
+        aria-label="Open style settings"
+        className="cursor-pointer"
+      >
+        <Settings className="w-5 h-5 text-chart-2 hover:text-chart-2/70 transition-colors" />
+      </PopoverTrigger>
 
-                  return (
-                    <div
-                      key={idx}
-                      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
-                        isSelected
-                          ? "ring-2 ring-primary bg-primary/10"
-                          : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
-                      }`}
-                      onClick={() => {
-                        setStylesFromLLM((prev: any) => {
-                          return {
-                            color: item.col1,
-                            muted: item.col2,
-                            font: prev.font,
-                          };
-                        });
-                        setChanges(true);
-                      }}
-                      aria-selected={isSelected}
-                      tabIndex={0}
-                      title={`Select ${item.col1} / ${item.col2}`}
-                    >
-                      <div className="flex gap-1">
-                        <div
-                          className={`w-6 h-6 rounded ${colorClass} border border-border shadow-sm`}
-                          title={item.col1}
-                        />
-                        <div
-                          className={`w-6 h-6 rounded ${mutedClass} border border-border shadow-sm`}
-                          title={item.col2}
-                        />
-                      </div>
-                      <span className="text-xs font-mono text-muted-foreground">
-                        {item.col1} / {item.col2}
-                      </span>
-                      {isSelected && (
-                        <Check
-                          className="text-primary ml-auto"
-                          size={18}
-                          aria-label="Selected"
-                        />
-                      )}
+      <PopoverContent className="mr-4 p-4 rounded-2xl shadow-xl bg-background border border-border max-w-xs space-y-4">
+        <Accordion type="single" collapsible className="w-full">
+          <AccordionItem value="colors" className="focus:outline-none">
+            <AccordionTrigger className="flex items-center gap-2 cursor-pointer font-semibold text-sm tracking-wide select-none rounded-md py-1 px-2 hover:bg-muted transition-colors">
+              <Paintbrush className="w-4 h-4" />
+              Theme Colors
+            </AccordionTrigger>
+            <AccordionContent className="p-2 max-h-60 overflow-y-auto space-y-2 custom-scrollbar">
+              {getRelColList(initialStyles).map((item, idx) => {
+                const isSelected =
+                  item.col1 === stylesFromLLM.color &&
+                  item.col2 === stylesFromLLM.muted;
+                return (
+                  <div
+                    key={idx}
+                    role="button"
+                    tabIndex={0}
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      setStylesFromLLM((prev: any) => ({
+                        color: item.col1,
+                        muted: item.col2,
+                        font: prev.font,
+                      }));
+                      setChanges(true);
+                    }}
+                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border ${
+                      isSelected
+                        ? "ring-2 ring-primary bg-primary/10 border-primary"
+                        : "border-transparent hover:ring-2 hover:ring-accent hover:bg-accent/10"
+                    }`}
+                    title={`Select ${item.col1} / ${item.col2}`}
+                  >
+                    <div className="flex gap-1">
+                      <div
+                        className={`w-6 h-6 rounded border border-border shadow-sm ${item.color}`}
+                        title={item.col1}
+                      />
+                      <div
+                        className={`w-6 h-6 rounded border border-border shadow-sm ${item.muted}`}
+                        title={item.col2}
+                      />
                     </div>
-                  );
-                })}
-              </AccordionContent>
-            </AccordionItem>
+                    <span className="text-xs font-mono text-muted-foreground">{`${item.col1} / ${item.col2}`}</span>
+                    {isSelected && (
+                      <Check
+                        className="text-primary ml-auto"
+                        size={18}
+                        aria-label="Selected"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </AccordionContent>
+          </AccordionItem>
 
-            <AccordionItem value="item-2">
-              <AccordionTrigger className="cursor-pointer">
-                <div className="flex items-center gap-2">
-                  <Pen className="w-4 h-4"></Pen>
-                  <span className="font-medium text-sm">Font Styles</span>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="p-2 space-y-2 max-h-60 overflow-y-scroll custom-scrollbar">
-                {getFontsList().map((item, idx) => {
-                  const isSelected =
-                    item.primary === stylesFromLLM.font.primary &&
-                    item.body === stylesFromLLM.font.body;
+          <AccordionItem value="fonts" className="focus:outline-none">
+            <AccordionTrigger className="flex items-center gap-2 cursor-pointer font-semibold text-sm tracking-wide select-none rounded-md py-1 px-2 hover:bg-muted transition-colors">
+              <Pen className="w-4 h-4" />
+              Font Styles
+            </AccordionTrigger>
+            <AccordionContent className="p-2 max-h-60 overflow-y-auto space-y-2 custom-scrollbar">
+              {getFontsList().map((item, idx) => {
+                const isSelected =
+                  item.primary === stylesFromLLM.font.primary &&
+                  item.body === stylesFromLLM.font.body;
 
-                  return (
-                    <div
-                      key={idx}
-                      className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border border-transparent ${
-                        isSelected
-                          ? "ring-2 ring-primary bg-primary/10"
-                          : "hover:ring-2 hover:ring-accent hover:bg-accent/10"
-                      }`}
-                      onClick={() => {
-                        setStylesFromLLM((prev: any) => {
-                          return {
-                            ...prev,
-                            font: {
-                              primary: item.primary,
-                              body: item.body,
-                            },
-                          };
-                        });
-                        setChanges(true);
-                      }}
-                      aria-selected={isSelected}
-                      tabIndex={0}
-                      title={`Select ${item.primary} / ${item.body}`}
-                    >
-                      <span className={`font-${item.primary} text-base`}>
-                        {item.primary}
-                      </span>
-                      <span className="text-xs font-mono text-muted-foreground">
-                        {item.body}
-                      </span>
-                      {isSelected && (
-                        <Check
-                          className="text-primary ml-auto"
-                          size={18}
-                          aria-label="Selected"
-                        />
-                      )}
-                    </div>
-                  );
-                })}
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>{" "}
-        </PopoverContent>
-      </Popover>
-    </div>
+                return (
+                  <div
+                    key={idx}
+                    role="button"
+                    tabIndex={0}
+                    aria-selected={isSelected}
+                    onClick={() => {
+                      setStylesFromLLM((prev: any) => ({
+                        ...prev,
+                        font: {
+                          primary: item.primary,
+                          body: item.body,
+                        },
+                      }));
+                      setChanges(true);
+                    }}
+                    className={`flex items-center gap-3 p-2 rounded-lg cursor-pointer transition-all border ${
+                      isSelected
+                        ? "ring-2 ring-primary bg-primary/10 border-primary"
+                        : "border-transparent hover:ring-2 hover:ring-accent hover:bg-accent/10"
+                    }`}
+                    title={`Select ${item.primary} / ${item.body}`}
+                  >
+                    <span className={`font-${item.primary} text-base`}>
+                      {item.primary}
+                    </span>
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {item.body}
+                    </span>
+                    {isSelected && (
+                      <Check
+                        className="text-primary ml-auto"
+                        size={18}
+                        aria-label="Selected"
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+      </PopoverContent>
+    </Popover>
   );
 }

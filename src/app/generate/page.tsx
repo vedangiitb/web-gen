@@ -201,7 +201,7 @@ export default function GenerateWebsite() {
       <div className="w-full">
         {/* <NavBar /> */}
 
-        <main className="flex h-[calc(100vh-1rem)]">
+        <main className="flex h-full">
           <ResizablePanelGroup direction="horizontal" className="h-full">
             <ResizablePanel
               className={`pl-1 h-full ${!chatVisible ? "hidden" : ""}`}

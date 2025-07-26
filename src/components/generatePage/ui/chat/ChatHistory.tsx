@@ -13,21 +13,19 @@ export default function ChatHistory({
 }) {
   return (
     <div
-      className="flex-1 overflow-y-auto custom-scrollbar pr-2 py-8"
+      className="flex-1 overflow-y-auto custom-scrollbar px-2 py-8 space-y-2"
       aria-live="polite"
-      style={{ maxHeight: "calc(100vh)" }}
+      tabIndex={0}
     >
-      {conversationHistory.map(
-        (item: { role: string; parts: { text: string }[] }, idx: number) => (
-          <div key={idx}>
-            {item.role === "user" ? (
-              <RenderUserMessage data={item.parts[0].text} />
-            ) : (
-              <RenderAIResponse data={item.parts[0].text} />
-            )}
-          </div>
-        )
-      )}
+      {conversationHistory.map((item, idx) => (
+        <div key={idx}>
+          {item.role === "user" ? (
+            <RenderUserMessage data={item.parts[0].text} />
+          ) : (
+            <RenderAIResponse data={item.parts[0].text} />
+          )}
+        </div>
+      ))}
       {isLoading && <TypingIndicator generatingsite={generatingsite} />}
     </div>
   );

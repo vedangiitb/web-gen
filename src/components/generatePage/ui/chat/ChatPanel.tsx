@@ -17,13 +17,12 @@ export default function ChatPanel({
   setPrompt: React.Dispatch<React.SetStateAction<string>>;
 }) {
   return (
-    <div className="pl-7 pr-2 h-full flex flex-col justify-between overflow-hidden">
+    <div className="pl-4 pr-2 pb-2 h-full flex flex-col justify-between overflow-hidden shadow-xl backdrop-blur-2xl bg-background">
       <ChatHistory
         conversationHistory={conversationHistory}
         isLoading={isLoading}
         generatingsite={generatingsite}
       />
-
       <ChatBox
         prompt={prompt}
         submitPrompt={submitPrompt}

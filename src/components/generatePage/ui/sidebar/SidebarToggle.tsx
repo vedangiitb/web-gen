@@ -14,17 +14,30 @@ export default function SidebarToggle({
   onToggle: () => void;
 }) {
   return (
-    <div className={`flex justify-between items-center ${isExpanded?"p-2":""}`}>
-      {isExpanded ? <p>Web Gen</p> : null}
+    <div
+      className={`relative flex items-center justify-between ${
+        isExpanded ? "p-2" : "p-0"
+      } mb-4`}
+    >
+      {isExpanded ? (
+        <span className="font-extrabold text-lg tracking-wider text-transparent bg-gradient-to-tr from-teal-400/70 via-purple-500/70 to-cyan-400/70 bg-clip-text drop-shadow select-none ml-2 transition">
+          Web Gen
+        </span>
+      ) : null}
       <Tooltip>
-        <TooltipTrigger asChild className="p-0">
+        <TooltipTrigger asChild>
           <button
             onClick={onToggle}
-            className={`flex justify-center items-center p-2 rounded-md hover:bg-muted transition cursor-pointer ${
-              !isExpanded ? "w-full" : ""
-            }`}
+            className={`
+              flex justify-center items-center p-2 rounded-xl shadow hover:shadow-xl border
+              hover:bg-muted
+              transition-colors duration-150
+              ${isExpanded ? "" : "w-full"}
+            `}
+            aria-label={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
+            tabIndex={0}
           >
-            <SidebarIcon className="w-5 h-5" />
+            <SidebarIcon className="w-5 h-5 text-chart-2" />
           </button>
         </TooltipTrigger>
         <TooltipContent side="right" className="text-xs">

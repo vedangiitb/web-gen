@@ -1,7 +1,11 @@
 "use client";
 import { useRouter } from "next/navigation";
 import { SquarePen, Search } from "lucide-react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function NavItems({ isExpanded }: { isExpanded: boolean }) {
   const router = useRouter();
@@ -15,23 +19,29 @@ export default function NavItems({ isExpanded }: { isExpanded: boolean }) {
     {
       icon: <Search className="w-5 h-5" />,
       label: "Search",
-      action: () => {},
+      action: () => {}, // Your search logic
     },
   ];
 
   return (
-    <div className="flex flex-col gap-2">
+    <nav className="flex flex-col gap-2">
       {navItems.map((item, idx) => (
         <Tooltip key={idx}>
           <TooltipTrigger asChild>
             <button
-              className={`flex items-center gap-3 cursor-pointer w-full text-sm p-2 rounded-md hover:bg-muted transition ${
-                !isExpanded && "justify-center"
-              }`}
+              className={`flex items-center gap-3 w-full text-base px-2 py-2 rounded-lg
+                hover:bg-muted
+                border border-white/10 shadow
+                transition-all duration-110
+                ${!isExpanded ? "justify-center" : ""}
+              `}
               onClick={item.action}
+              tabIndex={0}
             >
-              {item.icon}
-              {isExpanded && <span>{item.label}</span>}
+              <span className="">{item.icon}</span>
+              {isExpanded && (
+                <span className="font-semibold">{item.label}</span>
+              )}
             </button>
           </TooltipTrigger>
           {!isExpanded && (
@@ -41,6 +51,6 @@ export default function NavItems({ isExpanded }: { isExpanded: boolean }) {
           )}
         </Tooltip>
       ))}
-    </div>
+    </nav>
   );
 }
