@@ -36,7 +36,7 @@ export default function StyleSettings({
       <PopoverContent className="mr-4 p-4 rounded-2xl shadow-xl bg-background border border-border max-w-xs space-y-4">
         <Accordion type="single" collapsible className="w-full">
           <AccordionItem value="colors" className="focus:outline-none">
-            <AccordionTrigger className="flex items-center gap-2 cursor-pointer font-semibold text-sm tracking-wide select-none rounded-md py-1 px-2 hover:bg-muted transition-colors">
+            <AccordionTrigger className="flex  items-center gap-2 cursor-pointer font-semibold text-sm tracking-wide select-none rounded-md pb-4 px-2 hover:bg-muted transition-colors">
               <Paintbrush className="w-4 h-4" />
               Theme Colors
             </AccordionTrigger>
@@ -91,7 +91,7 @@ export default function StyleSettings({
           </AccordionItem>
 
           <AccordionItem value="fonts" className="focus:outline-none">
-            <AccordionTrigger className="flex items-center gap-2 cursor-pointer font-semibold text-sm tracking-wide select-none rounded-md py-1 px-2 hover:bg-muted transition-colors">
+            <AccordionTrigger className="flex items-center gap-2 cursor-pointer font-semibold text-sm tracking-wide select-none rounded-md pb-4 px-2 hover:bg-muted transition-colors">
               <Pen className="w-4 h-4" />
               Font Styles
             </AccordionTrigger>
