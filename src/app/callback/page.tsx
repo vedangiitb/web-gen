@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
-import { useAuth } from "@/components/auth/AuthContext";
+import { useAuth } from "@/services/authServices/AuthContext";
 
 type IdTokenPayload = {
   email: string;

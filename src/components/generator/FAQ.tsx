@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { colorMap } from "./colorMap";
-import EditingControls from "../editingControls/EditingControls";
+import EditingControls from "../editWebsite/EditingControls";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
 import { Input } from "../ui/input";

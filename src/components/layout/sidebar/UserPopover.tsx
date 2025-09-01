@@ -7,7 +7,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { CircleUser, HelpCircle, LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/components/auth/AuthContext";
+import { useAuth } from "@/services/authServices/AuthContext";
 import PrefDialog from "./prefDialog";
 import SettingsDialog from "./settingsDialog";
 

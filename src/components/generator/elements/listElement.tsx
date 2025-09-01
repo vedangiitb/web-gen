@@ -3,7 +3,7 @@
 import EditingControls from "@/components/editWebsite/EditingControls";
 import { AnimatePresence, motion } from "framer-motion";
 
-export default function Body({
+export default function LstElement({
   id,
   isEditing,
   editMode,
@@ -14,18 +14,21 @@ export default function Body({
   rollBackEdit,
   replaceContent,
   font,
+  deleteElement,
 }: {
   id: string;
   isEditing: boolean;
   editMode: boolean;
   color: string;
   renderText: string;
-  handleClick: (id: string) => void;
+  handleClick: (id: string, content: string) => void;
   handleSave: () => void;
   rollBackEdit: () => void;
   replaceContent: (newContent: string) => void;
   font?: string;
+  deleteElement: () => void;
 }) {
+  console.log(isEditing);
   return (
     <div className={`${font} relative group`}>
       {editMode && (
@@ -46,7 +49,9 @@ export default function Body({
             suppressContentEditableWarning={isEditing}
             contentEditable={isEditing}
             id={id}
-            onClick={(e) => handleClick((e.target as HTMLElement).id)}
+            onClick={(e) =>
+              handleClick((e.target as HTMLElement).id, renderText)
+            }
             style={{
               pointerEvents: editMode ? "auto" : "none",
               userSelect: editMode ? "text" : "none",
@@ -63,7 +68,7 @@ export default function Body({
             isEditing ? "outline-blue-500 shadow-md" : ""
           } relative z-20`}
           id={id}
-          onClick={(e) => handleClick((e.target as HTMLElement).id)}
+          onClick={(e) => handleClick((e.target as HTMLElement).id, renderText)}
         >
           {renderText}
         </p>
@@ -75,6 +80,7 @@ export default function Body({
           setEditElement={rollBackEdit}
           content={renderText}
           replaceContent={replaceContent}
+          deleteElement={deleteElement}
         />
       )}
     </div>

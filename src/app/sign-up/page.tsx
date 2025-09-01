@@ -115,7 +115,6 @@ export default function SignUp() {
       provider: "google",
     });
     if (error) console.error(error);
-    // Supabase redirects automatically on success
   };
 
   return (

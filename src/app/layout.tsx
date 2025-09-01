@@ -1,4 +1,4 @@
-import { AuthProvider } from "@/components/auth/AuthContext";
+import { AuthProvider } from "@/services/authServices/AuthContext";
 import type { Metadata } from "next";
 import { Toaster } from "@/components/ui/sonner";
 import {

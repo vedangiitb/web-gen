@@ -5,7 +5,7 @@ import {
   Save,
 } from "lucide-react";
 import { toast } from "sonner";
-import { updatedb } from "../../../network/updateDb";
+import { updatedb } from "../../../../services/generatePageServices/updateDb";
 import EditMode from "./EditMode";
 import StyleSettings from "./StyleSettings";
 import WidthSetting from "./widthSetting";

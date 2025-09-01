@@ -25,7 +25,10 @@ export const getConversation = async (
       .eq("id", id)
       .single();
 
-    if (error) throw error;
+    if (error) {
+      console.log(error);
+      throw error;
+    }
     if (!data) return;
     localStorage.setItem("chatId", id);
 

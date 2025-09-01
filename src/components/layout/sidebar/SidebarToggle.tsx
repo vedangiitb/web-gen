@@ -37,7 +37,7 @@ export default function SidebarToggle({
             aria-label={isExpanded ? "Collapse Sidebar" : "Expand Sidebar"}
             tabIndex={0}
           >
-            <SidebarIcon className="w-5 h-5 text-chart-2" />
+            <SidebarIcon className="w-5 h-5 text-chart-2 cursor-pointer" />
           </button>
         </TooltipTrigger>
         <TooltipContent side="right" className="text-xs">

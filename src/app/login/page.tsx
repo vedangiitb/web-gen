@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/components/auth/AuthContext";
-import { supabase } from "@/lib/supabaseClient"; // <- Make sure you have this
+import { useAuth } from "@/services/authServices/AuthContext";
+import { supabase } from "@/lib/supabaseClient";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -18,12 +18,13 @@ export default function Login() {
   const router = useRouter();
 
   useEffect(() => {
-    // You can fetch current user session here if needed
     supabase.auth.getUser().then(({ data }) => {
-      console.log(data)
+      console.log(data);
       if (data?.user) {
         if (data.user.email) {
-          setUser(data.user.user_metadata.full_name ?? data.user.email ?? "User");
+          setUser(
+            data.user.user_metadata.full_name ?? data.user.email ?? "User"
+          );
           router.push("/account");
         }
       }
@@ -56,7 +57,7 @@ export default function Login() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/account`, // Or /callback if you handle logic there
+        redirectTo: `${window.location.origin}/account`,
       },
     });
     if (error) setError(error.message);

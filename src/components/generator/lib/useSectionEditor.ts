@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 export function useSectionEditor<
-  SectionContent extends Record<string, string>,
-  Key extends keyof SectionContent = keyof SectionContent
+  SectionContent extends Record<string, any>,
+  Key extends string = string
 >(
   sectionName: string,
   initialContent: SectionContent,
@@ -22,21 +22,26 @@ export function useSectionEditor<
 
   const isValidKey = (key: any): key is Key => editableKeys.includes(key);
 
-  const handleClick = (key: string | "") => {
+  const handleClick = (key: string | "",content?:string) => {
+    console.log(key, editableKeys);
     if (!editMode || key === "" || !isValidKey(key)) return;
     setBackupContent((prev) => ({
       ...prev,
-      [key]: localContent[key],
+      [key]: content || localContent[key],
     }));
     setEditingKey(key);
   };
 
-  const isEditing = (key: Key) => editMode && editingKey === key;
+  const isEditing = (key: Key) => {
+    console.log(key, editMode, editingKey);
+    return editMode && editingKey === key;
+  };
 
   const handleSave = () => {
     if (!editMode || !editingKey || !isValidKey(editingKey)) return;
 
     const el = document.getElementById(editingKey as string);
+    console.log(el)
     if (!el) return;
 
     const newVal = el.textContent || "";
@@ -60,6 +65,7 @@ export function useSectionEditor<
   };
 
   const rollBackEdit = () => {
+    console.log(backupContent);
     if (!editMode || !editingKey || !isValidKey(editingKey)) return;
 
     const backup = backupContent[editingKey];
@@ -76,6 +82,7 @@ export function useSectionEditor<
     state: {
       localContent,
       isEditing,
+      setEditingKey,
     },
     handlers: {
       handleClick,

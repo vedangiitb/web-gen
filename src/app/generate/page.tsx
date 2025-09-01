@@ -1,10 +1,10 @@
 "use client";
-import { useAuth } from "@/components/auth/AuthContext";
-import { getHeroImg } from "@/components/generatePage/network/getHeroImg";
-import { getConversation } from "@/components/generatePage/network/loadConversation";
-import ChatPanel from "@/components/generatePage/ui/chat/ChatPanel";
-import PreviewBar from "@/components/generatePage/ui/preview/PreviewPanel";
-import NavBar from "@/components/others/navbar";
+import { useAuth } from "@/services/authServices/AuthContext";
+import { getHeroImg } from "@/services/generatePageServices/getHeroImg";
+import { getConversation } from "@/services/generatePageServices/loadConversation";
+import ChatPanel from "@/components/generatePage/chatPanel/ChatPanel";
+import PreviewBar from "@/components/generatePage/previewPanel/PreviewPanel";
+import NavBar from "@/components/layout/navbar";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -12,12 +12,12 @@ import {
 } from "@/components/ui/resizable";
 import { useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { captureWebsiteDetails } from "../../components/generatePage/network/captureWebsiteDetails";
-import { generateSite } from "../../components/generatePage/network/generateSite";
-import { generateSiteStyles } from "../../components/generatePage/network/generateSiteStyles";
-import { updatedb } from "../../components/generatePage/network/updateDb";
-import ImageSearcher from "../../components/generatePage/ui/imageSearcher/imageSearcher";
-import SideBar from "../../components/generatePage/ui/sidebar/sidebar";
+import { captureWebsiteDetails } from "../../services/generatePageServices/captureWebsiteDetails";
+import { generateSite } from "../../services/generatePageServices/generateSite";
+import { generateSiteStyles } from "../../services/generatePageServices/generateSiteStyles";
+import { updatedb } from "../../services/generatePageServices/updateDb";
+import ImageSearcher from "../../components/generatePage/imageSearcher/imageSearcher";
+import SideBar from "../../components/layout/sidebar/sidebar";
 
 export default function GenerateWebsite() {
   const serarchParams = useSearchParams();

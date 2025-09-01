@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabaseClient";
-import { useAuth } from "@/components/auth/AuthContext";
+import { useAuth } from "@/services/authServices/AuthContext";
 
 interface recentChatInterface {
   chatId: string;

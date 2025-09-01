@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Facebook, Twitter, Linkedin, Instagram, Globe } from "lucide-react";
-import EditingControls from "../editingControls/EditingControls";
+import EditingControls from "../editWebsite/EditingControls";
 
 export type FooterProps = {
   content: {

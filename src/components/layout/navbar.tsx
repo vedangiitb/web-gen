@@ -1,7 +1,7 @@
 "use client";
 import { LogIn } from "lucide-react";
 import Link from "next/link";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../../services/authServices/AuthContext";
 import { Button } from "../ui/button";
 
 export default function NavBar() {

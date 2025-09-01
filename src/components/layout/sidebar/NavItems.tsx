@@ -29,7 +29,7 @@ export default function NavItems({ isExpanded }: { isExpanded: boolean }) {
         <Tooltip key={idx}>
           <TooltipTrigger asChild>
             <button
-              className={`flex items-center gap-3 w-full text-base px-2 py-2 rounded-lg
+              className={`cursor-pointer flex items-center gap-3 w-full text-base px-2 py-2 rounded-lg
                 hover:bg-muted
                 border border-white/10 shadow
                 transition-all duration-110

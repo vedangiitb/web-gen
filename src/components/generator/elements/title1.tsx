@@ -1,6 +1,6 @@
 // For extra large texts mostly in hero sections
 
-import EditingControls from "@/components/editingControls/EditingControls";
+import EditingControls from "@/components/editWebsite/EditingControls";
 import { AnimatePresence, motion } from "framer-motion";
 
 export default function Title1({

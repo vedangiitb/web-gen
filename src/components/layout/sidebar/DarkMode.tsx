@@ -14,7 +14,7 @@ export default function DarkMode({ isExpanded }: { isExpanded: boolean }) {
       <button
         onClick={() => setDarkMode(!darkMode)}
         className={`
-          flex items-center rounded-xl border border-white/10 shadow bg-white/10 px-2 py-2 gap-2 transition
+          cursor-pointer flex items-center rounded-xl border border-white/10 shadow bg-white/10 px-2 py-2 gap-2 transition
           hover:bg-gradient-to-tr hover:from-indigo-400/20 hover:to-purple-300/10
           ${isExpanded ? "w-full justify-between" : "justify-center w-11"}
         `}

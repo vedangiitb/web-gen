@@ -3,7 +3,8 @@ import { useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import { useAuth } from "../auth/AuthContext";
+import { useAuth } from "../../services/authServices/AuthContext";
+import { useAI } from "@/hooks/editWebsiteHooks/generateContent";
 
 export function AIPopoverContent({
   onClose,
@@ -16,40 +17,13 @@ export function AIPopoverContent({
 }) {
   const [aiPrompt, setAiPrompt] = useState("");
   const user = useAuth();
+  const { generate, loading } = useAI(user?.accessToken);
 
   const handleGenerate = async () => {
-    setGenerating(true);
-    if (!user) return;
-    const response = await fetch(
-      "https://jxceaahrdymuhokduqdt.supabase.co/functions/v1/ai-content-generator",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${user?.accessToken}`,
-        },
-        body: JSON.stringify({
-          initContent: content,
-          userReq: aiPrompt,
-        }),
-      }
-    );
-
-    const resp = await response.json();
-    let text = resp?.text ?? "";
-
-    text = text
-      .trim()
-      .replace(/^["'`]+|["'`]+$/g, "")
-      .replace(/^```(?:\w+)?\n?/, "")
-      .replace(/\n?```$/, "");
-
+    const text = await generate(content, aiPrompt);
     if (text && replaceContent) replaceContent(text);
-    setGenerating(false);
     onClose();
   };
-
-  const [generating, setGenerating] = useState(false);
 
   return (
     <>
@@ -74,10 +48,10 @@ export function AIPopoverContent({
         </Button>
         <Button
           onClick={handleGenerate}
-          disabled={generating}
-          className={`${generating ? "cursor-not-allowed" : "cursor-pointer"}`}
+          disabled={loading}
+          className={`${loading ? "cursor-not-allowed" : "cursor-pointer"}`}
         >
-          {generating ? "Generating..." : "Generate"}
+          {loading ? "Generating..." : "Generate"}
         </Button>
       </div>
     </>

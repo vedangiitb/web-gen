@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MenuIcon, X } from "lucide-react";
 import { colorMap } from "./colorMap";
-import EditingControls from "../editingControls/EditingControls";
+import EditingControls from "../editWebsite/EditingControls";
 import { Input } from "../ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
