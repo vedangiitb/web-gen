@@ -1,7 +1,6 @@
 // Large texts for section headings
 
-import EditingControls from "@/components/editWebsite/EditingControls";
-import { AnimatePresence, motion } from "framer-motion";
+import EditingControls from "@/components/editWebsite/contentEditor/EditingControls";import { AnimatePresence, motion } from "framer-motion";
 
 export default function Title2({
   id,

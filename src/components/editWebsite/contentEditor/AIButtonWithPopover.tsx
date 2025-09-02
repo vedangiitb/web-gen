@@ -1,7 +1,11 @@
 "use client";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Sparkles } from "lucide-react";
 import { useState } from "react";
-import { Popover, PopoverTrigger, PopoverContent } from "../ui/popover";
 import { AIPopoverContent } from "./AIPopoverContent";
 
 export function AIButtonWithPopover({

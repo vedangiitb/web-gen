@@ -1,7 +1,6 @@
 // Medium headings, often for headings for individual items
 
-import EditingControls from "@/components/editWebsite/EditingControls";
-import { AnimatePresence, motion } from "framer-motion";
+import EditingControls from "@/components/editWebsite/contentEditor/EditingControls";import { AnimatePresence, motion } from "framer-motion";
 
 export default function Title3({
   id,

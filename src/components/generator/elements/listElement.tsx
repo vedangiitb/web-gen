@@ -1,7 +1,6 @@
 // General body text for most purposes
 
-import EditingControls from "@/components/editWebsite/EditingControls";
-import { AnimatePresence, motion } from "framer-motion";
+import EditingControls from "@/components/editWebsite/contentEditor/EditingControls";import { AnimatePresence, motion } from "framer-motion";
 
 export default function LstElement({
   id,

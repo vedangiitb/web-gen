@@ -16,7 +16,7 @@ import { captureWebsiteDetails } from "../../services/generatePageServices/captu
 import { generateSite } from "../../services/generatePageServices/generateSite";
 import { generateSiteStyles } from "../../services/generatePageServices/generateSiteStyles";
 import { updatedb } from "../../services/generatePageServices/updateDb";
-import ImageSearcher from "../../components/generatePage/imageSearcher/imageSearcher";
+import ImageSearcher from "../../components/editWebsite/imageSearcher/imageSearcher";
 import SideBar from "../../components/layout/sidebar/sidebar";
 
 export default function GenerateWebsite() {

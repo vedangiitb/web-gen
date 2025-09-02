@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
-import { Textarea } from "../ui/textarea";
-import { Button } from "../ui/button";
-import { Separator } from "../ui/separator";
-import { useAuth } from "../../services/authServices/AuthContext";
-import { useAI } from "@/hooks/editWebsiteHooks/generateContent";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { useAuth } from "@/services/authServices/AuthContext";
+import { useAI } from "@/hooks/editWebsiteHooks/editContent";
 
 export function AIPopoverContent({
   onClose,

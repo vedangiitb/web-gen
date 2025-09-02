@@ -1,8 +1,8 @@
 "use client";
-import { useState } from "react";
 import { Button } from "@/components/ui/button"; // shadcn/ui Button
+import { useState } from "react";
+import EditingControls from "../editWebsite/contentEditor/EditingControls";
 import { colorMap } from "./colorMap";
-import EditingControls from "../editWebsite/EditingControls";
 
 export type CallToActionProps = {
   content: {
@@ -40,7 +40,7 @@ export default function CallToAction({
 
   function handleSave(field: "ctaheading" | "subtext" | "buttonText") {
     const el = document.getElementById(field);
-    console.log(el)
+    console.log(el);
     if (!el) return;
     const newContent = { ...content, [field]: el.textContent || "" };
     updateData("CallToAction", newContent);
@@ -143,9 +143,9 @@ export default function CallToAction({
           contentEditable={isEditing("buttonText")}
           className={`transition ${bgColors.button} ${bgColors.buttonTxt} ${
             bgColors.buttonHover
-          } font-semibold ${editMode ? "cursor-pointer outline-dashed px-1 transition" : ""} ${
-            isEditing("buttonText") ? "outline-blue-500 shadow-md" : ""
-          }`}
+          } font-semibold ${
+            editMode ? "cursor-pointer outline-dashed px-1 transition" : ""
+          } ${isEditing("buttonText") ? "outline-blue-500 shadow-md" : ""}`}
           onClick={(e) => {
             // Avoid accidental click during editing
             if (editMode) {

@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { Star } from "lucide-react";
 import { colorMap } from "./colorMap";
-import EditingControls from "../editWebsite/EditingControls";
-
+import EditingControls from "../editWebsite/contentEditor/EditingControls";
 export type TestimonialProps = {
   content: { userReviews: string[]; userRatings: number[] };
   style: GenStyles;

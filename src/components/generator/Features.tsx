@@ -2,8 +2,7 @@
 import { CheckCircle, X } from "lucide-react"; // Lucide is used by shadcn/ui for icons
 import { colorMap } from "./colorMap";
 import { useState } from "react";
-import EditingControls from "../editWebsite/EditingControls";
-import { Button } from "../ui/button";
+import EditingControls from "../editWebsite/contentEditor/EditingControls";import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 export type FeaturesProps = {

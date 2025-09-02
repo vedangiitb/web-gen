@@ -7,7 +7,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { colorMap } from "./colorMap";
-import EditingControls from "../editWebsite/EditingControls";
+import EditingControls from "../editWebsite/contentEditor/EditingControls";
 import { Button } from "../ui/button";
 import { X } from "lucide-react";
 import { Input } from "../ui/input";
@@ -187,9 +187,7 @@ function AddFAQ({
 
       {/* Name Input */}
       <div className="mb-3">
-        <label className="text-sm font-medium text-muted-foreground">
-          FAQ
-        </label>
+        <label className="text-sm font-medium text-muted-foreground">FAQ</label>
         <Input
           value={faq}
           onChange={(e) => setFaq(e.target.value)}
